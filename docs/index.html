@@ -213,14 +213,14 @@
     .c-path.active { stroke: #ffffff; stroke-width: 1.6; }
     /* Pulse container */
     #waves-group {}
-    /* HEARTBEAT PULSE – redesigned as true heartbeat */
-    @keyframes heartbeatPulse {
-      0%   { r: 4;   opacity: 0.95; }
-      11%  { r: var(--max-r); opacity: 1; }
-      24%  { r: 4;   opacity: 0.55; }
-      38%  { r: calc(var(--max-r) * 0.62); opacity: 0.88; }
-      52%  { r: 4;   opacity: 0.35; }
-      100% { r: 4;   opacity: 0; }
+    /* DIAMOND HEARTBEAT PULSE – just a beating diamond dot (bigger for happier countries) */
+    @keyframes diamondBeat {
+      0%   { transform: scale(0.7); opacity: 0.95; }
+      14%  { transform: scale(var(--pulse-max)); opacity: 1; }
+      29%  { transform: scale(0.7); opacity: 0.55; }
+      44%  { transform: scale(calc(var(--pulse-max) * 0.75)); opacity: 0.92; }
+      58%  { transform: scale(0.7); opacity: 0.38; }
+      100% { transform: scale(0.7); opacity: 0; }
     }
     /* Tooltip */
     #tip {
@@ -648,30 +648,36 @@ function createSinglePulse(country, container = null) {
   if (!centroid || isNaN(centroid[0])) return;
   const [cx, cy] = centroid;
   const score = country.score;
-  const maxR = 9 + (score / 8) * 47;   // clearly bigger for happier countries
+
+  // Bigger diamond for happier countries
+  const pulseMaxScale = 1.4 + (score / 8) * 2.1;
 
   const pulseColor = '#cc2200';
 
-  // HEARTBEAT PULSE RING
-  const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  pulse.setAttribute('cx', cx);
-  pulse.setAttribute('cy', cy);
-  pulse.setAttribute('r', '4');
-  pulse.setAttribute('fill', 'none');
-  pulse.setAttribute('stroke', pulseColor);
-  pulse.setAttribute('stroke-width', '1.3');
-  pulse.style.setProperty('--max-r', maxR);
-  pulse.style.animation = 'heartbeatPulse 1380ms cubic-bezier(0.4, 0, 0.2, 1) infinite';
-  wg.appendChild(pulse);
+  // Group for easy scaling
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('transform', `translate(${cx} ${cy})`);
+  g.style.setProperty('--pulse-max', pulseMaxScale);
+  g.style.animation = 'diamondBeat 1380ms cubic-bezier(0.4, 0, 0.2, 1) infinite';
+  wg.appendChild(g);
 
-  // Permanent glowing center dot
+  // Diamond shape (rhombus)
+  const diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  diamond.setAttribute('points', '-3.5,0 0,-5.5 3.5,0 0,5.5');
+  diamond.setAttribute('fill', pulseColor);
+  diamond.setAttribute('stroke', '#ff6644');
+  diamond.setAttribute('stroke-width', '0.8');
+  diamond.setAttribute('opacity', '0.95');
+  g.appendChild(diamond);
+
+  // Tiny center glow dot
   const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  dot.setAttribute('cx', cx);
-  dot.setAttribute('cy', cy);
-  dot.setAttribute('r', '2.1');
-  dot.setAttribute('fill', pulseColor);
-  dot.setAttribute('opacity', '0.95');
-  wg.appendChild(dot);
+  dot.setAttribute('cx', '0');
+  dot.setAttribute('cy', '0');
+  dot.setAttribute('r', '1.1');
+  dot.setAttribute('fill', '#ffffff');
+  dot.setAttribute('opacity', '0.85');
+  g.appendChild(dot);
 }
 
 function previewCountry(name) {
