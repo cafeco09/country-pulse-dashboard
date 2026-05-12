@@ -228,36 +228,40 @@
       z-index: 10;
       white-space: nowrap;
     }
-    /* FOCUS OVERLAY on map */
+    /* FOCUS CARD – now much smaller & more intuitive */
     .map-focus {
       position: absolute;
       top: 12px;
       right: 12px;
-      background: rgba(13,13,20,0.88);
+      background: rgba(13,13,20,0.92);
       border: 1px solid var(--line2);
       backdrop-filter: blur(12px);
-      border-radius: 12px;
-      padding: 12px 16px;
-      min-width: 155px;
+      border-radius: 10px;
+      padding: 9px 13px;
+      min-width: 128px;
+      max-width: 145px;
       pointer-events: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,.4);
     }
     .focus-name {
       font-family: "Playfair Display", serif;
-      font-size: 0.95rem;
-      margin-bottom: 1px;
+      font-size: 0.9rem;
+      line-height: 1;
+      margin-bottom: 2px;
     }
     .focus-score {
       font-family: "Playfair Display", serif;
-      font-size: 2.4rem;
+      font-size: 2.15rem;
       line-height: 1;
       color: #cc2200;
+      font-weight: 700;
     }
     .focus-rank {
-      font-size: 0.58rem;
+      font-size: 0.54rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 1.4px;
-      margin-top: 5px;
+      letter-spacing: 1.3px;
+      margin-top: 3px;
     }
     /* BOTTOM METRICS */
     .bottom-metrics {
@@ -484,7 +488,7 @@ async function init() {
   document.getElementById('kpi-high').textContent = top.score.toFixed(2);
   buildRegionFilters();
   renderMap();
-  initAllPulses();           // ← ALL countries have visible red seismic pulses running together
+  initAllPulses();
   renderRankList(countries);
   selectCountry(top.name);
   setupSearch();
@@ -588,37 +592,36 @@ function renderMap() {
 
 function initAllPulses() {
   const wg = document.getElementById('waves-group');
-  wg.innerHTML = ''; // clear any previous
+  wg.innerHTML = '';
   state.countries.forEach(country => {
     if (!country.feature) return;
     const centroid = d3.geoPath().projection(state.projection).centroid(country.feature);
     if (!centroid || isNaN(centroid[0])) return;
     const [cx, cy] = centroid;
     const score = country.score;
-    const dur = Math.max(2.6, 4.2 - (score - 2.5) / 5.5 * 2.4);
-    const maxR = 22 + (score / 8) * 52;
+    const dur = Math.max(2.8, 4.1 - (score - 2.5) / 5.5 * 2.3);
+    const maxR = 19 + (score / 8) * 46;
     const waveColor = '#cc2200';
-    const WAVES = 4; // 4 rings per country → clearly visible together
+    const WAVES = 3; // fewer rings = cleaner, more intuitive look
     for (let i = 0; i < WAVES; i++) {
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', cx);
       circle.setAttribute('cy', cy);
-      circle.setAttribute('r', 3.5);
+      circle.setAttribute('r', 3.2);
       circle.setAttribute('fill', 'none');
       circle.setAttribute('stroke', waveColor);
-      circle.setAttribute('stroke-width', '1.1');
+      circle.setAttribute('stroke-width', '0.95');
       circle.setAttribute('opacity', '0');
       wg.appendChild(circle);
-      const delay = (i / WAVES) * dur * 1.1;
+      const delay = (i / WAVES) * dur * 1.05;
       animateWave(circle, cx, cy, maxR, dur, delay, waveColor);
     }
-    // center dot
     const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     dot.setAttribute('cx', cx);
     dot.setAttribute('cy', cy);
-    dot.setAttribute('r', 2.4);
+    dot.setAttribute('r', 2.1);
     dot.setAttribute('fill', waveColor);
-    dot.setAttribute('opacity', '0.75');
+    dot.setAttribute('opacity', '0.7');
     wg.appendChild(dot);
   });
 }
@@ -635,8 +638,8 @@ function animateWave(el, cx, cy, maxR, dur, delay, color) {
       return;
     }
     const t = ((elapsed - delayMs) % totalMs) / totalMs;
-    const r = 3.5 + t * maxR;
-    const op = (1 - t) * 0.72;
+    const r = 3.2 + t * maxR;
+    const op = (1 - t) * 0.58;   // lower opacity = less visual clutter
     el.setAttribute('r', r);
     el.setAttribute('opacity', op);
     requestAnimationFrame(step);
