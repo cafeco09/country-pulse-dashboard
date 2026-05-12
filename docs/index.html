@@ -857,75 +857,6 @@
       return -1;
     }
 
-    function parseWHR(buffer) {
-      const workbook = XLSX.read(buffer, { type: "array" });
-
-      for (const sheetName of workbook.SheetNames) {
-        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
-          header: 1,
-          defval: "",
-          blankrows: false
-        });
-
-        const headerRowIndex = rows.findIndex(row => {
-          const joined = row.map(clean).join(" | ");
-          return joined.includes("country") && (joined.includes("ladder") || joined.includes("happiness"));
-        });
-
-        if (headerRowIndex < 0) continue;
-
-        const headers = rows[headerRowIndex];
-
-        const idx = {
-          country: findColumn(headers, [["country", "name"], ["country"]]),
-          region: findColumn(headers, [["regional", "indicator"], ["region"]]),
-          score: findColumn(headers, [["ladder", "score"], ["life", "ladder"], ["happiness", "score"]]),
-          upper: findColumn(headers, [["upper", "whisker"], ["upper"]]),
-          lower: findColumn(headers, [["lower", "whisker"], ["lower"]]),
-          gdp: findColumn(headers, [["explained", "gdp"], ["log", "gdp"], ["gdp", "per", "capita"]]),
-          social: findColumn(headers, [["explained", "social", "support"], ["social", "support"]]),
-          life: findColumn(headers, [["explained", "healthy", "life"], ["healthy", "life", "expectancy"]]),
-          freedom: findColumn(headers, [["explained", "freedom"], ["freedom", "life", "choices"], ["freedom"]]),
-          generosity: findColumn(headers, [["explained", "generosity"], ["generosity"]]),
-          corruption: findColumn(headers, [["explained", "corruption"], ["perceptions", "corruption"], ["corruption"]])
-        };
-
-        if (idx.country < 0 || idx.score < 0) continue;
-
-        const parsed = rows.slice(headerRowIndex + 1)
-          .map(row => {
-            const country = String(row[idx.country] || "").trim();
-            const score = toNumber(row[idx.score]);
-
-            if (!country || score === null) return null;
-
-            return {
-              country,
-              key: keyName(country),
-              region: idx.region >= 0 ? String(row[idx.region] || "Uncategorised").trim() || "Uncategorised" : "Uncategorised",
-              score,
-              upper: idx.upper >= 0 ? toNumber(row[idx.upper]) : null,
-              lower: idx.lower >= 0 ? toNumber(row[idx.lower]) : null,
-              drivers: {
-                gdp: idx.gdp >= 0 ? toNumber(row[idx.gdp]) || 0 : 0,
-                social: idx.social >= 0 ? toNumber(row[idx.social]) || 0 : 0,
-                life: idx.life >= 0 ? toNumber(row[idx.life]) || 0 : 0,
-                freedom: idx.freedom >= 0 ? toNumber(row[idx.freedom]) || 0 : 0,
-                generosity: idx.generosity >= 0 ? toNumber(row[idx.generosity]) || 0 : 0,
-                corruption: idx.corruption >= 0 ? toNumber(row[idx.corruption]) || 0 : 0
-              }
-            };
-          })
-          .filter(Boolean)
-          .sort((a, b) => b.score - a.score)
-          .map((d, i) => ({ ...d, rank: i + 1 }));
-
-        if (parsed.length > 30) return parsed;
-      }
-
-      return new Map();
-    }
-
     function parseOWID(csvText) {
       const rows = d3.csvParse(csvText);
       const columns = rows.columns || [];
@@ -1305,22 +1236,22 @@
         .join("");
     }
 
+
     async function init() {
-      const [whrBuffer, owidCSV, world] = await Promise.all([
-        fetchFirst(SOURCES.whr, true),
+      const [owidCSV, world] = await Promise.all([
         fetchFirst(SOURCES.owid, false),
         d3.json(SOURCES.world)
       ]);
 
-      /* WHR parser disabled: using OWID data for country score/rank/map. */
-      state.byKey = new Map(state.data.map(d => [d.key, d]));
-      state.trends = parseOWID(owidCSV);
+      state.countries = parseOWID(owidCSV);
+      state.byKey = new Map(state.countries.map(d => [d.key, d]));
+      state.whrFactors = new Map();
       state.world = world;
-      state.selected = state.data[0];
+      state.selected = state.countries[0];
 
-      populateRegions();
       render();
     }
+
 
     $("search").addEventListener("input", event => {
       state.query = event.target.value;
