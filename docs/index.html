@@ -213,6 +213,15 @@
     .c-path.active { stroke: #ffffff; stroke-width: 1.6; }
     /* Pulse container */
     #waves-group {}
+    /* HEARTBEAT PULSE – redesigned as true heartbeat */
+    @keyframes heartbeatPulse {
+      0%   { r: 4;   opacity: 0.95; }
+      11%  { r: var(--max-r); opacity: 1; }
+      24%  { r: 4;   opacity: 0.55; }
+      38%  { r: calc(var(--max-r) * 0.62); opacity: 0.88; }
+      52%  { r: 4;   opacity: 0.35; }
+      100% { r: 4;   opacity: 0; }
+    }
     /* Tooltip */
     #tip {
       position: absolute;
@@ -517,7 +526,6 @@ function filterRegion(r, btn) {
 
 function setupSearch() {
   const searchInput = document.getElementById('search');
-  // live search as you type
   searchInput.addEventListener('input', e => {
     const q = e.target.value.toLowerCase().trim();
     let base = state.regionFilter === 'all' ? state.countries : state.countries.filter(c => c.region === state.regionFilter);
@@ -525,16 +533,12 @@ function setupSearch() {
     renderRankList(base);
   });
 
-  // ENTER KEY → only the searched country + its pulse/details visible
   searchInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       const q = searchInput.value.toLowerCase().trim();
       if (!q) return;
-
-      // find best match (exact first, then partial)
       let match = state.countries.find(c => c.name.toLowerCase() === q);
       if (!match) match = state.countries.find(c => c.name.toLowerCase().includes(q));
-
       if (match) {
         state.searchFocus = match.name;
         selectCountry(match.name);
@@ -552,12 +556,7 @@ function setupSearch() {
 }
 
 function applySearchFocus() {
-  // dim every country except the focused one
-  d3.selectAll('.c-path').attr('fill-opacity', d => {
-    return d.properties.name === state.searchFocus ? 1 : 0.09;
-  });
-
-  // clear all pulses and show ONLY the focused country’s pulse
+  d3.selectAll('.c-path').attr('fill-opacity', d => d.properties.name === state.searchFocus ? 1 : 0.09);
   const wg = document.getElementById('waves-group');
   wg.innerHTML = '';
   const focused = state.countries.find(c => c.name === state.searchFocus);
@@ -569,7 +568,7 @@ function resetMapVisuals() {
   d3.selectAll('.c-path').attr('fill-opacity', 1);
   const wg = document.getElementById('waves-group');
   wg.innerHTML = '';
-  initAllPulses(); // restore all pulses
+  initAllPulses();
 }
 
 function renderRankList(list) {
@@ -620,7 +619,6 @@ function renderMap() {
       return c ? colorScale(c.score) : '#1a1a2e';
     })
     .on('click', (e, d) => {
-      // clicking map always resets focus mode
       if (state.searchFocus) resetMapVisuals();
       selectCountry(d.properties.name);
     })
@@ -640,8 +638,6 @@ function initAllPulses() {
   wg.innerHTML = '';
   state.countries.forEach(country => {
     if (!country.feature) return;
-    const centroid = d3.geoPath().projection(state.projection).centroid(country.feature);
-    if (!centroid || isNaN(centroid[0])) return;
     createSinglePulse(country, wg);
   });
 }
@@ -652,49 +648,30 @@ function createSinglePulse(country, container = null) {
   if (!centroid || isNaN(centroid[0])) return;
   const [cx, cy] = centroid;
   const score = country.score;
-
-  // BIGGER PULSE FOR HAPPIER COUNTRIES — clear difference in size
-  const maxR = 8 + (score / 8) * 44;
+  const maxR = 9 + (score / 8) * 47;   // clearly bigger for happier countries
 
   const pulseColor = '#cc2200';
 
-  // single expanding pulse ring (classic pulse, not wave)
+  // HEARTBEAT PULSE RING
   const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   pulse.setAttribute('cx', cx);
   pulse.setAttribute('cy', cy);
-  pulse.setAttribute('r', 4);
+  pulse.setAttribute('r', '4');
   pulse.setAttribute('fill', 'none');
   pulse.setAttribute('stroke', pulseColor);
-  pulse.setAttribute('stroke-width', '1.25');
-  pulse.setAttribute('opacity', '0.95');
+  pulse.setAttribute('stroke-width', '1.3');
+  pulse.style.setProperty('--max-r', maxR);
+  pulse.style.animation = 'heartbeatPulse 1380ms cubic-bezier(0.4, 0, 0.2, 1) infinite';
   wg.appendChild(pulse);
 
-  // permanent center dot
+  // Permanent glowing center dot
   const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   dot.setAttribute('cx', cx);
   dot.setAttribute('cy', cy);
-  dot.setAttribute('r', 2.1);
+  dot.setAttribute('r', '2.1');
   dot.setAttribute('fill', pulseColor);
   dot.setAttribute('opacity', '0.95');
   wg.appendChild(dot);
-
-  animatePulse(pulse, maxR);
-}
-
-function animatePulse(el, maxR) {
-  let start = null;
-  const cycleMs = 1350; // snappy pulse feel
-  function step(ts) {
-    if (!start) start = ts;
-    const elapsed = (ts - start) % cycleMs;
-    const t = elapsed / cycleMs;
-    const radius = 4 + (t * t) * maxR;        // quadratic growth = sharper pulse
-    const opacity = Math.max(0.03, 1 - t * 1.8); // fast fade
-    el.setAttribute('r', radius);
-    el.setAttribute('opacity', opacity);
-    requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
 }
 
 function previewCountry(name) {
@@ -719,22 +696,17 @@ function endPreview() {
 function selectCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
-
-  // if we were in search-focus mode and clicked a different country → reset
   if (state.searchFocus && state.searchFocus !== name) {
     resetMapVisuals();
   }
-
   state.selected = entry;
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
   document.getElementById('focus-rank').textContent = `Rank #${entry.rank} of ${state.countries.length}`;
   d3.selectAll('.c-path').classed('active', d => d.properties.name === entry.name);
-
   renderFactors(entry);
   renderSparkline(entry);
   renderGauge(entry.score);
-
   const filtered = state.regionFilter === 'all'
     ? state.countries
     : state.countries.filter(c => c.region === state.regionFilter);
