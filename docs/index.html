@@ -1,1 +1,1329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Country Pulse | Global Happiness Dashboard</title>
+  <meta name="description" content="A real-data dashboard showing global happiness scores, heartbeat-style country pulses, and World Happiness Report factor contributions." />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
 
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #030303;
+      --panel: rgba(14, 14, 14, 0.92);
+      --panel2: rgba(24, 24, 24, 0.76);
+      --line: rgba(245, 241, 232, 0.16);
+      --text: #f5f1e8;
+      --muted: rgba(245, 241, 232, 0.68);
+      --soft: rgba(245, 241, 232, 0.38);
+      --red: #ff3434;
+      --red2: #ff7777;
+      --darkred: #7a0b0b;
+      --map: #4a4a4a;
+      --mapHi: #747474;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 16%, rgba(255, 52, 52, 0.14), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(245, 241, 232, 0.06), transparent 30%),
+        #030303;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .app {
+      width: min(1720px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 16px 0 26px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(10, 10, 10, 0.84);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 52, 52, 0.55);
+      background: radial-gradient(circle, rgba(255, 52, 52, 0.35), rgba(80, 0, 0, 0.35));
+      box-shadow: 0 0 38px rgba(255, 52, 52, 0.35);
+      flex: 0 0 auto;
+    }
+
+    .logo svg {
+      width: 36px;
+      height: 24px;
+      fill: none;
+      stroke: var(--text);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px rgba(255, 52, 52, 0.9));
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 4rem);
+      line-height: 0.95;
+      letter-spacing: -0.055em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .period {
+      justify-self: end;
+      border: 1px solid rgba(255, 52, 52, 0.45);
+      background: rgba(255, 52, 52, 0.08);
+      color: var(--red2);
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 230px minmax(260px, 430px);
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .control {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(15, 15, 15, 0.9);
+      border-radius: 17px;
+      overflow: hidden;
+    }
+
+    input, select {
+      width: 100%;
+      height: 100%;
+      color: var(--text);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      padding: 0 15px;
+      font: inherit;
+    }
+
+    input::placeholder { color: var(--soft); }
+
+    .legend {
+      gap: 11px;
+      padding: 0 15px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .scale {
+      flex: 1;
+      height: 9px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #353535, #595959 35%, #a83232 68%, var(--red));
+      box-shadow: 0 0 24px rgba(255, 52, 52, 0.26);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 14px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      box-shadow: 0 26px 90px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+    }
+
+    .map-panel {
+      min-height: 620px;
+      position: relative;
+      background:
+        linear-gradient(rgba(245, 241, 232, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 241, 232, 0.035) 1px, transparent 1px),
+        radial-gradient(circle at 48% 45%, rgba(255, 52, 52, 0.08), transparent 32%),
+        #050505;
+      background-size: 32px 32px, 32px 32px, auto, auto;
+    }
+
+    #map {
+      width: 100%;
+      height: 620px;
+      display: block;
+    }
+
+    .map-status {
+      position: absolute;
+      z-index: 5;
+      left: 16px;
+      top: 16px;
+      max-width: 560px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.75);
+      color: var(--muted);
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .country {
+      fill: var(--map);
+      stroke: #090909;
+      stroke-width: 0.45px;
+      opacity: 0.42;
+      transition: opacity 0.18s ease, fill 0.18s ease, stroke 0.18s ease;
+    }
+
+    .country.has-data {
+      opacity: 0.94;
+      cursor: pointer;
+    }
+
+    .country.filtered-out {
+      opacity: 0.14;
+    }
+
+    .country:hover {
+      fill: var(--mapHi);
+      stroke: var(--text);
+      stroke-width: 1px;
+    }
+
+    .country.selected {
+      fill: #787878;
+      stroke: var(--text);
+      stroke-width: 1.5px;
+      filter: drop-shadow(0 0 14px rgba(245, 241, 232, 0.22));
+    }
+
+    .pulse-group { pointer-events: none; }
+
+    .pulse-ring {
+      fill: none;
+      stroke: var(--red);
+      stroke-width: 1.25;
+      opacity: 0.52;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: seismicPulse 2.8s ease-out infinite;
+      filter: drop-shadow(0 0 10px rgba(255, 52, 52, 0.72));
+    }
+
+    .pulse-ring.r2 { animation-delay: 0.7s; opacity: 0.34; }
+    .pulse-ring.r3 { animation-delay: 1.4s; opacity: 0.2; }
+
+    .pulse-dot {
+      fill: var(--red);
+      stroke: var(--text);
+      stroke-width: 0.8;
+      filter: drop-shadow(0 0 16px rgba(255, 52, 52, 0.95));
+    }
+
+    .pulse-wave {
+      fill: none;
+      stroke: var(--text);
+      stroke-width: 1.55;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px rgba(255, 52, 52, 0.9));
+    }
+
+    @keyframes seismicPulse {
+      0% { transform: scale(0.45); opacity: 0.68; }
+      72% { transform: scale(1.48); opacity: 0.04; }
+      100% { transform: scale(1.48); opacity: 0; }
+    }
+
+    .tooltip {
+      position: absolute;
+      z-index: 20;
+      pointer-events: none;
+      min-width: 165px;
+      display: none;
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 52, 52, 0.48);
+      border-radius: 13px;
+      background: rgba(5, 5, 5, 0.94);
+      color: var(--text);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 28px rgba(255, 52, 52, 0.18);
+      transform: translate(-50%, -120%);
+    }
+
+    .tooltip strong { display: block; margin-bottom: 4px; }
+    .tooltip span { display: block; color: var(--muted); font-size: 0.86rem; }
+
+    .side {
+      padding: 17px;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 13px;
+      color: var(--text);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.055em;
+      font-weight: 900;
+    }
+
+    .panel-title small {
+      color: var(--red2);
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .rank-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .rank-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      text-align: left;
+      border: 1px solid rgba(245, 241, 232, 0.08);
+      background: rgba(255, 255, 255, 0.025);
+      border-radius: 13px;
+      padding: 10px;
+      color: var(--text);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .rank-row:hover, .rank-row.active {
+      border-color: rgba(255, 52, 52, 0.55);
+      background: rgba(255, 52, 52, 0.08);
+      transform: translateX(2px);
+    }
+
+    .rank-country {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rank-score {
+      color: var(--red2);
+      font-weight: 900;
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr) minmax(420px, 0.9fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .card {
+      min-height: 350px;
+      padding: 18px;
+    }
+
+    .selected-head {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .badge {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(245, 241, 232, 0.24);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--red2);
+      font-weight: 950;
+      box-shadow: inset 0 0 20px rgba(255,255,255,.05), 0 0 24px rgba(255,52,52,.15);
+      flex: 0 0 auto;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.85rem;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .meta {
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 0.92rem;
+    }
+
+    .rank-pill {
+      display: inline-flex;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 52, 52, 0.55);
+      border-radius: 13px;
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255,52,52,.2), rgba(255,52,52,.07));
+      font-weight: 950;
+      box-shadow: 0 0 24px rgba(255,52,52,.14);
+    }
+
+    .score-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .big-score {
+      color: var(--red2);
+      font-size: 4.1rem;
+      line-height: 0.9;
+      font-weight: 950;
+      letter-spacing: -0.065em;
+    }
+
+    .big-score small {
+      color: var(--muted);
+      font-size: 1.18rem;
+      letter-spacing: 0;
+    }
+
+    .stats {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.025);
+      border-radius: 14px;
+      padding: 11px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.35rem;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 2px;
+    }
+
+    .factors {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .factor {
+      min-height: 126px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.024);
+      border-radius: 15px;
+      padding: 12px;
+    }
+
+    .factor-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 38px;
+      font-size: 0.88rem;
+    }
+
+    .factor-top b {
+      color: var(--red2);
+    }
+
+    .factor-value {
+      margin-top: 10px;
+      color: var(--red2);
+      font-size: 1.38rem;
+      font-weight: 950;
+    }
+
+    .bar-track {
+      margin-top: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(245,241,232,.12);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--darkred), var(--red));
+      box-shadow: 0 0 14px rgba(255,52,52,.45);
+    }
+
+    .note, .insight {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .insight {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 12px;
+      background: rgba(255,255,255,.025);
+      margin-top: 12px;
+    }
+
+    .insight b {
+      color: var(--red2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    #trend, #compare {
+      width: 100%;
+      height: 235px;
+    }
+
+    .axis text {
+      fill: var(--muted);
+      font-size: 11px;
+    }
+
+    .axis path, .axis line {
+      stroke: rgba(245, 241, 232, 0.18);
+    }
+
+    .grid-line line {
+      stroke: rgba(245, 241, 232, 0.08);
+    }
+
+    .grid-line path {
+      stroke-width: 0;
+    }
+
+    .error {
+      display: none;
+      margin: 14px 0;
+      padding: 15px;
+      border: 1px solid rgba(255, 52, 52, 0.6);
+      border-radius: 17px;
+      background: rgba(255, 52, 52, 0.1);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .footer {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      background: rgba(255,255,255,.025);
+    }
+
+    .footer strong {
+      color: var(--text);
+    }
+
+    code {
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      padding: 1px 4px;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 1250px) {
+      .topbar, .controls, .layout, .bottom {
+        grid-template-columns: 1fr;
+      }
+
+      .period {
+        justify-self: start;
+      }
+
+      .map-panel, #map {
+        min-height: 560px;
+        height: 560px;
+      }
+
+      .factors {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 700px) {
+      .app { width: min(100vw - 16px, 1720px); }
+      .factors, .stats { grid-template-columns: 1fr; }
+      .big-score { font-size: 3.2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 42 22">
+            <path d="M1 11h8l4-8 7 17 5-9h16" />
+          </svg>
+        </div>
+        <div>
+          <h1>Country Pulse</h1>
+          <p class="subtitle">The pulse of happiness around the world</p>
+        </div>
+      </div>
+      <div class="period">2023–2025 average</div>
+    </header>
+
+    <section class="controls">
+      <label class="control">
+        <input id="search" type="search" placeholder="Search country..." autocomplete="off" />
+      </label>
+
+      <label class="control">
+        <select id="region">
+          <option value="All">All regions</option>
+        </select>
+      </label>
+
+      <div class="control legend">
+        <span>Score</span>
+        <div class="scale"></div>
+        <span>0</span>
+        <span>10</span>
+      </div>
+    </section>
+
+    <div id="error" class="error"></div>
+
+    <section class="layout">
+      <section class="panel map-panel">
+        <div id="mapStatus" class="map-status">Loading World Happiness Report data…</div>
+        <svg id="map" role="img" aria-label="World map showing happiness pulse by country"></svg>
+        <div id="tooltip" class="tooltip"></div>
+      </section>
+
+      <aside class="panel side">
+        <div class="panel-title">
+          <span>Top 10 happiest</span>
+          <small>heartbeat rank</small>
+        </div>
+        <div id="rankList" class="rank-list"></div>
+      </aside>
+    </section>
+
+    <section class="bottom">
+      <section class="panel card">
+        <div class="selected-head">
+          <div id="badge" class="badge">#—</div>
+          <div>
+            <h2 id="countryName">—</h2>
+            <div id="countryMeta" class="meta">—</div>
+          </div>
+        </div>
+
+        <div id="rankPill" class="rank-pill">#—</div>
+
+        <div class="score-label">Happiness score</div>
+        <div class="big-score"><span id="scoreBig">—</span> <small>/ 10</small></div>
+
+        <div class="stats">
+          <div class="stat"><strong id="rankSmall">—</strong><span>Rank</span></div>
+          <div class="stat"><strong id="countryCount">—</strong><span>Countries loaded</span></div>
+          <div class="stat"><strong id="regionAvg">—</strong><span>Region average</span></div>
+          <div class="stat"><strong id="worldAvg">—</strong><span>World average</span></div>
+        </div>
+      </section>
+
+      <section class="panel card">
+        <div class="panel-title">
+          <span>Associated factors</span>
+          <small>WHR contribution</small>
+        </div>
+        <div id="factors" class="factors"></div>
+        <p class="note">
+          These are World Happiness Report explanatory contributions, not proof that any single factor directly causes happiness.
+        </p>
+      </section>
+
+      <section class="panel card">
+        <div class="panel-title">
+          <span>Trend and comparison</span>
+          <small>OWID + WHR</small>
+        </div>
+        <svg id="trend"></svg>
+        <svg id="compare"></svg>
+        <div id="insight" class="insight"><b>Insight</b><br />Select a country.</div>
+      </section>
+    </section>
+
+    <footer class="footer">
+      <strong>Data note:</strong> Country scores and factor contributions are loaded from the World Happiness Report Figure 2.1 workbook in <code>docs/data</code>. Trends use Our World in Data's Cantril Ladder CSV. The grey map is intentional; red heartbeat rings encode higher happiness scores visually.
+    </footer>
+  </main>
+
+  <script>
+    window.addEventListener("error", event => {
+      showError("JavaScript error: " + event.message);
+    });
+
+    window.addEventListener("unhandledrejection", event => {
+      const reason = event.reason && event.reason.message ? event.reason.message : event.reason;
+      showError("Loading error: " + reason);
+    });
+
+    const SOURCES = {
+      whr: [
+        "data/WHR26_Data_Figure_2.1.xlsx",
+        "https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx"
+      ],
+      owid: [
+        "data/happiness-cantril-ladder.csv",
+        "https://ourworldindata.org/grapher/happiness-cantril-ladder.csv?csvType=full&useColumnShortNames=false"
+      ],
+      world: "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+    };
+
+    const drivers = [
+      ["gdp", "GDP per capita", "GDP"],
+      ["social", "Social support", "SS"],
+      ["life", "Healthy life expectancy", "HL"],
+      ["freedom", "Freedom", "FR"],
+      ["generosity", "Generosity", "GE"],
+      ["corruption", "Corruption perception", "CP"]
+    ];
+
+    const aliases = {
+      "united states of america": "united states",
+      "usa": "united states",
+      "united states": "united states",
+      "united kingdom": "united kingdom",
+      "england": "united kingdom",
+      "russia": "russian federation",
+      "russian federation": "russian federation",
+      "south korea": "south korea",
+      "korea republic of": "south korea",
+      "czech republic": "czechia",
+      "czechia": "czechia",
+      "vietnam": "viet nam",
+      "viet nam": "viet nam",
+      "iran": "iran",
+      "iran islamic republic of": "iran",
+      "syria": "syria",
+      "syrian arab republic": "syria",
+      "laos": "lao pdr",
+      "lao pdr": "lao pdr",
+      "democratic republic of the congo": "congo kinshasa",
+      "congo democratic republic of the": "congo kinshasa",
+      "republic of the congo": "congo brazzaville",
+      "ivory coast": "cote divoire",
+      "cote divoire": "cote divoire",
+      "hong kong": "hong kong sar of china",
+      "taiwan": "taiwan province of china",
+      "palestine": "state of palestine",
+      "swaziland": "eswatini"
+    };
+
+    const state = {
+      data: [],
+      byKey: new Map(),
+      trends: new Map(),
+      world: null,
+      selected: null,
+      query: "",
+      region: "All"
+    };
+
+    const $ = id => document.getElementById(id);
+
+    function showError(message) {
+      const box = $("error");
+      box.style.display = "block";
+      box.innerHTML = "<strong>Dashboard issue:</strong><br>" + message;
+      console.error(message);
+    }
+
+    function clean(value) {
+      return String(value || "")
+        .toLowerCase()
+        .replace(/&/g, " and ")
+        .replace(/[’']/g, "")
+        .replace(/[^a-z0-9+]+/g, " ")
+        .replace(/\bthe\b/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function keyName(value) {
+      const key = clean(value);
+      return aliases[key] || key;
+    }
+
+    function toNumber(value) {
+      if (value === null || value === undefined || value === "") return null;
+      const n = Number(String(value).replace(/,/g, ""));
+      return Number.isFinite(n) ? n : null;
+    }
+
+    async function fetchFirst(urls, asArrayBuffer = false) {
+      let lastError;
+
+      for (const url of urls) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (!response.ok) throw new Error(url + " returned " + response.status);
+          return asArrayBuffer ? await response.arrayBuffer() : await response.text();
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError;
+    }
+
+    function findColumn(headers, candidates) {
+      const cleanedHeaders = headers.map(clean);
+
+      for (const candidate of candidates) {
+        const terms = candidate.map(clean);
+        const idx = cleanedHeaders.findIndex(header => terms.every(term => header.includes(term)));
+        if (idx >= 0) return idx;
+      }
+
+      return -1;
+    }
+
+    function parseWHR(buffer) {
+      const workbook = XLSX.read(buffer, { type: "array" });
+
+      for (const sheetName of workbook.SheetNames) {
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+          header: 1,
+          defval: "",
+          blankrows: false
+        });
+
+        const headerRowIndex = rows.findIndex(row => {
+          const joined = row.map(clean).join(" | ");
+          return joined.includes("country") && (joined.includes("ladder") || joined.includes("happiness"));
+        });
+
+        if (headerRowIndex < 0) continue;
+
+        const headers = rows[headerRowIndex];
+
+        const idx = {
+          country: findColumn(headers, [["country", "name"], ["country"]]),
+          region: findColumn(headers, [["regional", "indicator"], ["region"]]),
+          score: findColumn(headers, [["ladder", "score"], ["life", "ladder"], ["happiness", "score"]]),
+          upper: findColumn(headers, [["upper", "whisker"], ["upper"]]),
+          lower: findColumn(headers, [["lower", "whisker"], ["lower"]]),
+          gdp: findColumn(headers, [["explained", "gdp"], ["log", "gdp"], ["gdp", "per", "capita"]]),
+          social: findColumn(headers, [["explained", "social", "support"], ["social", "support"]]),
+          life: findColumn(headers, [["explained", "healthy", "life"], ["healthy", "life", "expectancy"]]),
+          freedom: findColumn(headers, [["explained", "freedom"], ["freedom", "life", "choices"], ["freedom"]]),
+          generosity: findColumn(headers, [["explained", "generosity"], ["generosity"]]),
+          corruption: findColumn(headers, [["explained", "corruption"], ["perceptions", "corruption"], ["corruption"]])
+        };
+
+        if (idx.country < 0 || idx.score < 0) continue;
+
+        const parsed = rows.slice(headerRowIndex + 1)
+          .map(row => {
+            const country = String(row[idx.country] || "").trim();
+            const score = toNumber(row[idx.score]);
+
+            if (!country || score === null) return null;
+
+            return {
+              country,
+              key: keyName(country),
+              region: idx.region >= 0 ? String(row[idx.region] || "Uncategorised").trim() || "Uncategorised" : "Uncategorised",
+              score,
+              upper: idx.upper >= 0 ? toNumber(row[idx.upper]) : null,
+              lower: idx.lower >= 0 ? toNumber(row[idx.lower]) : null,
+              drivers: {
+                gdp: idx.gdp >= 0 ? toNumber(row[idx.gdp]) || 0 : 0,
+                social: idx.social >= 0 ? toNumber(row[idx.social]) || 0 : 0,
+                life: idx.life >= 0 ? toNumber(row[idx.life]) || 0 : 0,
+                freedom: idx.freedom >= 0 ? toNumber(row[idx.freedom]) || 0 : 0,
+                generosity: idx.generosity >= 0 ? toNumber(row[idx.generosity]) || 0 : 0,
+                corruption: idx.corruption >= 0 ? toNumber(row[idx.corruption]) || 0 : 0
+              }
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b.score - a.score)
+          .map((d, i) => ({ ...d, rank: i + 1 }));
+
+        if (parsed.length > 30) return parsed;
+      }
+
+      throw new Error("Could not parse the World Happiness Report workbook.");
+    }
+
+    function parseOWID(csvText) {
+      const rows = d3.csvParse(csvText);
+      const columns = rows.columns || [];
+
+      const entityCol = columns.find(c => clean(c) === "entity") || "Entity";
+      const yearCol = columns.find(c => clean(c) === "year") || "Year";
+
+      const valueCol = columns.find(c => {
+        const name = clean(c);
+        return name.includes("cantril") || name.includes("life satisfaction") || name.includes("happiness") || name.includes("ladder");
+      });
+
+      const map = new Map();
+      if (!valueCol) return map;
+
+      rows.forEach(row => {
+        const country = row[entityCol];
+        const year = Number(row[yearCol]);
+        const score = toNumber(row[valueCol]);
+
+        if (!country || !Number.isFinite(year) || score === null) return;
+
+        const key = keyName(country);
+        if (!map.has(key)) map.set(key, []);
+        map.get(key).push({ year, score });
+      });
+
+      for (const [key, values] of map.entries()) {
+        map.set(key, values.sort((a, b) => a.year - b.year).slice(-12));
+      }
+
+      return map;
+    }
+
+    function visibleData() {
+      return state.data.filter(d => {
+        const matchesQuery = !state.query || d.country.toLowerCase().includes(state.query.toLowerCase());
+        const matchesRegion = state.region === "All" || d.region === state.region;
+        return matchesQuery && matchesRegion;
+      });
+    }
+
+    function average(rows, getter) {
+      return d3.mean(rows, getter) || 0;
+    }
+
+    function worldAverage(driverKey = null) {
+      return driverKey
+        ? average(state.data, d => d.drivers[driverKey])
+        : average(state.data, d => d.score);
+    }
+
+    function regionAverage(region) {
+      const rows = state.data.filter(d => d.region === region);
+      return average(rows, d => d.score) || worldAverage();
+    }
+
+    function rankLabel(rank) {
+      if (rank === 1) return "Happiest country";
+      if (rank <= 10) return "Top 10 happiness pulse";
+      if (rank <= 30) return "High happiness pulse";
+      if (rank <= 70) return "Mid-table pulse";
+      return "Lower happiness pulse";
+    }
+
+    function render() {
+      renderRankList();
+      renderDetails();
+      drawMap();
+      drawTrend();
+      drawCompare();
+    }
+
+    function renderRankList() {
+      d3.select("#rankList")
+        .selectAll("button")
+        .data(state.data.slice(0, 10), d => d.key)
+        .join("button")
+        .attr("class", d => "rank-row " + (state.selected && state.selected.key === d.key ? "active" : ""))
+        .html(d => `
+          <span>${d.rank}</span>
+          <span class="rank-country">${d.country}</span>
+          <span class="rank-score">${d.score.toFixed(2)}</span>
+        `)
+        .on("click", (event, d) => {
+          state.selected = d;
+          render();
+        });
+    }
+
+    function renderDetails() {
+      const d = state.selected || state.data[0];
+      if (!d) return;
+
+      state.selected = d;
+
+      $("badge").textContent = "#" + d.rank;
+      $("countryName").textContent = d.country;
+      $("countryMeta").textContent = d.region + (d.lower && d.upper ? ` · 95% CI ${d.lower.toFixed(2)}–${d.upper.toFixed(2)}` : "");
+      $("rankPill").textContent = "#" + d.rank + " " + rankLabel(d.rank);
+      $("scoreBig").textContent = d.score.toFixed(2);
+      $("rankSmall").textContent = d.rank + " / " + state.data.length;
+      $("countryCount").textContent = state.data.length;
+      $("regionAvg").textContent = regionAverage(d.region).toFixed(2);
+      $("worldAvg").textContent = worldAverage().toFixed(2);
+
+      const maxDriver = d3.max(state.data.flatMap(row => drivers.map(m => row.drivers[m[0]]))) || 1;
+
+      d3.select("#factors")
+        .selectAll(".factor")
+        .data(drivers)
+        .join("div")
+        .attr("class", "factor")
+        .html(m => {
+          const value = d.drivers[m[0]] || 0;
+          const pct = Math.max(2, Math.min(100, value / maxDriver * 100));
+
+          return `
+            <div class="factor-top">
+              <span>${m[1]}</span>
+              <b>${m[2]}</b>
+            </div>
+            <div class="factor-value">${value.toFixed(2)}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${pct}%"></div>
+            </div>
+          `;
+        });
+
+      const ranked = drivers
+        .map(m => ({ name: m[1], value: d.drivers[m[0]] || 0 }))
+        .sort((a, b) => b.value - a.value);
+
+      const trend = state.trends.get(d.key) || [];
+      const change = trend.length > 1 ? trend[trend.length - 1].score - trend[0].score : null;
+
+      $("insight").innerHTML = `
+        <b>Insight</b><br>
+        ${d.country}'s score is ${d.score.toFixed(2)} out of 10.
+        Its strongest modelled contribution is ${ranked[0].name.toLowerCase()}.
+        ${
+          change === null
+            ? "No matched OWID trend is available in this view."
+            : change >= 0
+              ? `The visible trend has risen by ${change.toFixed(2)} points.`
+              : `The visible trend has fallen by ${Math.abs(change).toFixed(2)} points.`
+        }
+      `;
+    }
+
+    function drawMap() {
+      const svg = d3.select("#map");
+      svg.selectAll("*").remove();
+
+      const width = svg.node().clientWidth || 1000;
+      const height = svg.node().clientHeight || 620;
+
+      svg.attr("viewBox", `0 0 ${width} ${height}`);
+
+      const geographies = topojson.feature(state.world, state.world.objects.countries).features;
+      const projection = d3.geoNaturalEarth1().fitExtent(
+        [[18, 18], [width - 18, height - 18]],
+        { type: "FeatureCollection", features: geographies }
+      );
+
+      const path = d3.geoPath(projection);
+      const geographyByKey = new Map(geographies.map(g => [keyName(g.properties.name), g]));
+      const visibleKeys = new Set(visibleData().map(d => d.key));
+
+      svg.append("g")
+        .selectAll("path")
+        .data(geographies)
+        .join("path")
+        .attr("class", geo => {
+          const k = keyName(geo.properties.name);
+          const hasData = state.byKey.has(k);
+          const isSelected = state.selected && state.selected.key === k;
+          return `country ${hasData ? "has-data" : ""} ${hasData && !visibleKeys.has(k) ? "filtered-out" : ""} ${isSelected ? "selected" : ""}`;
+        })
+        .attr("d", path)
+        .on("mousemove", (event, geo) => {
+          const d = state.byKey.get(keyName(geo.properties.name));
+          if (!d) return;
+
+          d3.select("#tooltip")
+            .style("display", "block")
+            .style("left", event.pageX + "px")
+            .style("top", event.pageY + "px")
+            .html(`
+              <strong>${d.country}</strong>
+              <span>Score: ${d.score.toFixed(2)}</span>
+              <span>Rank: ${d.rank}</span>
+            `);
+        })
+        .on("mouseleave", () => d3.select("#tooltip").style("display", "none"))
+        .on("click", (event, geo) => {
+          const d = state.byKey.get(keyName(geo.properties.name));
+          if (!d) return;
+          state.selected = d;
+          render();
+        });
+
+      const pulseLayer = svg.append("g");
+      const scoreExtent = d3.extent(state.data, d => d.score);
+
+      state.data.forEach(d => {
+        if (!visibleKeys.has(d.key)) return;
+
+        const geo = geographyByKey.get(d.key);
+        if (!geo) return;
+
+        const [x, y] = path.centroid(geo);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
+        const score01 = (d.score - scoreExtent[0]) / Math.max(0.1, scoreExtent[1] - scoreExtent[0]);
+        const rankBoost = d.rank <= 10 ? 1.5 : d.rank <= 25 ? 1.18 : 1;
+        const r = (7 + score01 * 30) * rankBoost;
+
+        const group = pulseLayer
+          .append("g")
+          .attr("class", "pulse-group")
+          .attr("transform", `translate(${x},${y})`);
+
+        group.append("circle").attr("class", "pulse-ring").attr("r", r);
+        group.append("circle").attr("class", "pulse-ring r2").attr("r", r * 1.42);
+
+        if (d.rank <= 35) {
+          group.append("circle").attr("class", "pulse-ring r3").attr("r", r * 1.9);
+        }
+
+        group.append("circle")
+          .attr("class", "pulse-dot")
+          .attr("r", d.rank <= 10 ? 4.2 : 3.1);
+
+        if (d.rank <= 40) {
+          group.append("path")
+            .attr("class", "pulse-wave")
+            .attr("d", "M-13 0h6l2-7 4 16 4-9h10");
+        }
+      });
+
+      $("mapStatus").textContent = `${state.data.length} WHR countries loaded · ${visibleKeys.size} visible · click a pulsing country`;
+    }
+
+    function drawTrend() {
+      const d = state.selected || state.data[0];
+      const data = d ? state.trends.get(d.key) || [] : [];
+
+      const svg = d3.select("#trend");
+      svg.selectAll("*").remove();
+
+      const width = svg.node().clientWidth || 360;
+      const height = svg.node().clientHeight || 235;
+      const margin = { top: 18, right: 14, bottom: 30, left: 36 };
+
+      svg.attr("viewBox", `0 0 ${width} ${height}`);
+
+      if (!data.length) {
+        svg.append("text")
+          .attr("x", width / 2)
+          .attr("y", height / 2)
+          .attr("text-anchor", "middle")
+          .attr("fill", "rgba(245,241,232,.65)")
+          .text("No matched OWID trend");
+        return;
+      }
+
+      const x = d3.scaleLinear()
+        .domain(d3.extent(data, p => p.year))
+        .range([margin.left, width - margin.right]);
+
+      const y = d3.scaleLinear()
+        .domain([0, 10])
+        .range([height - margin.bottom, margin.top]);
+
+      const line = d3.line()
+        .x(p => x(p.year))
+        .y(p => y(p.score))
+        .curve(d3.curveMonotoneX);
+
+      svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));
+
+      svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).ticks(4));
+
+      svg.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "var(--red)")
+        .attr("stroke-width", 3)
+        .attr("filter", "drop-shadow(0 0 8px rgba(255,52,52,.65))")
+        .attr("d", line);
+
+      svg.selectAll("circle")
+        .data(data)
+        .join("circle")
+        .attr("cx", p => x(p.year))
+        .attr("cy", p => y(p.score))
+        .attr("r", 3.6)
+        .attr("fill", "var(--text)")
+        .attr("stroke", "var(--red)")
+        .attr("stroke-width", 2);
+    }
+
+    function drawCompare() {
+      const d = state.selected || state.data[0];
+
+      const svg = d3.select("#compare");
+      svg.selectAll("*").remove();
+
+      if (!d) return;
+
+      const rows = drivers.map(m => ({
+        name: m[1],
+        country: d.drivers[m[0]] || 0,
+        world: worldAverage(m[0])
+      }));
+
+      const width = svg.node().clientWidth || 360;
+      const height = svg.node().clientHeight || 235;
+      const margin = { top: 8, right: 30, bottom: 25, left: 116 };
+
+      svg.attr("viewBox", `0 0 ${width} ${height}`);
+
+      const x = d3.scaleLinear()
+        .domain([0, d3.max(rows, r => Math.max(r.country, r.world)) || 1])
+        .nice()
+        .range([margin.left, width - margin.right]);
+
+      const y = d3.scaleBand()
+        .domain(rows.map(r => r.name))
+        .range([margin.top, height - margin.bottom])
+        .padding(0.22);
+
+      svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).tickSize(0));
+
+      svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).ticks(4));
+
+      svg.selectAll(".world")
+        .data(rows)
+        .join("rect")
+        .attr("x", margin.left)
+        .attr("y", r => y(r.name) + y.bandwidth() * 0.55)
+        .attr("width", r => x(r.world) - margin.left)
+        .attr("height", y.bandwidth() * 0.30)
+        .attr("fill", "rgba(245,241,232,.38)");
+
+      svg.selectAll(".country")
+        .data(rows)
+        .join("rect")
+        .attr("x", margin.left)
+        .attr("y", r => y(r.name) + y.bandwidth() * 0.12)
+        .attr("width", r => x(r.country) - margin.left)
+        .attr("height", y.bandwidth() * 0.34)
+        .attr("fill", "var(--red)");
+    }
+
+    function populateRegions() {
+      const regions = [
+        "All",
+        ...Array.from(new Set(state.data.map(d => d.region))).filter(Boolean).sort()
+      ];
+
+      $("region").innerHTML = regions
+        .map(region => `<option value="${region}">${region}</option>`)
+        .join("");
+    }
+
+    async function init() {
+      const [whrBuffer, owidCSV, world] = await Promise.all([
+        fetchFirst(SOURCES.whr, true),
+        fetchFirst(SOURCES.owid, false),
+        d3.json(SOURCES.world)
+      ]);
+
+      state.data = parseWHR(whrBuffer);
+      state.byKey = new Map(state.data.map(d => [d.key, d]));
+      state.trends = parseOWID(owidCSV);
+      state.world = world;
+      state.selected = state.data[0];
+
+      populateRegions();
+      render();
+    }
+
+    $("search").addEventListener("input", event => {
+      state.query = event.target.value;
+      render();
+    });
+
+    $("region").addEventListener("change", event => {
+      state.region = event.target.value;
+      render();
+    });
+
+    window.addEventListener("resize", () => {
+      if (state.world) render();
+    });
+
+    init().catch(err => {
+      showError(err.message);
+      $("mapStatus").textContent = "Data loading failed.";
+    });
+  </script>
+</body>
+</html>
