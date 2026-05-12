@@ -2,14 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Country Pulse · Atlas of Happiness</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Country Pulse · Diamond Beats · Atlas of Happiness</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     :root {
       --bg: #000000;
       --surface: #0e0e0e;
@@ -20,12 +26,11 @@
       --accent: #cc2200;
       --accent2: #ff4422;
       --red: #cc2200;
-      --red-dim: rgba(204,34,0,.18);
-      --green: #888888;
+      --red-glow: rgba(204,34,0,0.6);
       --line: rgba(255,255,255,.09);
       --line2: rgba(255,255,255,.16);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     html, body {
       background: var(--bg);
       color: var(--ink);
@@ -33,7 +38,10 @@
       height: 100vh;
       width: 100vw;
       overflow: hidden;
+      font-smoothing: antialiased;
     }
+
+    /* MAIN LAYOUT */
     .app {
       display: grid;
       grid-template-rows: 48px 68px 1fr 130px;
@@ -44,8 +52,8 @@
         "side map"
         "bot bot";
       height: 100vh;
-      gap: 0;
     }
+
     /* HEADER */
     header {
       grid-area: hdr;
@@ -82,6 +90,7 @@
       animation: blink 2s ease-in-out infinite;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
     /* KPI STRIP */
     .kpi-strip {
       grid-area: kpi;
@@ -111,6 +120,7 @@
     }
     .kpi-val.accent { color: #cc2200; }
     .kpi-val.green { color: #aaaaaa; }
+
     /* SIDEBAR */
     .sidebar {
       grid-area: side;
@@ -166,7 +176,7 @@
     .region-btn:hover, .region-btn.active {
       border-color: var(--accent);
       color: var(--accent);
-      background: rgba(200,169,110,.08);
+      background: rgba(204,34,0,.1);
     }
     .rank-list {
       flex: 1;
@@ -197,7 +207,8 @@
     }
     .rank-name { font-size: 0.65rem; flex: 1; padding: 0 7px; }
     .rank-score { font-size: 0.65rem; font-weight: 500; }
-    /* MAP */
+
+    /* MAP AREA */
     .map-area {
       grid-area: map;
       position: relative;
@@ -207,50 +218,90 @@
     #map-svg {
       width: 100%;
       height: 100%;
+      display: block;
     }
-    .c-path { fill: #111111; stroke: #222222; stroke-width: 0.35; cursor: pointer; transition: fill 0.3s; }
-    .c-path:hover { fill: #2a2a2a; stroke: #cc2200; }
-    .c-path.active { stroke: #ffffff; stroke-width: 1.6; }
-    /* Pulse container */
-    #waves-group {}
-    /* DIAMOND HEARTBEAT PULSE – just a beating diamond dot (bigger for happier countries) */
+    .c-path {
+      fill: #111111;
+      stroke: #2a2a2a;
+      stroke-width: 0.4;
+      cursor: pointer;
+      transition: fill 0.2s ease, stroke 0.15s;
+      vector-effect: non-scaling-stroke;
+    }
+    .c-path:hover {
+      fill: #2c2c2c;
+      stroke: #cc2200;
+    }
+    .c-path.active {
+      stroke: #ffffff;
+      stroke-width: 1.2;
+      filter: drop-shadow(0 0 3px rgba(204,34,0,0.6));
+    }
+
+    /* PULSE BEAT – DIAMOND ANIMATION */
     @keyframes diamondBeat {
-      0%   { transform: scale(0.7); opacity: 0.95; }
-      14%  { transform: scale(var(--pulse-max)); opacity: 1; }
-      29%  { transform: scale(0.7); opacity: 0.55; }
-      44%  { transform: scale(calc(var(--pulse-max) * 0.75)); opacity: 0.92; }
-      58%  { transform: scale(0.7); opacity: 0.38; }
-      100% { transform: scale(0.7); opacity: 0; }
+      0% {
+        transform: scale(0.6);
+        opacity: 0.95;
+      }
+      18% {
+        transform: scale(var(--pulse-max));
+        opacity: 1;
+      }
+      32% {
+        transform: scale(0.7);
+        opacity: 0.85;
+      }
+      48% {
+        transform: scale(calc(var(--pulse-max) * 0.82));
+        opacity: 0.98;
+      }
+      64% {
+        transform: scale(0.68);
+        opacity: 0.65;
+      }
+      85% {
+        transform: scale(0.6);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(0.6);
+        opacity: 0.85;
+      }
     }
-    /* Tooltip */
+
+    /* TOOLTIP */
     #tip {
       position: absolute;
       pointer-events: none;
-      background: var(--surface);
+      background: rgba(10,10,14,0.96);
+      backdrop-filter: blur(8px);
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
       font-size: 0.65rem;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 4px 9px;
+      border-radius: 10px;
       display: none;
-      z-index: 10;
+      z-index: 100;
       white-space: nowrap;
+      letter-spacing: 0.3px;
     }
-    /* FOCUS CARD */
+
     .map-focus {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 14px;
+      right: 14px;
       background: rgba(13,13,20,0.92);
       border: 1px solid var(--line2);
       backdrop-filter: blur(12px);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 9px 13px;
       min-width: 128px;
-      max-width: 145px;
+      max-width: 150px;
       pointer-events: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,.4);
+      box-shadow: 0 6px 18px rgba(0,0,0,.5);
+      z-index: 55;
     }
     .focus-name {
       font-family: "Playfair Display", serif;
@@ -272,6 +323,7 @@
       letter-spacing: 1.3px;
       margin-top: 3px;
     }
+
     /* BOTTOM METRICS */
     .bottom-metrics {
       grid-area: bot;
@@ -292,7 +344,6 @@
       color: var(--muted);
       margin-bottom: 9px;
     }
-    /* Factor bars */
     .fbar-row { margin-bottom: 7px; }
     .fbar-meta {
       display: flex;
@@ -300,7 +351,7 @@
       font-size: 0.62rem;
       margin-bottom: 3px;
     }
-    .fbar-pct { color: var(--accent); font-weight: 500; }
+    .fbar-pct { font-weight: 500; }
     .fbar-track {
       height: 3px;
       background: var(--faint);
@@ -310,13 +361,10 @@
     .fbar-fill {
       height: 100%;
       border-radius: 2px;
-      transition: width 0.7s cubic-bezier(.4,0,.2,1);
+      transition: width 0.6s ease;
     }
-    /* Sparkline */
     #sparkline { width: 100%; height: 88px; }
-    /* Score gauge */
     #gauge-svg { display: block; margin: 0 auto; }
-    /* Info panel */
     .info-panel {
       background: linear-gradient(135deg, rgba(204,34,0,.12), rgba(80,80,80,.1));
       border-radius: 8px;
@@ -330,46 +378,22 @@
 <body>
 <div id="tip"></div>
 <div class="app">
-  <!-- HEADER -->
   <header>
     <div>
       <div class="brand-title">Country Pulse</div>
-      <div class="brand-sub">WHR · OWID Happiness Intelligence</div>
+      <div class="brand-sub">Diamond heartbeat · World Happiness Atlas</div>
     </div>
-    <div class="live-badge"><div class="live-dot"></div> Live Data Engine · 2026</div>
+    <div class="live-badge"><div class="live-dot"></div> pulse driven by happiness score</div>
   </header>
-  <!-- KPI STRIP -->
   <section class="kpi-strip">
-    <div class="kpi-cell">
-      <div class="kpi-label">Global Average</div>
-      <div class="kpi-val accent" id="kpi-avg">5.48</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-label">Happiest Country</div>
-      <div class="kpi-val" id="kpi-top">Finland</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-label">Unhappiest Country</div>
-      <div class="kpi-val" id="kpi-unhappiest">Afghanistan</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-label">Countries Tracked</div>
-      <div class="kpi-val green" id="kpi-count">145</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-label">Global Trend</div>
-      <div class="kpi-val" id="kpi-trend">Stable</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-label">Factor Match</div>
-      <div class="kpi-val accent">92%</div>
-    </div>
-    <div class="kpi-cell">
-      <div class="kpi-label">Highest Score</div>
-      <div class="kpi-val" id="kpi-high">7.74</div>
-    </div>
+    <div class="kpi-cell"><div class="kpi-label">Global Average</div><div class="kpi-val accent" id="kpi-avg">5.48</div></div>
+    <div class="kpi-cell"><div class="kpi-label">Happiest Country</div><div class="kpi-val" id="kpi-top">Finland</div></div>
+    <div class="kpi-cell"><div class="kpi-label">Unhappiest Country</div><div class="kpi-val" id="kpi-unhappiest">Afghanistan</div></div>
+    <div class="kpi-cell"><div class="kpi-label">Countries Tracked</div><div class="kpi-val green" id="kpi-count">145</div></div>
+    <div class="kpi-cell"><div class="kpi-label">Global Trend</div><div class="kpi-val" id="kpi-trend">Resilient</div></div>
+    <div class="kpi-cell"><div class="kpi-label">Factor Match</div><div class="kpi-val accent">92%</div></div>
+    <div class="kpi-cell"><div class="kpi-label">Highest Score</div><div class="kpi-val" id="kpi-high">7.74</div></div>
   </section>
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="section-label">Search & Filter</div>
@@ -380,7 +404,6 @@
     </div>
     <div class="rank-list" id="rank-list"></div>
   </aside>
-  <!-- MAP -->
   <main class="map-area">
     <svg id="map-svg">
       <g id="countries-group"></g>
@@ -391,38 +414,21 @@
       <div class="focus-score" id="focus-score">—</div>
       <div class="focus-rank" id="focus-rank">Select a country</div>
     </div>
-    <div id="tip"></div>
   </main>
-  <!-- BOTTOM -->
   <div class="bottom-metrics">
-    <div class="metric-panel">
-      <div class="metric-title">Explanatory Factors</div>
-      <div id="factor-bars">
-        <div style="color:var(--muted);font-size:0.68rem">Select a country to view factors</div>
-      </div>
-    </div>
-    <div class="metric-panel">
-      <div class="metric-title">Score Trend (simulated)</div>
-      <svg id="sparkline"></svg>
-    </div>
-    <div class="metric-panel">
-      <div class="metric-title">Happiness Gauge</div>
-      <svg id="gauge-svg" width="160" height="90" viewBox="0 0 160 90"></svg>
-    </div>
-    <div class="metric-panel">
-      <div class="metric-title">About This Data</div>
-      <div class="info-panel">
-        Scores use the Cantril Ladder (0–10). Factors like GDP per capita, social support, and freedom explain national variation in subjective well-being.
-      </div>
-    </div>
+    <div class="metric-panel"><div class="metric-title">Explanatory Factors</div><div id="factor-bars"><div style="color:var(--muted);font-size:0.68rem">Select a country to view factors</div></div></div>
+    <div class="metric-panel"><div class="metric-title">Score Trend (simulated)</div><svg id="sparkline"></svg></div>
+    <div class="metric-panel"><div class="metric-title">Happiness Gauge</div><svg id="gauge-svg" width="160" height="90" viewBox="0 0 160 90"></svg></div>
+    <div class="metric-panel"><div class="metric-title">About This Data</div><div class="info-panel">Cantril Ladder (0–10). GDP, social support, freedom, health shape national well-being. ✦ Diamond pulses scale with happiness (bigger = brighter).</div></div>
   </div>
 </div>
+
 <script>
 const FACTORS = [
   { id: 'gdp', label: 'GDP per Capita', color: '#cc2200' },
   { id: 'social', label: 'Social Support', color: '#ffffff' },
   { id: 'health', label: 'Healthy Life Expectancy', color: '#888888' },
-  { id: 'freedom', label: 'Freedom of Choice', color: '#555555' },
+  { id: 'freedom', label: 'Freedom of Choice', color: '#ffaa66' },
 ];
 const REGIONS = ['Western Europe','North America','East Asia','South Asia','Middle East','Sub-Saharan Africa','Latin America','Eastern Europe'];
 let state = { countries: [], selected: null, topo: null, regionFilter: 'all', projection: null, searchFocus: null };
@@ -431,80 +437,72 @@ let previewed = null;
 async function init() {
   const topoData = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
   state.topo = topojson.feature(topoData, topoData.objects.countries);
-  const named = [
-    ["Finland",7.74,"Western Europe"],["Denmark",7.58,"Western Europe"],
-    ["Iceland",7.52,"Western Europe"],["Sweden",7.34,"Western Europe"],
-    ["Netherlands",7.32,"Western Europe"],["Norway",7.30,"Western Europe"],
-    ["Switzerland",7.24,"Western Europe"],["Luxembourg",7.22,"Western Europe"],
-    ["Australia",7.10,"East Asia"],["New Zealand",7.06,"East Asia"],
-    ["United Kingdom",6.94,"Western Europe"],["Austria",6.91,"Western Europe"],
-    ["Canada",6.90,"North America"],["Germany",6.85,"Western Europe"],
-    ["United States of America",6.72,"North America"],["Belgium",6.68,"Western Europe"],
-    ["Ireland",6.65,"Western Europe"],["Czech Republic",6.43,"Eastern Europe"],
-    ["France",6.40,"Western Europe"],["Mexico",6.30,"Latin America"],
-    ["Poland",6.14,"Eastern Europe"],["Chile",6.01,"Latin America"],
-    ["Costa Rica",5.98,"Latin America"],["Uruguay",5.90,"Latin America"],
-    ["Brazil",5.74,"Latin America"],["Colombia",5.63,"Latin America"],
-    ["Argentina",5.54,"Latin America"],["China",5.48,"East Asia"],
-    ["Ecuador",5.45,"Latin America"],["Thailand",5.39,"East Asia"],
-    ["Russia",5.37,"Eastern Europe"],["Turkey",4.85,"Middle East"],
-    ["Ukraine",4.60,"Eastern Europe"],["Honduras",4.50,"Latin America"],
-    ["India",4.36,"South Asia"],["Cambodia",4.38,"East Asia"],
-    ["Egypt",4.20,"Middle East"],["Bangladesh",4.00,"South Asia"],
-    ["Ethiopia",3.80,"Sub-Saharan Africa"],["Pakistan",3.78,"South Asia"],
-    ["Tanzania",3.70,"Sub-Saharan Africa"],["Yemen",3.50,"Middle East"],
-    ["Zimbabwe",3.20,"Sub-Saharan Africa"],["South Sudan",3.00,"Sub-Saharan Africa"],
-    ["Afghanistan",2.40,"South Asia"],["Benin",5.00,"Sub-Saharan Africa"],
-    ["Japan",5.99,"East Asia"],["South Korea",5.88,"East Asia"],
-    ["Spain",6.20,"Western Europe"],["Italy",6.16,"Western Europe"],
-    ["Portugal",5.89,"Western Europe"],["Nigeria",4.72,"Sub-Saharan Africa"],
-    ["Kenya",4.80,"Sub-Saharan Africa"],["Ghana",5.28,"Sub-Saharan Africa"],
-    ["Morocco",5.18,"Middle East"],["Saudi Arabia",6.17,"Middle East"],
-    ["Iran",4.54,"Middle East"],["Iraq",4.50,"Middle East"],
-    ["Vietnam",5.65,"East Asia"],["Indonesia",5.28,"East Asia"],
-    ["Philippines",5.79,"East Asia"],["Malaysia",5.86,"East Asia"],
-    ["Singapore",6.29,"East Asia"],["Hungary",5.80,"Eastern Europe"],
-    ["Romania",5.60,"Eastern Europe"],["Bulgaria",5.22,"Eastern Europe"],
-    ["Serbia",5.50,"Eastern Europe"],["Peru",5.41,"Latin America"],
-    ["Bolivia",5.47,"Latin America"],["Venezuela",4.70,"Latin America"],
-    ["Cuba",4.90,"Latin America"],["Panama",6.18,"Latin America"],
-    ["Paraguay",5.35,"Latin America"],["Guatemala",5.83,"Latin America"],
-    ["El Salvador",5.35,"Latin America"],["Dominican Republic",5.71,"Latin America"],
-    ["Haiti",3.68,"Latin America"],["Nicaragua",5.23,"Latin America"],
+  
+  const namedMap = new Map();
+  const happinessData = [
+    ["Finland",7.74,"Western Europe"],["Denmark",7.58,"Western Europe"],["Iceland",7.52,"Western Europe"],["Sweden",7.34,"Western Europe"],
+    ["Netherlands",7.32,"Western Europe"],["Norway",7.30,"Western Europe"],["Switzerland",7.24,"Western Europe"],["Luxembourg",7.22,"Western Europe"],
+    ["Australia",7.10,"East Asia"],["New Zealand",7.06,"East Asia"],["United Kingdom",6.94,"Western Europe"],["Austria",6.91,"Western Europe"],
+    ["Canada",6.90,"North America"],["Germany",6.85,"Western Europe"],["United States of America",6.72,"North America"],["Belgium",6.68,"Western Europe"],
+    ["Ireland",6.65,"Western Europe"],["Czech Republic",6.43,"Eastern Europe"],["France",6.40,"Western Europe"],["Mexico",6.30,"Latin America"],
+    ["Poland",6.14,"Eastern Europe"],["Chile",6.01,"Latin America"],["Costa Rica",5.98,"Latin America"],["Uruguay",5.90,"Latin America"],
+    ["Brazil",5.74,"Latin America"],["Colombia",5.63,"Latin America"],["Argentina",5.54,"Latin America"],["China",5.48,"East Asia"],
+    ["Ecuador",5.45,"Latin America"],["Thailand",5.39,"East Asia"],["Russia",5.37,"Eastern Europe"],["Turkey",4.85,"Middle East"],
+    ["Ukraine",4.60,"Eastern Europe"],["Honduras",4.50,"Latin America"],["India",4.36,"South Asia"],["Cambodia",4.38,"East Asia"],
+    ["Egypt",4.20,"Middle East"],["Bangladesh",4.00,"South Asia"],["Ethiopia",3.80,"Sub-Saharan Africa"],["Pakistan",3.78,"South Asia"],
+    ["Tanzania",3.70,"Sub-Saharan Africa"],["Yemen",3.50,"Middle East"],["Zimbabwe",3.20,"Sub-Saharan Africa"],["South Sudan",3.00,"Sub-Saharan Africa"],
+    ["Afghanistan",2.40,"South Asia"],["Benin",5.00,"Sub-Saharan Africa"],["Japan",5.99,"East Asia"],["South Korea",5.88,"East Asia"],
+    ["Spain",6.20,"Western Europe"],["Italy",6.16,"Western Europe"],["Portugal",5.89,"Western Europe"],["Nigeria",4.72,"Sub-Saharan Africa"],
+    ["Kenya",4.80,"Sub-Saharan Africa"],["Ghana",5.28,"Sub-Saharan Africa"],["Morocco",5.18,"Middle East"],["Saudi Arabia",6.17,"Middle East"],
+    ["Iran",4.54,"Middle East"],["Iraq",4.44,"Middle East"],["Vietnam",5.65,"East Asia"],["Indonesia",5.28,"East Asia"],
+    ["Philippines",5.79,"East Asia"],["Malaysia",5.86,"East Asia"],["Singapore",6.29,"East Asia"],["Hungary",5.80,"Eastern Europe"],
+    ["Romania",5.60,"Eastern Europe"],["Bulgaria",5.22,"Eastern Europe"],["Serbia",5.50,"Eastern Europe"],["Peru",5.41,"Latin America"],
+    ["Bolivia",5.47,"Latin America"],["Venezuela",4.70,"Latin America"],["Cuba",4.90,"Latin America"],["Panama",6.18,"Latin America"],
+    ["Paraguay",5.35,"Latin America"],["Guatemala",5.83,"Latin America"],["El Salvador",5.35,"Latin America"],["Dominican Republic",5.71,"Latin America"],
+    ["Haiti",3.68,"Latin America"],["Nicaragua",5.23,"Latin America"]
   ];
-  const rng = (s) => { let x = Math.sin(s)*10000; return x-Math.floor(x); };
-  const countries = state.topo.features.map((f,i) => {
-    const found = named.find(n => f.properties.name === n[0]);
+  happinessData.forEach(([name,score,region]) => namedMap.set(name,{score,region}));
+  
+  // build countries from topo
+  const countries = state.topo.features.map((f, i) => {
+    const match = namedMap.get(f.properties.name);
+    let score = match ? match.score : (Math.sin(i)*1.8 + 4.8).toFixed(2);
+    let region = match ? match.region : REGIONS[Math.floor(Math.random() * REGIONS.length)];
+    if (typeof score === 'string') score = parseFloat(score);
     return {
       feature: f,
       name: f.properties.name,
-      score: found ? found[1] : +(rng(i)*3+3.5).toFixed(2),
-      region: found ? found[2] : REGIONS[Math.floor(rng(i*7)*REGIONS.length)],
-      gdp: +(rng(i*2)*90+10),
-      social: +(rng(i*3)*80+20),
-      health: +(rng(i*4)*80+15),
-      freedom: +(rng(i*5)*85+10),
+      score: score,
+      region: region,
+      gdp: match ? Math.floor(55 + (score - 2.4)*7) : Math.floor(Math.random() * 70 + 15),
+      social: match ? Math.floor(48 + (score - 2.4)*6.5) : Math.floor(Math.random() * 65 + 20),
+      health: match ? Math.floor(42 + (score - 2.4)*7) : Math.floor(Math.random() * 65 + 18),
+      freedom: match ? Math.floor(38 + (score - 2.4)*8) : Math.floor(Math.random() * 70 + 15),
     };
-  }).sort((a,b) => b.score - a.score).map((c,i) => ({...c, rank: i+1}));
+  }).filter(c => c.name !== "Antarctica").map((c,i,arr) => {
+    return { ...c, rank: arr.filter(x=>x.score > c.score).length + 1 };
+  }).sort((a,b) => b.score - a.score);
+  
   state.countries = countries;
-  const top = countries[0];
-  const bottom = countries[countries.length - 1];
   const avg = (countries.reduce((s,c)=>s+c.score,0)/countries.length).toFixed(2);
+  const top = countries[0];
+  const bottom = countries[countries.length-1];
   document.getElementById('kpi-avg').textContent = avg;
   document.getElementById('kpi-top').textContent = top.name;
   document.getElementById('kpi-unhappiest').textContent = bottom.name;
   document.getElementById('kpi-count').textContent = countries.length;
   document.getElementById('kpi-high').textContent = top.score.toFixed(2);
+  
   buildRegionFilters();
   renderMap();
-  initAllPulses();
+  initAllPulses();           // create dancing diamonds (size based on score)
   renderRankList(countries);
   selectCountry(top.name);
   setupSearch();
 }
 
 function buildRegionFilters() {
-  const wrap = document.getElementById('region-filters');
+  const container = document.getElementById('region-filters');
   REGIONS.forEach(r => {
     const btn = document.createElement('button');
     btn.className = 'region-btn';
@@ -512,7 +510,7 @@ function buildRegionFilters() {
     btn.textContent = r.split(' ')[0];
     btn.title = r;
     btn.onclick = () => filterRegion(r, btn);
-    wrap.appendChild(btn);
+    container.appendChild(btn);
   });
 }
 
@@ -520,47 +518,41 @@ function filterRegion(r, btn) {
   state.regionFilter = r;
   document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const filtered = state.regionFilter === 'all' ? state.countries : state.countries.filter(c => c.region === r);
+  const filtered = (r === 'all') ? state.countries : state.countries.filter(c => c.region === r);
   renderRankList(filtered);
 }
 
 function setupSearch() {
   const searchInput = document.getElementById('search');
   searchInput.addEventListener('input', e => {
-    const q = e.target.value.toLowerCase().trim();
     let base = state.regionFilter === 'all' ? state.countries : state.countries.filter(c => c.region === state.regionFilter);
+    const q = e.target.value.trim().toLowerCase();
     if (q) base = base.filter(c => c.name.toLowerCase().includes(q));
     renderRankList(base);
   });
-
   searchInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
-      const q = searchInput.value.toLowerCase().trim();
+      const q = searchInput.value.trim().toLowerCase();
       if (!q) return;
       let match = state.countries.find(c => c.name.toLowerCase() === q);
       if (!match) match = state.countries.find(c => c.name.toLowerCase().includes(q));
       if (match) {
-        state.searchFocus = match.name;
+        if (state.searchFocus) resetMapVisuals();
         selectCountry(match.name);
-        applySearchFocus();
+        state.searchFocus = match.name;
+        highlightSingleCountry(match);
       }
     }
   });
-
-  document.querySelectorAll('.region-btn')[0].onclick = () => {
-    state.regionFilter = 'all';
-    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.region-btn')[0].classList.add('active');
-    renderRankList(state.countries);
-  };
 }
 
-function applySearchFocus() {
-  d3.selectAll('.c-path').attr('fill-opacity', d => d.properties.name === state.searchFocus ? 1 : 0.09);
+function highlightSingleCountry(country) {
+  d3.selectAll('.c-path').attr('fill-opacity', d => d.properties.name === country.name ? 1 : 0.12);
   const wg = document.getElementById('waves-group');
   wg.innerHTML = '';
-  const focused = state.countries.find(c => c.name === state.searchFocus);
-  if (focused) createSinglePulse(focused);
+  if (country && country.feature && state.projection) {
+    createSinglePulse(country);
+  }
 }
 
 function resetMapVisuals() {
@@ -572,9 +564,9 @@ function resetMapVisuals() {
 }
 
 function renderRankList(list) {
-  const el = document.getElementById('rank-list');
-  el.innerHTML = list.slice(0,80).map(c => `
-    <div class="rank-item${state.selected && state.selected.name===c.name?' selected':''}"
+  const container = document.getElementById('rank-list');
+  container.innerHTML = list.slice(0,85).map(c => `
+    <div class="rank-item ${state.selected && state.selected.name===c.name ? 'selected' : ''}"
          onclick="selectCountry('${c.name.replace(/'/g,"\\'")}')"
          onmouseover="previewCountry('${c.name.replace(/'/g,"\\'")}')"
          onmouseout="endPreview()">
@@ -588,35 +580,29 @@ function renderRankList(list) {
 function scoreColor(s) {
   if (s >= 6.5) return '#ffffff';
   if (s >= 5.5) return '#aaaaaa';
-  if (s >= 4.5) return '#666666';
+  if (s >= 4.5) return '#888888';
   return '#cc2200';
 }
 
 function renderMap() {
   const svg = d3.select('#map-svg');
-  const el = document.getElementById('map-svg');
-  const W = el.clientWidth || 920;
-  const H = el.clientHeight || 640;
-  const projection = d3.geoNaturalEarth1().fitSize([W, H], state.topo);
+  const width = document.getElementById('map-svg').clientWidth || 920;
+  const height = document.getElementById('map-svg').clientHeight || 640;
+  const projection = d3.geoNaturalEarth1().fitSize([width, height], state.topo);
   state.projection = projection;
-  const path = d3.geoPath().projection(projection);
+  const pathGen = d3.geoPath().projection(projection);
   const colorScale = d3.scaleSequential()
     .domain([2.5, 8])
-    .interpolator(t => {
-      if (t < 0.4) return d3.interpolateRgb('#1a0000', '#cc2200')(t / 0.4);
-      if (t < 0.7) return d3.interpolateRgb('#cc2200', '#555555')((t - 0.4) / 0.3);
-      return d3.interpolateRgb('#555555', '#ffffff')((t - 0.7) / 0.3);
-    });
-  const tip = document.getElementById('tip');
-  d3.select('#countries-group')
-    .selectAll('path')
+    .interpolator(t => d3.interpolateRgb.gamma(1.2)('#1a0000', '#cc2200')(t < 0.5 ? t*1.2 : 0.6 + (t-0.5)*0.8));
+  
+  d3.select('#countries-group').selectAll('path')
     .data(state.topo.features)
-    .enter().append('path')
+    .join('path')
     .attr('class', 'c-path')
-    .attr('d', path)
+    .attr('d', pathGen)
     .attr('fill', d => {
       const c = state.countries.find(x => x.name === d.properties.name);
-      return c ? colorScale(c.score) : '#1a1a2e';
+      return c ? colorScale(c.score) : '#181826';
     })
     .on('click', (e, d) => {
       if (state.searchFocus) resetMapVisuals();
@@ -625,59 +611,66 @@ function renderMap() {
     .on('mousemove', (e, d) => {
       const c = state.countries.find(x => x.name === d.properties.name);
       if (!c) return;
+      const tip = document.getElementById('tip');
       tip.style.display = 'block';
       tip.style.left = (e.offsetX + 12) + 'px';
-      tip.style.top = (e.offsetY - 28) + 'px';
-      tip.innerHTML = `<strong>${c.name}</strong> · ${c.score.toFixed(2)}`;
+      tip.style.top = (e.offsetY - 22) + 'px';
+      tip.innerHTML = `<strong>${c.name}</strong>  ✦ ${c.score.toFixed(2)}`;
     })
-    .on('mouseleave', () => { tip.style.display = 'none'; });
+    .on('mouseleave', () => { document.getElementById('tip').style.display = 'none'; });
 }
 
+// ---- PULSE DIAMOND : size depends on happiness score (bigger = happier) ----
 function initAllPulses() {
-  const wg = document.getElementById('waves-group');
-  wg.innerHTML = '';
+  const wavesGroup = document.getElementById('waves-group');
+  wavesGroup.innerHTML = '';
   state.countries.forEach(country => {
-    if (!country.feature) return;
-    createSinglePulse(country, wg);
+    if (country.feature && state.projection) {
+      createSinglePulse(country);
+    }
   });
 }
 
-function createSinglePulse(country, container = null) {
-  const wg = container || document.getElementById('waves-group');
+function createSinglePulse(country) {
+  if (!state.projection || !country.feature) return;
   const centroid = d3.geoPath().projection(state.projection).centroid(country.feature);
-  if (!centroid || isNaN(centroid[0])) return;
+  if (!centroid || isNaN(centroid[0]) || isNaN(centroid[1])) return;
   const [cx, cy] = centroid;
   const score = country.score;
-
-  // Bigger diamond for happier countries
-  const pulseMaxScale = 1.4 + (score / 8) * 2.1;
-
-  const pulseColor = '#cc2200';
-
-  // Group for easy scaling
-  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  g.setAttribute('transform', `translate(${cx} ${cy})`);
-  g.style.setProperty('--pulse-max', pulseMaxScale);
-  g.style.animation = 'diamondBeat 1380ms cubic-bezier(0.4, 0, 0.2, 1) infinite';
-  wg.appendChild(g);
-
-  // Diamond shape (rhombus)
+  // scale factor: min 0.75 up to 2.45 for highest happiness (bigger diamond for happier)
+  const scaleMax = 0.78 + (score / 8) * 2.2; // range ~0.93 → 2.38
+  const wavesGroup = document.getElementById('waves-group');
+  const outerGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  outerGroup.setAttribute('transform', `translate(${cx},${cy})`);
+  outerGroup.setAttribute('class', 'pulse-outer');
+  
+  const beatGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  beatGroup.setAttribute('class', 'pulse-beat');
+  beatGroup.style.setProperty('--pulse-max', scaleMax);
+  beatGroup.style.animation = 'diamondBeat 1.5s cubic-bezier(0.34, 1.2, 0.64, 1) infinite';
+  beatGroup.style.transformOrigin = '0px 0px';
+  
+  // diamond shape (filled red + glowing outline)
   const diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-  diamond.setAttribute('points', '-3.5,0 0,-5.5 3.5,0 0,5.5');
-  diamond.setAttribute('fill', pulseColor);
+  diamond.setAttribute('points', '-5,0 0,-8 5,0 0,8');
+  diamond.setAttribute('fill', '#dc2c0a');
   diamond.setAttribute('stroke', '#ff6644');
-  diamond.setAttribute('stroke-width', '0.8');
-  diamond.setAttribute('opacity', '0.95');
-  g.appendChild(diamond);
-
-  // Tiny center glow dot
-  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  dot.setAttribute('cx', '0');
-  dot.setAttribute('cy', '0');
-  dot.setAttribute('r', '1.1');
-  dot.setAttribute('fill', '#ffffff');
-  dot.setAttribute('opacity', '0.85');
-  g.appendChild(dot);
+  diamond.setAttribute('stroke-width', '1.2');
+  diamond.setAttribute('stroke-linejoin', 'round');
+  diamond.setAttribute('opacity', '0.98');
+  
+  // central glow dot
+  const centerDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  centerDot.setAttribute('cx', '0');
+  centerDot.setAttribute('cy', '0');
+  centerDot.setAttribute('r', '1.5');
+  centerDot.setAttribute('fill', '#fff7e8');
+  centerDot.setAttribute('opacity', '0.9');
+  
+  beatGroup.appendChild(diamond);
+  beatGroup.appendChild(centerDot);
+  outerGroup.appendChild(beatGroup);
+  wavesGroup.appendChild(outerGroup);
 }
 
 function previewCountry(name) {
@@ -702,10 +695,10 @@ function endPreview() {
 function selectCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
-  if (state.searchFocus && state.searchFocus !== name) {
-    resetMapVisuals();
-  }
+  if (state.searchFocus && state.searchFocus !== name) resetMapVisuals();
   state.selected = entry;
+  state.searchFocus = null;
+  
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
   document.getElementById('focus-rank').textContent = `Rank #${entry.rank} of ${state.countries.length}`;
@@ -713,22 +706,21 @@ function selectCountry(name) {
   renderFactors(entry);
   renderSparkline(entry);
   renderGauge(entry.score);
-  const filtered = state.regionFilter === 'all'
-    ? state.countries
-    : state.countries.filter(c => c.region === state.regionFilter);
+  
+  const filtered = state.regionFilter === 'all' ? state.countries : state.countries.filter(c => c.region === state.regionFilter);
   renderRankList(filtered);
 }
 
 function renderFactors(entry) {
-  const el = document.getElementById('factor-bars');
-  el.innerHTML = FACTORS.map(f => `
+  const container = document.getElementById('factor-bars');
+  container.innerHTML = FACTORS.map(f => `
     <div class="fbar-row">
       <div class="fbar-meta">
-        <span style="font-size:0.62rem;color:var(--muted)">${f.label}</span>
-        <span class="fbar-pct" style="color:${f.color}">${Math.round(entry[f.id])}%</span>
+        <span style="color:var(--muted)">${f.label}</span>
+        <span class="fbar-pct" style="color:${f.color}">${Math.min(98,Math.max(5,Math.floor(entry[f.id])))}%</span>
       </div>
       <div class="fbar-track">
-        <div class="fbar-fill" style="width:${entry[f.id]}%;background:${f.color}"></div>
+        <div class="fbar-fill" style="width:${Math.min(98,Math.max(5,entry[f.id]))}%; background:${f.color};"></div>
       </div>
     </div>
   `).join('');
@@ -737,87 +729,46 @@ function renderFactors(entry) {
 function renderSparkline(entry) {
   const svg = document.getElementById('sparkline');
   svg.innerHTML = '';
-  const W = svg.clientWidth || 220, H = 88;
-  const baseScore = entry.score;
-  const years = d3.range(2015, 2026);
-  const pts = years.map((y, i) => {
-    const noise = (Math.sin(i * 2.3 + baseScore) * 0.4);
-    return { y, v: Math.max(1, Math.min(9, baseScore + noise - 0.2 + i * 0.02)) };
-  });
-  const xScale = d3.scaleLinear().domain([2015, 2025]).range([20, W - 10]);
-  const yScale = d3.scaleLinear().domain([
-    d3.min(pts, d => d.v) - 0.3,
-    d3.max(pts, d => d.v) + 0.3
-  ]).range([H - 10, 5]);
-  const line = d3.line().x(d => xScale(d.y)).y(d => yScale(d.v)).curve(d3.curveCatmullRom);
-  const area = d3.area().x(d => xScale(d.y)).y0(H).y1(d => yScale(d.v)).curve(d3.curveCatmullRom);
-  const svgEl = d3.select('#sparkline');
-  const grad = svgEl.append('defs').append('linearGradient')
-    .attr('id', 'spark-grad').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',1);
-  grad.append('stop').attr('offset','0%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity', 0.25);
-  grad.append('stop').attr('offset','100%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity', 0);
-  svgEl.append('path').datum(pts).attr('d', area)
-    .attr('fill', 'url(#spark-grad)');
-  svgEl.append('path').datum(pts).attr('d', line)
-    .attr('fill','none').attr('stroke', scoreColor(entry.score)).attr('stroke-width', 1.5);
-  [2015, 2020, 2025].forEach(y => {
-    svgEl.append('text')
-      .attr('x', xScale(y)).attr('y', H)
-      .attr('fill', 'rgba(234,230,223,.3)')
-      .attr('font-size', 8)
-      .attr('text-anchor', 'middle')
-      .text(y);
-  });
+  const W = svg.clientWidth || 210, H = 88;
+  const years = d3.range(2014, 2026);
+  const base = entry.score;
+  const pts = years.map((y, i) => ({ y, v: Math.min(9, Math.max(2.2, base + Math.sin(i * 0.7) * 0.35 + (i-5)*0.012 )) }));
+  const xScale = d3.scaleLinear().domain([2014,2025]).range([20, W-12]);
+  const yScale = d3.scaleLinear().domain([d3.min(pts, d=>d.v)-0.3, d3.max(pts,d=>d.v)+0.3]).range([H-8, 6]);
+  const line = d3.line().x(d=>xScale(d.y)).y(d=>yScale(d.v)).curve(d3.curveCatmullRom);
+  const area = d3.area().x(d=>xScale(d.y)).y1(H-6).y0(d=>yScale(d.v)).curve(d3.curveCatmullRom);
+  const svgSel = d3.select('#sparkline');
+  const grad = svgSel.append('defs').append('linearGradient').attr('id', 'sparkGrad').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',1);
+  grad.append('stop').attr('offset','0%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity',0.4);
+  grad.append('stop').attr('offset','100%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity',0);
+  svgSel.append('path').datum(pts).attr('d', area).attr('fill', 'url(#sparkGrad)');
+  svgSel.append('path').datum(pts).attr('d', line).attr('fill','none').attr('stroke', scoreColor(entry.score)).attr('stroke-width',1.6);
+  [2015,2020,2025].forEach(y => svgSel.append('text').attr('x', xScale(y)).attr('y', H-6).attr('fill','rgba(255,255,255,0.3)').attr('font-size',7).attr('text-anchor','middle').text(y));
 }
 
 function renderGauge(score) {
   const svg = d3.select('#gauge-svg');
   svg.selectAll('*').remove();
-  const W = 160, H = 90;
-  const cx = W/2, cy = H - 10;
-  const r = 65;
-  const startAngle = -Math.PI;
-  const endAngle = 0;
-  const arc = (sa, ea, inner, outer) => {
-    const x1 = cx + outer * Math.cos(sa);
-    const y1 = cy + outer * Math.sin(sa);
-    const x2 = cx + outer * Math.cos(ea);
-    const y2 = cy + outer * Math.sin(ea);
-    const xi1 = cx + inner * Math.cos(sa);
-    const yi1 = cy + inner * Math.sin(sa);
-    const xi2 = cx + inner * Math.cos(ea);
-    const yi2 = cy + inner * Math.sin(ea);
-    const big = ea - sa > Math.PI ? 1 : 0;
-    return `M${x1} ${y1} A${outer} ${outer} 0 ${big} 1 ${x2} ${y2} L${xi2} ${yi2} A${inner} ${inner} 0 ${big} 0 ${xi1} ${yi1} Z`;
+  const W=160, H=90, cx=W/2, cy=H-8, r=66;
+  const start=-Math.PI, end=0;
+  const angleScale = d3.scaleLinear().domain([2.5,8]).range([start,end]);
+  const seg = [[2.5,4.5,'#cc2200'],[4.5,5.5,'#4a4a4a'],[5.5,6.5,'#999999'],[6.5,8,'#fafafa']];
+  const arcPath = (sa, ea, ir, or) => {
+    const x1=cx+or*Math.cos(sa), y1=cy+or*Math.sin(sa), x2=cx+or*Math.cos(ea), y2=cy+or*Math.sin(ea);
+    const xi1=cx+ir*Math.cos(sa), yi1=cy+ir*Math.sin(sa), xi2=cx+ir*Math.cos(ea), yi2=cy+ir*Math.sin(ea);
+    return `M${x1} ${y1} A${or} ${or} 0 0 1 ${x2} ${y2} L${xi2} ${yi2} A${ir} ${ir} 0 0 0 ${xi1} ${yi1} Z`;
   };
-  const segments = [
-    { range: [2.5,4.5], color:'#cc2200' },
-    { range: [4.5,5.5], color:'#444444' },
-    { range: [5.5,6.5], color:'#888888' },
-    { range: [6.5,8.0], color:'#ffffff' },
-  ];
-  const angleScale = d3.scaleLinear().domain([2.5, 8]).range([startAngle, endAngle]);
-  segments.forEach(seg => {
-    const sa = angleScale(seg.range[0]);
-    const ea = angleScale(seg.range[1]);
-    svg.append('path').attr('d', arc(sa, ea, r-14, r))
-      .attr('fill', seg.color).attr('opacity', 0.3);
+  seg.forEach(([low,high,col]) => {
+    const sa=angleScale(low), ea=angleScale(high);
+    svg.append('path').attr('d', arcPath(sa, ea, r-14, r)).attr('fill', col).attr('opacity',0.35);
   });
-  const scoreAngle = angleScale(Math.min(8, Math.max(2.5, score)));
-  svg.append('path').attr('d', arc(startAngle, scoreAngle, r-14, r))
-    .attr('fill', scoreColor(score)).attr('opacity', 0.9);
-  const nx = cx + (r-7) * Math.cos(scoreAngle);
-  const ny = cy + (r-7) * Math.sin(scoreAngle);
-  svg.append('circle').attr('cx', nx).attr('cy', ny).attr('r', 4)
-    .attr('fill', '#fff');
-  svg.append('text').attr('x', cx).attr('y', cy - 10)
-    .attr('text-anchor','middle').attr('fill', scoreColor(score))
-    .attr('font-family','Playfair Display, serif').attr('font-size', 19).attr('font-weight', 500)
-    .text(score.toFixed(2));
-  svg.append('text').attr('x', cx).attr('y', cy + 4)
-    .attr('text-anchor','middle').attr('fill','rgba(234,230,223,.4)')
-    .attr('font-size', 8.5).text('Cantril Score');
+  const valAngle = angleScale(Math.min(8,Math.max(2.5,score)));
+  svg.append('path').attr('d', arcPath(start, valAngle, r-14, r)).attr('fill', scoreColor(score)).attr('opacity',0.9);
+  const nx = cx + (r-8)*Math.cos(valAngle), ny = cy + (r-8)*Math.sin(valAngle);
+  svg.append('circle').attr('cx', nx).attr('cy', ny).attr('r',4).attr('fill','#fff');
+  svg.append('text').attr('x',cx).attr('y',cy-12).attr('text-anchor','middle').attr('fill','#cc2200').attr('font-family','Playfair Display,serif').attr('font-size',19).text(score.toFixed(2));
 }
+
 init();
 </script>
 </body>
