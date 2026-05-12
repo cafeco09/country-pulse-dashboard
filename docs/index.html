@@ -857,39 +857,70 @@
       return -1;
     }
 
+
     function parseOWID(csvText) {
       const rows = d3.csvParse(csvText);
       const columns = rows.columns || [];
 
       const entityCol = columns.find(c => clean(c) === "entity") || "Entity";
+      const codeCol = columns.find(c => clean(c) === "code") || "Code";
       const yearCol = columns.find(c => clean(c) === "year") || "Year";
 
       const valueCol = columns.find(c => {
-        const name = clean(c);
-        return name.includes("cantril") || name.includes("life satisfaction") || name.includes("happiness") || name.includes("ladder");
+        const x = clean(c);
+        return x.includes("cantril") || x.includes("life satisfaction") || x.includes("happiness") || x.includes("ladder");
       });
 
-      const map = new Map();
-      if (!valueCol) return map;
+      if (!valueCol) {
+        throw new Error("Could not find the Cantril Ladder / happiness score column in the OWID CSV.");
+      }
+
+      const grouped = new Map();
 
       rows.forEach(row => {
         const country = row[entityCol];
+        const code = row[codeCol];
         const year = Number(row[yearCol]);
         const score = toNumber(row[valueCol]);
 
         if (!country || !Number.isFinite(year) || score === null) return;
 
-        const key = keyName(country);
-        if (!map.has(key)) map.set(key, []);
-        map.get(key).push({ year, score });
+        const k = keyName(country);
+
+        if (!grouped.has(k)) {
+          grouped.set(k, {
+            country,
+            key: k,
+            code: code || "",
+            values: []
+          });
+        }
+
+        grouped.get(k).values.push({ year, score });
       });
 
-      for (const [key, values] of map.entries()) {
-        map.set(key, values.sort((a, b) => a.year - b.year).slice(-12));
-      }
+      return Array.from(grouped.values())
+        .map(d => {
+          d.values.sort((a, b) => a.year - b.year);
 
-      return map;
+          const latest = d.values[d.values.length - 1];
+          const firstVisible = d.values[Math.max(0, d.values.length - 12)];
+
+          return {
+            ...d,
+            score: latest.score,
+            latestYear: latest.year,
+            trend: latest.score - firstVisible.score
+          };
+        })
+        .filter(d => Number.isFinite(d.score))
+        .sort((a, b) => b.score - a.score)
+        .map((d, i) => ({
+          ...d,
+          rank: i + 1
+        }));
     }
+
 
     function visibleData() {
       return state.data.filter(d => {
@@ -1244,6 +1275,10 @@
       ]);
 
       state.countries = parseOWID(owidCSV);
+
+      if (!Array.isArray(state.countries)) {
+        state.countries = Array.from(state.countries.values ? state.countries.values() : []);
+      }
       state.byKey = new Map(state.countries.map(d => [d.key, d]));
       state.whrFactors = new Map();
       state.world = world;
