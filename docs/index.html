@@ -211,7 +211,7 @@
     .c-path { fill: #111111; stroke: #222222; stroke-width: 0.35; cursor: pointer; transition: fill 0.3s; }
     .c-path:hover { fill: #2a2a2a; stroke: #cc2200; }
     .c-path.active { stroke: #ffffff; stroke-width: 1.6; }
-    /* Seismic waves container */
+    /* Pulse container */
     #waves-group {}
     /* Tooltip */
     #tip {
@@ -228,7 +228,7 @@
       z-index: 10;
       white-space: nowrap;
     }
-    /* FOCUS CARD – now much smaller & more intuitive */
+    /* FOCUS CARD */
     .map-focus {
       position: absolute;
       top: 12px;
@@ -488,7 +488,7 @@ async function init() {
   document.getElementById('kpi-high').textContent = top.score.toFixed(2);
   buildRegionFilters();
   renderMap();
-  initAllPulses();
+  initAllPulses();           // ← clean single PULSE per country (bigger for happier)
   renderRankList(countries);
   selectCountry(top.name);
   setupSearch();
@@ -599,49 +599,45 @@ function initAllPulses() {
     if (!centroid || isNaN(centroid[0])) return;
     const [cx, cy] = centroid;
     const score = country.score;
-    const dur = Math.max(2.8, 4.1 - (score - 2.5) / 5.5 * 2.3);
-    const maxR = 19 + (score / 8) * 46;
-    const waveColor = '#cc2200';
-    const WAVES = 3; // fewer rings = cleaner, more intuitive look
-    for (let i = 0; i < WAVES; i++) {
-      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', cx);
-      circle.setAttribute('cy', cy);
-      circle.setAttribute('r', 3.2);
-      circle.setAttribute('fill', 'none');
-      circle.setAttribute('stroke', waveColor);
-      circle.setAttribute('stroke-width', '0.95');
-      circle.setAttribute('opacity', '0');
-      wg.appendChild(circle);
-      const delay = (i / WAVES) * dur * 1.05;
-      animateWave(circle, cx, cy, maxR, dur, delay, waveColor);
-    }
+    // Pulse size scales directly with happiness
+    const maxR = 6 + (score / 8) * 38;        // bigger for happier countries
+    const pulseColor = '#cc2200';
+
+    // Main pulsing ring
+    const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    pulse.setAttribute('cx', cx);
+    pulse.setAttribute('cy', cy);
+    pulse.setAttribute('r', 3);
+    pulse.setAttribute('fill', 'none');
+    pulse.setAttribute('stroke', pulseColor);
+    pulse.setAttribute('stroke-width', '1.1');
+    pulse.setAttribute('opacity', '0.85');
+    wg.appendChild(pulse);
+
+    // Small permanent center dot
     const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     dot.setAttribute('cx', cx);
     dot.setAttribute('cy', cy);
-    dot.setAttribute('r', 2.1);
-    dot.setAttribute('fill', waveColor);
-    dot.setAttribute('opacity', '0.7');
+    dot.setAttribute('r', 1.9);
+    dot.setAttribute('fill', pulseColor);
+    dot.setAttribute('opacity', '0.9');
     wg.appendChild(dot);
+
+    animatePulse(pulse, maxR);
   });
 }
 
-function animateWave(el, cx, cy, maxR, dur, delay, color) {
+function animatePulse(el, maxR) {
   let start = null;
-  const totalMs = dur * 1000;
-  const delayMs = delay * 1000;
+  const cycleMs = 1650;                     // smooth continuous pulse for all countries
   function step(ts) {
     if (!start) start = ts;
-    const elapsed = ts - start;
-    if (elapsed < delayMs) {
-      requestAnimationFrame(step);
-      return;
-    }
-    const t = ((elapsed - delayMs) % totalMs) / totalMs;
-    const r = 3.2 + t * maxR;
-    const op = (1 - t) * 0.58;   // lower opacity = less visual clutter
-    el.setAttribute('r', r);
-    el.setAttribute('opacity', op);
+    const elapsed = (ts - start) % cycleMs;
+    const t = elapsed / cycleMs;            // 0 → 1 loop
+    const radius = 3 + t * maxR;
+    const opacity = Math.max(0.05, 1 - t * 1.65);   // quick fade
+    el.setAttribute('r', radius);
+    el.setAttribute('opacity', opacity);
     requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
