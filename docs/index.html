@@ -1,12 +1,9 @@
-Here is an improved, single-frame HTML document that creates a global happiness dashboard with a map, rankings, and detailed factor analysis.
-```html
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Country Pulse · global happiness atlas</title>
-  <meta name="description" content="One‑frame happiness dashboard — OWID scores & WHR factor layers, interactive map, real insights." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>Country Pulse · Atlas of Happiness</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -20,69 +17,52 @@ Here is an improved, single-frame HTML document that creates a global happiness 
       box-sizing: border-box;
     }
 
-    /* modern reset & design tokens */
+    /* ----- DARK GLOBAL TOKENS ----- */
     :root {
-      --bg-deep: #010101;
-      --card-bg: rgba(10, 10, 14, 0.86);
-      --glass-edge: rgba(255, 255, 245, 0.08);
-      --glow-accent: rgba(255, 48, 48, 0.65);
+      --bg-radial: radial-gradient(ellipse at 70% 20%, #120a0a, #010101);
+      --card-bg: rgba(12, 12, 18, 0.82);
+      --border-glow: rgba(255, 70, 70, 0.25);
       --accent: #ff3b3b;
-      --accent-soft: #ff6b6b;
-      --text-main: #f0ede8;
-      --text-muted: #b2aea6;
-      --border-dim: rgba(240, 235, 225, 0.12);
-      --map-bg: #090a0c;
-      --success: #a8e6cf;
+      --accent-hover: #ff5e5e;
+      --text-light: #f2efe9;
+      --text-dim: #b7b2a6;
+      --panel-edge: rgba(255, 245, 235, 0.08);
     }
 
     body {
-      background: radial-gradient(ellipse at 30% 20%, #1a0505, var(--bg-deep));
-      color: var(--text-main);
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-      font-weight: 400;
-      line-height: 1.4;
+      background: var(--bg-radial);
+      color: var(--text-light);
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: fixed;
+      top: 0;
+      left: 0;
     }
 
-    /* DESKTOP: SINGLE FRAME, NO SCROLL, ABSOLUTE LOCK */
-    @media (min-width: 1025px) {
-      html, body {
-        width: 100vw;
-        height: 100dvh;
-        max-height: 100dvh;
-        overflow: hidden;
-        position: fixed;
-        top: 0;
-        left: 0;
-      }
-      .app {
-        width: 100%;
-        height: 100dvh;
-        max-height: 100dvh;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        padding: 12px 16px 14px 16px;
-        gap: 12px;
-      }
-    }
-
-    /* main grid layout */
+    /* MAIN LOCK — NO SCROLLING */
     .app {
-      background: transparent;
-      backdrop-filter: blur(0px);
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      padding: 14px 18px 16px 18px;
+      gap: 14px;
+      overflow: hidden;
     }
 
-    /* header area */
-    .glass-header {
+    /* ---------- HEADER + top bar ---------- */
+    .top-bar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: rgba(6, 6, 10, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-dim);
-      border-radius: 40px;
-      padding: 8px 20px 8px 24px;
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.6);
+      justify-content: space-between;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--panel-edge);
+      border-radius: 68px;
+      padding: 6px 24px 6px 20px;
+      flex-shrink: 0;
     }
     .brand {
       display: flex;
@@ -90,622 +70,592 @@ Here is an improved, single-frame HTML document that creates a global happiness 
       gap: 12px;
       flex-wrap: wrap;
     }
-    .pulse-icon {
+    .logo-pulse {
       width: 44px;
       height: 44px;
-      background: radial-gradient(50% 50% at 50% 50%, rgba(255,59,59,0.25), rgba(0,0,0,0.2));
+      background: rgba(255, 59, 59, 0.12);
       border-radius: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(255,59,59,0.5);
-      box-shadow: 0 0 14px rgba(255,59,59,0.4);
+      border: 1px solid rgba(255, 59, 59, 0.6);
+      box-shadow: 0 0 12px rgba(255, 59, 59, 0.3);
     }
-    .pulse-icon svg {
+    .logo-pulse svg {
       width: 28px;
       height: 18px;
-      stroke: var(--text-main);
+      stroke: white;
       stroke-width: 2.2;
-      filter: drop-shadow(0 0 3px #ff3b3b);
+      fill: none;
     }
     h1 {
       font-family: 'Instrument Serif', serif;
       font-weight: 400;
       font-size: 1.9rem;
       letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #fff 60%, #ffb3b3);
+      background: linear-gradient(135deg, #fff, #ffaeae);
       background-clip: text;
       -webkit-background-clip: text;
       color: transparent;
     }
-    .badge-pill {
-      background: rgba(255,59,59,0.2);
-      border: 1px solid rgba(255,70,70,0.4);
-      border-radius: 100px;
-      padding: 6px 16px;
-      font-size: 0.75rem;
+    .pill {
+      background: rgba(255, 59, 59, 0.18);
+      border-radius: 40px;
+      padding: 5px 16px;
+      font-size: 0.7rem;
       font-weight: 500;
-      letter-spacing: 0.2px;
-      color: #ffc5c5;
+      letter-spacing: 0.3px;
+      border: 0.5px solid var(--border-glow);
     }
 
-    /* metrics row */
-    .metrics-strip {
+    /* metrics strip compact */
+    .metrics-rail {
       display: grid;
-      grid-template-columns: 1fr repeat(6, minmax(90px, 1fr));
+      grid-template-columns: 260px repeat(6, 1fr);
       gap: 10px;
-      align-items: stretch;
+      flex-shrink: 0;
     }
-    .search-glass {
+    .search-shell {
       background: rgba(20, 20, 28, 0.8);
-      border: 1px solid var(--border-dim);
-      border-radius: 32px;
+      border-radius: 48px;
+      border: 1px solid var(--panel-edge);
       display: flex;
       align-items: center;
       padding: 0 16px;
-      transition: all 0.2s;
     }
-    .search-glass input {
+    .search-shell input {
       background: transparent;
       border: none;
       width: 100%;
-      color: var(--text-main);
-      font-size: 0.85rem;
-      padding: 11px 0;
+      color: white;
+      font-size: 0.8rem;
       outline: none;
+      padding: 10px 0;
     }
-    .search-glass input::placeholder {
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-    .metric-card {
-      background: rgba(12, 12, 18, 0.7);
+    .metric-tile {
+      background: rgba(8, 8, 14, 0.7);
       backdrop-filter: blur(4px);
-      border: 1px solid var(--border-dim);
       border-radius: 24px;
-      padding: 8px 12px;
-      transition: 0.2s;
+      border: 1px solid var(--panel-edge);
+      padding: 6px 12px;
     }
-    .metric-card.highlight {
+    .metric-tile.hot {
       border-left: 3px solid var(--accent);
-      background: rgba(255,59,59,0.08);
     }
     .metric-label {
       font-size: 0.62rem;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-muted);
+      letter-spacing: 0.9px;
+      color: var(--text-dim);
     }
-    .metric-number {
+    .metric-value {
       font-weight: 700;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       line-height: 1.2;
-      color: var(--text-main);
-      letter-spacing: -0.01em;
-    }
-    .metric-number small {
-      font-size: 0.7rem;
-      font-weight: 400;
-      color: var(--text-muted);
+      white-space: nowrap;
     }
 
-    /* map container */
-    .map-container {
+    /* MAIN FLEX ROW: map + bottom panels in one cohesive area */
+    .dashboard-core {
       flex: 1;
       min-height: 0;
-      background: var(--map-bg);
-      border-radius: 32px;
-      border: 1px solid var(--border-dim);
+      display: flex;
+      gap: 16px;
       overflow: hidden;
+    }
+
+    /* MAP PANEL — centered, spacious, right aligned */
+    .map-wrapper {
+      flex: 2.2;
+      min-width: 0;
+      background: #030507;
+      border-radius: 32px;
+      border: 1px solid var(--panel-edge);
       position: relative;
-      box-shadow: 0 30px 40px -20px black;
+      overflow: hidden;
+      box-shadow: 0 25px 45px -12px black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     #map {
       width: 100%;
       height: 100%;
       display: block;
-      background: radial-gradient(circle at 20% 30%, #0c131a, #020205);
-    }
-    .map-status {
-      position: absolute;
-      bottom: 12px;
-      left: 16px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(12px);
-      padding: 5px 12px;
-      border-radius: 40px;
-      font-size: 0.7rem;
-      border: 1px solid var(--border-dim);
-      pointer-events: none;
-      z-index: 5;
-    }
-    .tooltip-dashboard {
-      position: absolute;
-      background: rgba(8,8,12,0.96);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,90,90,0.35);
-      border-radius: 18px;
-      padding: 8px 14px;
-      pointer-events: none;
-      font-size: 0.8rem;
-      transition: 0.05s linear;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
-      z-index: 100;
-      white-space: nowrap;
+      background: radial-gradient(circle at 30% 40%, #0c141f, #010101);
     }
 
-    /* bottom dashboard: fixed-height rail */
-    .insight-rail {
-      display: grid;
-      grid-template-columns: 1.2fr 1.8fr 1.3fr 1.8fr;
+    /* RIGHT SIDEBAR: all compact widgets */
+    .insights-stack {
+      flex: 1.3;
+      min-width: 290px;
+      display: flex;
+      flex-direction: column;
       gap: 12px;
-      min-height: 166px;
+      overflow: hidden;
     }
-    .glass-panel {
-      background: rgba(6, 6, 12, 0.78);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border-dim);
-      border-radius: 28px;
+    .glass-widget {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--panel-edge);
+      border-radius: 26px;
       padding: 12px 14px;
-      transition: all 0.2s;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
-    .panel-title {
-      font-size: 0.68rem;
+    .widget-title {
+      font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1.2px;
-      color: var(--accent-soft);
-      margin-bottom: 10px;
+      color: var(--accent-hover);
+      margin-bottom: 9px;
       display: flex;
       justify-content: space-between;
     }
-    .selected-country-header {
+    .country-head {
       display: flex;
       gap: 12px;
       align-items: center;
+      margin-bottom: 6px;
     }
-    .country-flag-badge {
-      background: rgba(255,59,59,0.2);
-      width: 48px;
-      height: 48px;
-      border-radius: 60px;
+    .rank-badge {
+      background: rgba(255, 59, 59, 0.2);
+      width: 44px;
+      height: 44px;
+      border-radius: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 1.2rem;
       border: 1px solid var(--accent);
     }
-    .country-name-lg {
+    .country-name {
       font-family: 'Instrument Serif', serif;
-      font-size: 1.65rem;
-      font-weight: 400;
+      font-size: 1.55rem;
       line-height: 1;
     }
-    .score-xl {
-      font-size: 2.3rem;
-      font-weight: 700;
+    .score-big {
+      font-size: 2.2rem;
+      font-weight: 800;
       color: var(--accent);
       line-height: 1;
     }
-    .stat-grid {
+    .mini-stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      margin-top: 10px;
+      margin: 10px 0 6px;
     }
-    .stat-item {
-      background: rgba(255,255,245,0.03);
-      border-radius: 18px;
-      padding: 5px 6px;
+    .mini-stat {
+      background: rgba(255,255,245,0.04);
+      border-radius: 20px;
       text-align: center;
+      padding: 4px;
     }
-
-    /* factor grid scroll but confined within panel */
-    .factor-scroll {
+    .factor-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
       overflow-y: auto;
-      max-height: 116px;
-      padding-right: 4px;
+      max-height: 130px;
+      padding-right: 5px;
     }
-    .factor-cell {
-      background: rgba(255,255,245,0.02);
+    .factor-item {
+      background: rgba(255,255,250,0.02);
       border-radius: 18px;
-      padding: 7px 8px;
-      border: 1px solid rgba(255,255,235,0.05);
+      padding: 6px 8px;
     }
-    .factor-name {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-    }
-    .factor-val {
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-top: 4px;
-    }
-    .progress-bar-bg {
-      background: rgba(255,255,255,0.08);
-      border-radius: 20px;
-      margin-top: 6px;
+    .factor-bar {
       height: 4px;
+      background: rgba(255,255,245,0.1);
+      border-radius: 8px;
+      margin-top: 6px;
       overflow: hidden;
     }
-    .progress-fill {
-      background: linear-gradient(90deg, var(--accent), #ff8a5c);
-      width: 0%;
+    .factor-fill {
       height: 100%;
-      border-radius: 20px;
-    }
-
-    .rank-list-sm {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      overflow-y: auto;
-      max-height: 118px;
-      padding-right: 4px;
-    }
-    .rank-row {
-      display: grid;
-      grid-template-columns: 28px 1fr 46px;
-      align-items: center;
-      background: rgba(255,255,245,0.02);
-      border-radius: 40px;
-      padding: 5px 10px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: 0.1s;
-      border: 1px solid transparent;
-    }
-    .rank-row.active {
-      background: rgba(255,59,59,0.12);
-      border-color: rgba(255,59,59,0.5);
-    }
-    .rank-row:hover {
-      background: rgba(255,59,59,0.2);
-    }
-    .insight-text {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-      margin-top: 4px;
-      overflow-y: auto;
-      flex: 1;
-    }
-    .spark-svg {
-      width: 100%;
-      height: 86px;
-      margin-top: 8px;
-    }
-
-    /* custom scroll */
-    ::-webkit-scrollbar {
-      width: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--accent);
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #ff8a6f);
       border-radius: 8px;
     }
-
-    /* responsive fallback */
-    @media (max-width: 1024px) {
-      .insight-rail {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        overflow-y: auto;
-      }
-      body {
-        overflow-y: auto;
-      }
-      .app {
-        padding: 12px;
-        gap: 12px;
-      }
+    .rank-list-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      overflow-y: auto;
+      max-height: 130px;
     }
-    @media (max-width: 760px) {
-      .metrics-strip {
-        grid-template-columns: 1fr;
-        gap: 8px;
+    .rank-item {
+      display: grid;
+      grid-template-columns: 28px 1fr 44px;
+      align-items: center;
+      background: rgba(255,255,245,0.02);
+      border-radius: 28px;
+      padding: 5px 8px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: 0.07s linear;
+      border: 1px solid transparent;
+    }
+    .rank-item.active {
+      background: rgba(255, 59, 59, 0.2);
+      border-color: var(--accent);
+    }
+    .insight-text {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+      margin-top: 6px;
+      flex: 1;
+    }
+    .spark-container {
+      margin-top: 8px;
+      height: 78px;
+    }
+    #trendSpark {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* map tooltip */
+    .map-tooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 200;
+      border-left: 2px solid var(--accent);
+      white-space: nowrap;
+    }
+
+    /* scroll only inside lists — but container never overflows */
+    .factor-grid::-webkit-scrollbar,
+    .rank-list-vertical::-webkit-scrollbar {
+      width: 3px;
+    }
+    ::-webkit-scrollbar-track { background: #1e1a1a; border-radius: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 6px; }
+
+    /* Force no body scroll on desktop */
+    @media (max-width: 900px) {
+      .dashboard-core {
+        flex-direction: column;
       }
-      .insight-rail {
-        grid-template-columns: 1fr;
+      .insights-stack {
+        min-height: 280px;
       }
+      body { overflow-y: auto; position: relative; }
+      .app { overflow-y: auto; }
     }
   </style>
 </head>
 <body>
 <div class="app">
-  <div class="glass-header">
+  <!-- HEADER + top row -->
+  <div class="top-bar">
     <div class="brand">
-      <div class="pulse-icon"><svg viewBox="0 0 42 22"><path d="M2 11h7l4-8 7 17 4-9h16" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="logo-pulse"><svg viewBox="0 0 42 22"><path d="M2 11h7l4-8 7 17 4-9h16"/></svg></div>
       <h1>Country Pulse</h1>
-      <div class="badge-pill">OWID + WHR factor insight</div>
+      <div class="pill">OWID real scores + WHR factor lens</div>
     </div>
-    <div class="badge-pill">live happiness atlas</div>
+    <div class="pill">live • happiness atlas</div>
   </div>
 
-  <!-- metrics + search -->
-  <div class="metrics-strip">
-    <div class="search-glass"><input type="search" id="globalSearch" placeholder="🔍 Search country..."></div>
-    <div class="metric-card highlight"><div class="metric-label">global avg</div><div class="metric-number" id="globalAvg">—</div></div>
-    <div class="metric-card"><div class="metric-label">🏆 top nation</div><div class="metric-number" id="topNation">—</div></div>
-    <div class="metric-card"><div class="metric-label">📈 improving</div><div class="metric-number" id="improvingCount">—</div></div>
-    <div class="metric-card"><div class="metric-label">⚡ gap to #1</div><div class="metric-number" id="gapLeader">—</div></div>
-    <div class="metric-card"><div class="metric-label">📊 vs average</div><div class="metric-number" id="gapAvg">—</div></div>
-    <div class="metric-card"><div class="metric-label">🧩 factor sum</div><div class="metric-number" id="factorSumMetric">—</div></div>
+  <!-- metrics bar -->
+  <div class="metrics-rail">
+    <div class="search-shell"><input type="text" id="globalSearchInput" placeholder="🔍  Filter country..."></div>
+    <div class="metric-tile hot"><div class="metric-label">🌍 world avg</div><div class="metric-value" id="worldAvgVal">—</div></div>
+    <div class="metric-tile"><div class="metric-label">🏆 top nation</div><div class="metric-value" id="topNationVal">—</div></div>
+    <div class="metric-tile"><div class="metric-label">📈 improving</div><div class="metric-value" id="improvingVal">—</div></div>
+    <div class="metric-tile"><div class="metric-label">⚡ gap to #1</div><div class="metric-value" id="gapLeaderVal">—</div></div>
+    <div class="metric-tile"><div class="metric-label">📉 vs avg</div><div class="metric-value" id="gapAvgVal">—</div></div>
+    <div class="metric-tile"><div class="metric-label">🧩 factor sum</div><div class="metric-value" id="factorSumMetricVal">—</div></div>
   </div>
 
-  <!-- map zone -->
-  <div class="map-container">
-    <svg id="map" style="width:100%; height:100%;"></svg>
-    <div class="map-status" id="mapStatusMsg">🌍 loading happiness data...</div>
-    <div id="mapTooltip" class="tooltip-dashboard" style="display:none"></div>
-  </div>
+  <!-- core area: map left (centered) + right widgets -->
+  <div class="dashboard-core">
+    <!-- MAP area: centred, beautiful -->
+    <div class="map-wrapper">
+      <svg id="map" style="width:100%; height:100%;"></svg>
+      <div id="mapStatusTag" style="position: absolute; bottom: 12px; left: 16px; background: rgba(0,0,0,0.55); backdrop-filter: blur(8px); padding: 4px 12px; border-radius: 28px; font-size: 0.7rem; z-index: 10;"></div>
+      <div id="dynamicTooltip" class="map-tooltip" style="display: none;"></div>
+    </div>
 
-  <!-- bottom insight rail -->
-  <div class="insight-rail">
-    <div class="glass-panel">
-      <div class="panel-title">⦿ selected pulse</div>
-      <div class="selected-country-header">
-        <div class="country-flag-badge" id="rankBadge">#—</div>
-        <div><div class="country-name-lg" id="selectedCountryName">—</div>
-        <div style="font-size:0.7rem; color:var(--text-muted)" id="countryMeta">—</div></div>
+    <!-- right stack: selected details + factor list + rankings + insight -->
+    <div class="insights-stack">
+      <!-- selected country card -->
+      <div class="glass-widget">
+        <div class="widget-title">🎯 current pulse</div>
+        <div class="country-head">
+          <div class="rank-badge" id="rankBadgeWidget">#—</div>
+          <div><div class="country-name" id="selectedCountryNameWidget">—</div><div style="font-size: 0.65rem; color: var(--text-dim);" id="countryMetaWidget"></div></div>
+        </div>
+        <div><span class="score-big" id="bigScoreWidget">—</span> <span style="font-size:0.8rem;">/10</span></div>
+        <div class="mini-stats">
+          <div class="mini-stat"><strong id="globalRankStat">—</strong><div>global rank</div></div>
+          <div class="mini-stat"><strong id="trendStatMini">—</strong><div>trend</div></div>
+          <div class="mini-stat"><strong id="yearStatMini">—</strong><div>year</div></div>
+          <div class="mini-stat"><strong id="totalCountStat">—</strong><div>countries</div></div>
+        </div>
       </div>
-      <div><span class="score-xl" id="bigScore">—</span> <span style="font-size:0.85rem;">/10</span></div>
-      <div class="stat-grid">
-        <div class="stat-item"><strong id="rankSmallStat">—</strong><div>rank</div></div>
-        <div class="stat-item"><strong id="trendStatVal">—</strong><div>trend</div></div>
-        <div class="stat-item"><strong id="yearStat">—</strong><div>year</div></div>
-        <div class="stat-item"><strong id="totalCountriesStat">—</strong><div>total</div></div>
+
+      <!-- factor contributions -->
+      <div class="glass-widget">
+        <div class="widget-title">🔬 explained factors <span id="factorLoadBadge" style="font-size:0.6rem;">loading WHR</span></div>
+        <div id="factorGridContainer" class="factor-grid"></div>
+        <div id="factorFootnote" style="font-size:0.55rem; margin-top: 6px; color:#918e86;"></div>
       </div>
-    </div>
 
-    <div class="glass-panel">
-      <div class="panel-title">🧬 factor contributions <span id="factorLoadState" style="font-size:0.6rem;">WHR</span></div>
-      <div id="factorListContainer" class="factor-scroll"></div>
-      <div id="factorMetaNote" style="font-size:0.55rem; margin-top:6px; color:#a5988b;"></div>
-    </div>
+      <!-- top 10 rankings -->
+      <div class="glass-widget">
+        <div class="widget-title">🏅 happiest nations (top 10)</div>
+        <div id="rankListDynamic" class="rank-list-vertical"></div>
+      </div>
 
-    <div class="glass-panel">
-      <div class="panel-title">🏅 top 10 happiest</div>
-      <div id="rankListContainer" class="rank-list-sm"></div>
-    </div>
-
-    <div class="glass-panel">
-      <div class="panel-title">📈 story & trend</div>
-      <div id="insightMessage" class="insight-text">Select any country to read pulse insights and see trendline.</div>
-      <svg id="trendSparkline" class="spark-svg"></svg>
+      <!-- insight + sparkline -->
+      <div class="glass-widget">
+        <div class="widget-title">📌 story & trendline</div>
+        <div id="insightDynamicText" class="insight-text">Select a country to reveal happiness narrative</div>
+        <div class="spark-container"><svg id="trendSpark" width="100%" height="100%"></svg></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  // ---------- DATA CONFIG ----------
-  const SOURCES = {
-    owid: ["data/happiness-cantril-ladder.csv", "https://ourworldindata.org/grapher/happiness-cantril-ladder.csv?csvType=full&useColumnShortNames=false"],
-    whr: ["data/WHR26_Data_Figure_2.1.xlsx", "https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx"],
-    worldMap: "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
-  };
-  const ALIAS_MAP = {
-    "united states of america":"united states", "usa":"united states", "united kingdom":"united kingdom",
-    "russian federation":"russia", "korea republic of":"south korea", "czech republic":"czechia",
-    "viet nam":"vietnam", "congo democratic republic of the":"drc", "syrian arab republic":"syria"
-  };
-  const FACTOR_KEYS = [
-    {id:"gdp", label:"GDP per capita", short:"GDP"},
-    {id:"social", label:"Social support", short:"Social"},
-    {id:"life", label:"Healthy life exp.", short:"Health"},
-    {id:"freedom", label:"Freedom", short:"Freedom"},
-    {id:"generosity", label:"Generosity", short:"Generosity"},
-    {id:"corruption", label:"Perception of corruption", short:"Trust"},
-    {id:"residual", label:"Residual / baseline", short:"Other"}
+  // ----- CONFIGURATION -----
+  const OWID_URLS = [
+    "data/happiness-cantril-ladder.csv",
+    "https://ourworldindata.org/grapher/happiness-cantril-ladder.csv?csvType=full&useColumnShortNames=false"
   ];
-  function cleanName(s) { return String(s||"").toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim(); }
-  function keyAlias(c) { let k = cleanName(c); return ALIAS_MAP[k] || k; }
+  const WHR_URLS = [
+    "data/WHR26_Data_Figure_2.1.xlsx",
+    "https://files.worldhappiness.report/WHR26_Data_Figure_2.1.xlsx"
+  ];
+  const WORLD_MAP_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
-  let globalCountries = [];          // full sorted array with history
-  let countryMap = new Map();        // key -> country obj
+  const NAME_ALIAS = {
+    "united states of america": "united states", "usa": "united states",
+    "united kingdom": "united kingdom", "russian federation": "russia",
+    "korea republic of": "south korea", "czech republic": "czechia",
+    "viet nam": "vietnam", "syrian arab republic": "syria"
+  };
+
+  const FACTOR_SCHEMA = [
+    {id: "gdp", label: "GDP per capita", short: "GDP"},
+    {id: "social", label: "Social support", short: "Social"},
+    {id: "life", label: "Healthy life exp.", short: "Health"},
+    {id: "freedom", label: "Freedom", short: "Freedom"},
+    {id: "generosity", label: "Generosity", short: "Generosity"},
+    {id: "corruption", label: "Low corruption", short: "Trust"},
+    {id: "residual", label: "Residual", short: "Baseline"}
+  ];
+
+  // helper: clean country key
+  function cleanStr(s) { return String(s || "").toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+  function getKey(name) { let k = cleanStr(name); return NAME_ALIAS[k] || k; }
+
+  let globalCountries = [];           // all countries with scores+history
+  let countryIndex = new Map();       // key -> country object
   let worldTopology = null;
-  let factorData = new Map();        // key -> factor object
-  let factorsReady = false;
+  let factorMap = new Map();          // key -> factors obj
+  let whrReady = false;
   let selectedCountry = null;
-  let searchQuery = "";
+  let searchFilter = "";
 
-  // DOM elements
-  const $ = id => document.getElementById(id);
-  const statusDiv = $("#mapStatusMsg");
-  const searchInput = $("#globalSearch");
-  
-  // helpers
-  function toNum(v) { let n = Number(v); return isNaN(n) ? null : n; }
+  // DOM shortcuts
+  const $id = (id) => document.getElementById(id);
+  const statusDiv = $id("mapStatusTag");
+  const searchInput = $id("globalSearchInput");
 
-  // OWID parse + historical
-  async function fetchOWID() {
-    let text = null;
-    for(let url of SOURCES.owid) {
-      try { let resp = await fetch(url, {cache:"force-cache"}); if(resp.ok) { text = await resp.text(); break; } } catch(e) {}
+  function toNumber(value) { let n = Number(value); return isNaN(n) ? null : n; }
+
+  // ---------- 1. fetch OWID Cantril data with historical ----------
+  async function loadOWID() {
+    let csvText = null;
+    for (let url of OWID_URLS) {
+      try {
+        let resp = await fetch(url, { cache: "force-cache" });
+        if (resp.ok) { csvText = await resp.text(); break; }
+      } catch(e) {}
     }
-    if(!text) throw new Error("OWID data not accessible");
-    const rows = d3.csvParse(text);
-    const cols = rows.columns;
-    const entityCol = cols.find(c => cleanName(c)==='entity') || 'Entity';
-    const yearCol = cols.find(c => cleanName(c)==='year') || 'Year';
-    const scoreCol = cols.find(c => /cantril|ladder|happiness|life.*satisfaction/i.test(cleanName(c)));
-    if(!scoreCol) throw new Error("score column missing");
-    const grouped = new Map();
-    for(let row of rows) {
-      let country = row[entityCol];
-      let year = toNum(row[yearCol]);
-      let score = toNum(row[scoreCol]);
-      if(!country || !year || score===null) continue;
-      const key = keyAlias(country);
-      if(!grouped.has(key)) grouped.set(key, {country:country, key:key, values:[], code: row.Code || ""});
-      grouped.get(key).values.push({year, score});
+    if (!csvText) throw new Error("OWID happiness data unreachable");
+    const rows = d3.csvParse(csvText);
+    const columns = rows.columns;
+    const entityCol = columns.find(c => cleanStr(c) === 'entity') || 'Entity';
+    const yearCol = columns.find(c => cleanStr(c) === 'year') || 'Year';
+    const valueCol = columns.find(c => /cantril|ladder|happiness|life.*satisfaction/i.test(cleanStr(c)));
+    if (!valueCol) throw new Error("No happiness score column found");
+
+    const groups = new Map();
+    for (let row of rows) {
+      const countryRaw = row[entityCol];
+      const yearRaw = row[yearCol];
+      const scoreRaw = row[valueCol];
+      if (!countryRaw) continue;
+      const year = toNumber(yearRaw);
+      const score = toNumber(scoreRaw);
+      if (!year || score === null) continue;
+      const key = getKey(countryRaw);
+      if (!groups.has(key)) groups.set(key, { country: countryRaw, key: key, code: row.Code || "", values: [] });
+      groups.get(key).values.push({ year, score });
     }
-    const arr = [];
-    for(let [key, obj] of grouped.entries()) {
-      if(obj.values.length === 0) continue;
-      obj.values.sort((a,b)=>a.year-b.year);
+    const result = [];
+    for (let [key, obj] of groups.entries()) {
+      if (obj.values.length === 0) continue;
+      obj.values.sort((a,b) => a.year - b.year);
       const latest = obj.values[obj.values.length-1];
-      const baseYear = obj.values[Math.max(0, obj.values.length-12)] || latest;
-      const trend = latest.score - baseYear.score;
-      arr.push({
-        key, country: obj.country, code: obj.code, score: latest.score, latestYear: latest.year,
-        trend: trend, values: obj.values.slice(-12), rank: 0
+      const prev = obj.values[Math.max(0, obj.values.length-12)] || latest;
+      const trend = latest.score - prev.score;
+      result.push({
+        key, country: obj.country, code: obj.code, score: latest.score,
+        latestYear: latest.year, trend: trend, values: obj.values.slice(-12), rank: 0
       });
     }
-    arr.sort((a,b)=>b.score - a.score);
-    arr.forEach((c,i)=>c.rank=i+1);
-    return arr;
+    result.sort((a,b) => b.score - a.score);
+    result.forEach((c, idx) => c.rank = idx+1);
+    return result;
   }
 
-  // WHR Excel parse
-  async function fetchWHR() {
+  // ---------- 2. parse WHR Excel for factor contributions ----------
+  async function loadWHR() {
     let buffer = null;
-    for(let url of SOURCES.whr) {
-      try { let resp = await fetch(url); if(resp.ok) { buffer = await resp.arrayBuffer(); break; } } catch(e) {}
+    for (let url of WHR_URLS) {
+      try {
+        let resp = await fetch(url);
+        if (resp.ok) { buffer = await resp.arrayBuffer(); break; }
+      } catch(e) {}
     }
-    if(!buffer) throw new Error("WHR not loaded, factors partially missing");
-    const wb = XLSX.read(buffer, {type:'array'});
-    const factorOut = new Map();
-    for(let sheet of wb.SheetNames) {
-      const ws = wb.Sheets[sheet];
-      const data = XLSX.utils.sheet_to_json(ws, {header:1, defval:""});
-      for(let i=0; i<data.length; i++) {
-        let row = data[i];
-        if(!row || row.length<2) continue;
-        let headerIndices = null;
-        if(row.some(cell => String(cell).toLowerCase().includes("country"))) {
-          headerIndices = {country:-1, gdp:-1, social:-1, life:-1, freedom:-1, generosity:-1, corruption:-1, residual:-1};
-          for(let j=0;j<row.length;j++) {
+    if (!buffer) throw new Error("WHR optional not available");
+    const workbook = XLSX.read(buffer, { type: "array" });
+    const factorsOut = new Map();
+    for (let sheetName of workbook.SheetNames) {
+      const sheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        if (!row || row.length < 2) continue;
+        let headerIdx = { country: -1, gdp: -1, social: -1, life: -1, freedom: -1, generosity: -1, corruption: -1, residual: -1 };
+        if (row.some(cell => String(cell).toLowerCase().includes("country"))) {
+          for (let j = 0; j < row.length; j++) {
             let h = String(row[j]).toLowerCase();
-            if(h.includes("country") || h.includes("name")) headerIndices.country = j;
-            if(h.includes("gdp") || (h.includes("log") && h.includes("gdp"))) headerIndices.gdp = j;
-            if(h.includes("social support")) headerIndices.social = j;
-            if(h.includes("healthy life expectancy")) headerIndices.life = j;
-            if(h.includes("freedom")) headerIndices.freedom = j;
-            if(h.includes("generosity")) headerIndices.generosity = j;
-            if(h.includes("corruption") || h.includes("perceptions")) headerIndices.corruption = j;
-            if(h.includes("residual") || h.includes("dystopia")) headerIndices.residual = j;
+            if (h.includes("country") || h.includes("name")) headerIdx.country = j;
+            if ((h.includes("gdp") && h.includes("log")) || (h.includes("gdp") && h.includes("per"))) headerIdx.gdp = j;
+            if (h.includes("social support")) headerIdx.social = j;
+            if (h.includes("healthy life")) headerIdx.life = j;
+            if (h.includes("freedom")) headerIdx.freedom = j;
+            if (h.includes("generosity")) headerIdx.generosity = j;
+            if (h.includes("corruption") || h.includes("perceptions")) headerIdx.corruption = j;
+            if (h.includes("residual") || h.includes("dystopia")) headerIdx.residual = j;
           }
-          if(headerIndices.country !== -1) {
-            for(let r=i+1; r<Math.min(i+250, data.length); r++) {
+          if (headerIdx.country !== -1) {
+            for (let r = i+1; r < Math.min(i+280, data.length); r++) {
               const rec = data[r];
-              if(!rec || rec.length===0) continue;
-              const cname = String(rec[headerIndices.country] || "").trim();
-              if(!cname) continue;
-              const key = keyAlias(cname);
+              if (!rec || rec.length === 0) continue;
+              const ctry = String(rec[headerIdx.country] || "").trim();
+              if (!ctry) continue;
+              const key = getKey(ctry);
               const factors = {
-                gdp: headerIndices.gdp>=0 ? toNum(rec[headerIndices.gdp]) : null,
-                social: headerIndices.social>=0 ? toNum(rec[headerIndices.social]) : null,
-                life: headerIndices.life>=0 ? toNum(rec[headerIndices.life]) : null,
-                freedom: headerIndices.freedom>=0 ? toNum(rec[headerIndices.freedom]) : null,
-                generosity: headerIndices.generosity>=0 ? toNum(rec[headerIndices.generosity]) : null,
-                corruption: headerIndices.corruption>=0 ? toNum(rec[headerIndices.corruption]) : null,
-                residual: headerIndices.residual>=0 ? toNum(rec[headerIndices.residual]) : null
+                gdp: headerIdx.gdp>=0 ? toNumber(rec[headerIdx.gdp]) : null,
+                social: headerIdx.social>=0 ? toNumber(rec[headerIdx.social]) : null,
+                life: headerIdx.life>=0 ? toNumber(rec[headerIdx.life]) : null,
+                freedom: headerIdx.freedom>=0 ? toNumber(rec[headerIdx.freedom]) : null,
+                generosity: headerIdx.generosity>=0 ? toNumber(rec[headerIdx.generosity]) : null,
+                corruption: headerIdx.corruption>=0 ? toNumber(rec[headerIdx.corruption]) : null,
+                residual: headerIdx.residual>=0 ? toNumber(rec[headerIdx.residual]) : null
               };
-              if(Object.values(factors).some(v=>v!==null)) factorOut.set(key, factors);
+              if (Object.values(factors).some(v => v !== null)) factorsOut.set(key, factors);
             }
             break;
           }
         }
       }
-      if(factorOut.size>30) break;
+      if (factorsOut.size > 30) break;
     }
-    return factorOut;
+    return factorsOut;
   }
 
-  // rendering all UI
-  function refreshUI() {
-    if(!globalCountries.length) return;
-    let visible = globalCountries.filter(c => !searchQuery || c.country.toLowerCase().includes(searchQuery.toLowerCase()));
+  // ---------- GLOBAL RENDER ----------
+  function refreshDashboard() {
+    if (!globalCountries.length) return;
+    let visible = globalCountries.filter(c => !searchFilter || c.country.toLowerCase().includes(searchFilter.toLowerCase()));
     let selected = selectedCountry || globalCountries[0];
-    if(!selected && globalCountries[0]) selected = globalCountries[0];
-    if(selected && !visible.find(c=>c.key===selected.key) && visible.length) selected = visible[0];
+    if (selected && !visible.find(v => v.key === selected.key) && visible.length) selected = visible[0];
+    if (!selected && visible.length) selected = visible[0];
     selectedCountry = selected;
 
-    // metrics
-    const avg = d3.mean(globalCountries, d=>d.score) || 0;
+    // update metrics
+    const avgScore = d3.mean(globalCountries, d => d.score) || 0;
     const top = globalCountries[0];
-    const improving = globalCountries.filter(c=>c.trend>0).length;
-    const gapLeader = selected ? (selected.rank===1?0:(top.score - selected.score)).toFixed(2) : "—";
-    const gapAvg = selected ? (selected.score - avg).toFixed(2) : "—";
-    const factorsActive = factorData.get(selected?.key);
-    const factorSum = factorsActive ? FACTOR_KEYS.reduce((sum,f)=> sum + (Number.isFinite(factorsActive[f.id]) ? factorsActive[f.id] : 0),0) : null;
-    $("#globalAvg").innerText = avg.toFixed(2);
-    $("#topNation").innerHTML = `${top.country}<small style="font-size:0.6rem;"> ${top.score.toFixed(1)}</small>`;
-    $("#improvingCount").innerText = `${improving}/${globalCountries.length}`;
-    $("#gapLeader").innerText = gapLeader !== "—" ? gapLeader : "—";
-    $("#gapAvg").innerHTML = `${gapAvg!="—"?(gapAvg>=0?"+":"")+gapAvg:"—"}`;
-    $("#factorSumMetric").innerText = factorSum ? factorSum.toFixed(2) : (factorsReady ? "no data" : "loading");
-    
-    // selected panel
-    if(selected) {
-      $("#rankBadge").innerText = `#${selected.rank}`;
-      $("#selectedCountryName").innerText = selected.country;
-      $("#countryMeta").innerText = `${selected.code || "int"} · ${selected.latestYear}`;
-      $("#bigScore").innerText = selected.score.toFixed(2);
-      $("#rankSmallStat").innerText = `${selected.rank}/${globalCountries.length}`;
-      $("#trendStatVal").innerHTML = `${selected.trend>=0?'+':''}${selected.trend.toFixed(2)}`;
-      $("#yearStat").innerText = selected.latestYear;
-      $("#totalCountriesStat").innerText = globalCountries.length;
-      let trendText = selected.trend>=0 ? `improved by ${selected.trend.toFixed(2)} points` : `declined ${Math.abs(selected.trend).toFixed(2)} pts`;
-      let insightMsg = `${selected.country} ranks ${selected.rank} with ${selected.score.toFixed(2)}/10. ${trendText} over recent years.`;
-      if(factorsActive) {
-        let topFactor = FACTOR_KEYS.map(f=> ({id:f.id, val: factorsActive[f.id]})).filter(f=>Number.isFinite(f.val)).sort((a,b)=>b.val - a.val)[0];
-        if(topFactor) insightMsg += ` Strongest factor: ${FACTOR_KEYS.find(f=>f.id===topFactor.id)?.label} (${topFactor.val.toFixed(2)}).`;
-      } else insightMsg += ` Factor contributions from WHR will refine insight.`;
-      $("#insightMessage").innerHTML = `<b>📌 insight</b><br>${insightMsg}`;
+    const improvingCount = globalCountries.filter(c => c.trend > 0).length;
+    const gapLeader = selected ? (selected.rank === 1 ? 0 : (top.score - selected.score)).toFixed(2) : "—";
+    const gapAvg = selected ? (selected.score - avgScore).toFixed(2) : "—";
+    const selectedFactors = selected ? factorMap.get(selected.key) : null;
+    const factorSum = selectedFactors ? FACTOR_SCHEMA.reduce((acc, f) => acc + (Number.isFinite(selectedFactors[f.id]) ? selectedFactors[f.id] : 0), 0) : null;
+
+    $id("worldAvgVal").innerText = avgScore.toFixed(2);
+    $id("topNationVal").innerHTML = `${top.country} <span style="font-size:0.7rem;">${top.score.toFixed(1)}</span>`;
+    $id("improvingVal").innerText = `${improvingCount}/${globalCountries.length}`;
+    $id("gapLeaderVal").innerText = gapLeader !== "—" ? gapLeader : "—";
+    $id("gapAvgVal").innerText = gapAvg !== "—" ? (gapAvg >=0 ? `+${gapAvg}` : gapAvg) : "—";
+    $id("factorSumMetricVal").innerText = factorSum ? factorSum.toFixed(2) : (whrReady ? "—" : "loading");
+
+    // selected country widget
+    if (selected) {
+      $id("rankBadgeWidget").innerText = `#${selected.rank}`;
+      $id("selectedCountryNameWidget").innerText = selected.country;
+      $id("countryMetaWidget").innerHTML = `${selected.code || "INT"} · ${selected.latestYear}`;
+      $id("bigScoreWidget").innerText = selected.score.toFixed(2);
+      $id("globalRankStat").innerText = `${selected.rank}/${globalCountries.length}`;
+      $id("trendStatMini").innerHTML = `${selected.trend >= 0 ? '+' : ''}${selected.trend.toFixed(2)}`;
+      $id("yearStatMini").innerText = selected.latestYear;
+      $id("totalCountStat").innerText = globalCountries.length;
+      const trendMsg = selected.trend >= 0 ? `improved by ${selected.trend.toFixed(2)} pts` : `declined ${Math.abs(selected.trend).toFixed(2)} pts`;
+      $id("insightDynamicText").innerHTML = `<b>🔍 ${selected.country}</b> — score ${selected.score.toFixed(2)} /10, ranks #${selected.rank}. ${trendMsg}. ${selectedFactors ? "Factor contributions shown below reflect WHR estimates." : "WHR factors enrich view once matched."}`;
     }
-    // factor grid
-    renderFactors(selected);
-    renderRankList(visible);
+    renderFactorsGrid(selected);
+    renderRankings(visible);
     drawMap(visible);
-    drawSpark(selected);
+    drawSparkline(selected);
   }
 
-  function renderFactors(country) {
-    const factors = country ? factorData.get(country.key) : null;
-    const container = $("#factorListContainer");
-    if(!container) return;
+  function renderFactorsGrid(country) {
+    const container = $id("factorGridContainer");
+    if (!container) return;
+    const f = country ? factorMap.get(country.key) : null;
     container.innerHTML = "";
-    for(let f of FACTOR_KEYS) {
-      let val = factors ? (Number.isFinite(factors[f.id]) ? factors[f.id] : null) : null;
-      let percent = val !== null ? Math.min(100, (val / 2.2) * 100) : 0;
-      let displayVal = val !== null ? val.toFixed(2) : "—";
+    for (let factor of FACTOR_SCHEMA) {
+      const val = f ? (Number.isFinite(f[factor.id]) ? f[factor.id] : null) : null;
+      const percent = val !== null ? Math.min(100, (val / 2.2) * 100) : 0;
+      const displayVal = val !== null ? val.toFixed(2) : "—";
       const div = document.createElement("div");
-      div.className = "factor-cell";
+      div.className = "factor-item";
       div.innerHTML = `
-        <div class="factor-name"><span>${f.label}</span><span>${f.short}</span></div>
-        <div class="factor-val">${displayVal}</div>
-        <div class="progress-bar-bg"><div class="progress-fill" style="width:${val !== null ? percent+'%' : '0%'}"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.65rem;"><span>${factor.label}</span><span style="color:#ff9f9f;">${factor.short}</span></div>
+        <div class="factor-val" style="font-weight:500; margin-top:2px;">${displayVal}</div>
+        <div class="factor-bar"><div class="factor-fill" style="width: ${val !== null ? percent : 0}%;"></div></div>
       `;
       container.appendChild(div);
     }
-    $("#factorLoadState").innerHTML = factorsReady ? (factors ? "matched" : "partial") : "loading...";
-    $("#factorMetaNote").innerHTML = factorsReady ? `WHR contributions for ${factorData.size} countries` : "fetching WHR Figure 2.1 ...";
+    $id("factorLoadBadge").innerHTML = whrReady ? (f ? "✓ matched" : "partial") : "loading...";
+    $id("factorFootnote").innerText = whrReady ? `WHR data for ${factorMap.size} territories` : "Fetching World Happiness Report Table 2.1 …";
   }
 
-  function renderRankList(visibleList) {
-    const rankDiv = $("#rankListContainer");
-    if(!rankDiv) return;
+  function renderRankings(visibleList) {
+    const rankDiv = $id("rankListDynamic");
+    if (!rankDiv) return;
     rankDiv.innerHTML = "";
-    visibleList.slice(0,10).forEach(c => {
-      const btn = document.createElement("button");
-      btn.className = `rank-row ${selectedCountry && selectedCountry.key===c.key ? 'active' : ''}`;
-      btn.innerHTML = `<span>${c.rank}</span><span style="text-align:left; overflow:hidden; text-overflow:ellipsis;">${c.country}</span><span style="color:#ff6b6b;">${c.score.toFixed(2)}</span>`;
-      btn.onclick = () => { selectedCountry = c; refreshUI(); };
+    visibleList.slice(0, 10).forEach(c => {
+      const btn = document.createElement("div");
+      btn.className = `rank-item ${selectedCountry && selectedCountry.key === c.key ? 'active' : ''}`;
+      btn.innerHTML = `<span>${c.rank}</span><span style="text-align:left; white-space: nowrap; overflow:hidden; text-overflow:ellipsis;">${c.country}</span><span style="color: #ff7b7b;">${c.score.toFixed(2)}</span>`;
+      btn.onclick = () => { selectedCountry = c; refreshDashboard(); };
       rankDiv.appendChild(btn);
     });
   }
@@ -713,118 +663,104 @@ Here is an improved, single-frame HTML document that creates a global happiness 
   function drawMap(visibleCountries) {
     const svg = d3.select("#map");
     svg.selectAll("*").remove();
-    if(!worldTopology || !globalCountries.length) return;
-    const width = svg.node().clientWidth || 900, height = svg.node().clientHeight || 480;
+    if (!worldTopology || !globalCountries.length) return;
+    const width = svg.node().clientWidth || 800;
+    const height = svg.node().clientHeight || 520;
     svg.attr("viewBox", `0 0 ${width} ${height}`);
     const geos = topojson.feature(worldTopology, worldTopology.objects.countries).features;
-    const projection = d3.geoNaturalEarth1().fitExtent([[12,12],[width-12,height-12]], {type:"FeatureCollection", features:geos});
+    const projection = d3.geoNaturalEarth1().fitExtent([[18, 18], [width-18, height-18]], { type: "FeatureCollection", features: geos });
     const path = d3.geoPath(projection);
-    const geoByKey = new Map(geos.map(g => [keyAlias(g.properties.name), g]));
-    const visibleKeys = new Set(visibleCountries.map(c=>c.key));
-    const scoreExtent = d3.extent(globalCountries, d=>d.score);
-    
+    const geoLookup = new Map(geos.map(g => [getKey(g.properties.name), g]));
+    const visibleKeys = new Set(visibleCountries.map(c => c.key));
+    const scoreDomain = d3.extent(globalCountries, d => d.score);
     svg.append("g").selectAll("path").data(geos).join("path")
-      .attr("class", geo => {
-        const k = keyAlias(geo.properties.name);
-        const has = countryMap.has(k);
-        const isSelected = selectedCountry && selectedCountry.key === k;
-        const hidden = has && !visibleKeys.has(k);
-        return `country ${has ? 'hasData' : ''} ${hidden ? 'filteredOut' : ''} ${isSelected ? 'selected' : ''}`;
-      })
       .attr("d", path)
-      .attr("fill", geo => {
-        const k = keyAlias(geo.properties.name);
-        const c = countryMap.get(k);
-        if(!c) return "#26282f";
-        const intensity = (c.score - scoreExtent[0]) / (scoreExtent[1]-scoreExtent[0] || 1);
-        return `rgba(210, 80, 70, ${0.4 + intensity*0.5})`;
+      .attr("fill", d => {
+        const c = countryIndex.get(getKey(d.properties.name));
+        if (!c) return "#25282e";
+        const t = (c.score - scoreDomain[0]) / (scoreDomain[1] - scoreDomain[0] || 1);
+        return `rgb(170, 70, 60, ${0.5 + t * 0.45})`;
       })
-      .attr("stroke", "#1e1f24")
-      .attr("stroke-width", 0.6)
+      .attr("stroke", "#1a1c22").attr("stroke-width", 0.5)
       .on("mousemove", function(event, geo) {
-        const k = keyAlias(geo.properties.name);
-        const c = countryMap.get(k);
-        if(!c) return;
-        const tool = $("#mapTooltip");
-        tool.style.display = "block";
-        tool.style.left = (event.pageX + 18)+"px";
-        tool.style.top = (event.pageY - 42)+"px";
-        tool.innerHTML = `<strong>${c.country}</strong> · score ${c.score.toFixed(2)} · rank ${c.rank}`;
+        const c = countryIndex.get(getKey(geo.properties.name));
+        if (!c) return;
+        const tip = $id("dynamicTooltip");
+        tip.style.display = "block";
+        tip.style.left = (event.pageX + 12) + "px";
+        tip.style.top = (event.pageY - 36) + "px";
+        tip.innerHTML = `<strong>${c.country}</strong> · ${c.score.toFixed(2)} /10 · rank ${c.rank}`;
       })
-      .on("mouseleave", () => $("#mapTooltip").style.display = "none")
-      .on("click", (e,geo) => {
-        const k = keyAlias(geo.properties.name);
-        let c = countryMap.get(k);
-        if(c) { selectedCountry = c; refreshUI(); }
+      .on("mouseleave", () => $id("dynamicTooltip").style.display = "none")
+      .on("click", (e, geo) => {
+        const c = countryIndex.get(getKey(geo.properties.name));
+        if (c) { selectedCountry = c; refreshDashboard(); }
       });
-    
-    // pulse rings on top countries
-    const pulseGroup = svg.append("g").attr("class", "pulse-group");
-    for(let c of visibleCountries.slice(0,35)) {
-      const geo = geoByKey.get(c.key);
-      if(!geo) continue;
-      const centroid = path.centroid(geo);
-      if(!centroid.every(isFinite)) continue;
-      const rad = 5 + (c.rank <= 15 ? 9 : 5);
-      const group = pulseGroup.append("g").attr("transform", `translate(${centroid[0]},${centroid[1]})`);
-      group.append("circle").attr("r", rad).attr("fill", "none").attr("stroke", "#ff5757").attr("stroke-width", 1.2).attr("opacity",0.7);
-      group.append("circle").attr("r", rad*1.7).attr("fill", "none").attr("stroke", "#ff8888").attr("stroke-width", 0.8).attr("opacity",0.4).attr("class","pulse-ring");
-      group.append("circle").attr("r", 3).attr("fill", "#ff3b3b").attr("stroke","#fff").attr("stroke-width",0.8);
+    // subtle pulse overlay on top 25
+    const pulseGrp = svg.append("g");
+    for (let c of visibleCountries.slice(0, 28)) {
+      const geom = geoLookup.get(c.key);
+      if (!geom) continue;
+      const cent = path.centroid(geom);
+      if (!cent.every(isFinite)) continue;
+      const grp = pulseGrp.append("g").attr("transform", `translate(${cent[0]},${cent[1]})`);
+      grp.append("circle").attr("r", 5).attr("fill", "none").attr("stroke", "#ff5757").attr("stroke-width", 1.2).attr("opacity", 0.6);
+      grp.append("circle").attr("r", 2.6).attr("fill", "#ff3b3b").attr("stroke", "#fff").attr("stroke-width", 0.6);
     }
-    statusDiv.innerText = `${visibleCountries.length} countries visible · ${globalCountries.length} total · factors ${factorData.size} matched`;
+    statusDiv.innerText = `${visibleCountries.length} countries · WHR factors ${factorMap.size} matched · map centered`;
   }
 
-  function drawSpark(country) {
-    const svg = d3.select("#trendSparkline");
+  function drawSparkline(country) {
+    const svg = d3.select("#trendSpark");
     svg.selectAll("*").remove();
-    if(!country || !country.values || country.values.length<2) {
-      svg.append("text").attr("x", 20).attr("y", 40).attr("fill","#aaa").text("trend data limited").attr("font-size",10);
+    if (!country || !country.values || country.values.length < 2) {
+      svg.append("text").attr("x", 20).attr("y", 40).attr("fill", "#9a8f88").text("trend data limited").attr("font-size", 9);
       return;
     }
-    const width = svg.node().parentElement.clientWidth-20 || 300, height = 78;
-    svg.attr("viewBox", `0 0 ${width} ${height}`).style("background","transparent");
-    const margin = {top:8, right:12, bottom:20, left:30};
-    const vals = country.values.slice(-10);
-    const xScale = d3.scaleLinear().domain(d3.extent(vals,d=>d.year)).range([margin.left, width-margin.right]);
-    const yScale = d3.scaleLinear().domain([0,10]).range([height-margin.bottom, margin.top]);
-    const lineGen = d3.line().x(d=>xScale(d.year)).y(d=>yScale(d.score)).curve(d3.curveMonotoneX);
-    svg.append("path").datum(vals).attr("fill","none").attr("stroke","#ff5e5e").attr("stroke-width",2.2).attr("d", lineGen);
-    svg.append("g").attr("transform",`translate(0,${height-margin.bottom})`).call(d3.axisBottom(xScale).ticks(4).tickFormat(d3.format("d")).attr("font-size",7));
-    svg.append("g").attr("transform",`translate(${margin.left},0)`).call(d3.axisLeft(yScale).ticks(3).tickFormat(d=>d).attr("font-size",7));
-    svg.selectAll("circle").data(vals).enter().append("circle").attr("cx",d=>xScale(d.year)).attr("cy",d=>yScale(d.score)).attr("r",3).attr("fill","#ffb3b3").attr("stroke","#ff3b3b");
+    const width = svg.node().parentElement.clientWidth - 12 || 300;
+    const height = 70;
+    svg.attr("viewBox", `0 0 ${width} ${height}`);
+    const margin = { top: 6, right: 10, bottom: 16, left: 26 };
+    const values = country.values.slice(-10);
+    const xScale = d3.scaleLinear().domain(d3.extent(values, d => d.year)).range([margin.left, width - margin.right]);
+    const yScale = d3.scaleLinear().domain([0, 10]).range([height - margin.bottom, margin.top]);
+    const lineFn = d3.line().x(d => xScale(d.year)).y(d => yScale(d.score)).curve(d3.curveMonotoneX);
+    svg.append("path").datum(values).attr("fill", "none").attr("stroke", "#ff5c5c").attr("stroke-width", 2).attr("d", lineFn);
+    svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(xScale).ticks(4).tickFormat(d3.format("d")).attr("font-size", 7));
+    svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(yScale).ticks(3).attr("font-size", 7));
+    svg.selectAll(".dot").data(values).enter().append("circle").attr("cx", d => xScale(d.year)).attr("cy", d => yScale(d.score)).attr("r", 2.5).attr("fill", "#ffbcbc").attr("stroke", "#ff4242");
   }
 
-  async function init() {
+  async function bootstrap() {
     try {
-      statusDiv.innerText = "📡 loading OWID happiness & map...";
-      const [countriesData, world] = await Promise.all([fetchOWID(), d3.json(SOURCES.worldMap)]);
-      globalCountries = countriesData;
-      countryMap = new Map(globalCountries.map(c=>[c.key,c]));
-      worldTopology = world;
+      statusDiv.innerText = "loading OWID scores...";
+      const [owidData, worldGeo] = await Promise.all([loadOWID(), d3.json(WORLD_MAP_URL)]);
+      globalCountries = owidData;
+      countryIndex = new Map(globalCountries.map(c => [c.key, c]));
+      worldTopology = worldGeo;
       selectedCountry = globalCountries[0];
-      refreshUI();
-      statusDiv.innerText = "✅ OWID loaded · fetching WHR factors...";
+      refreshDashboard();
+      statusDiv.innerText = "✔️ OWID loaded, fetching WHR factors...";
       try {
-        const factors = await fetchWHR();
-        factorData = factors;
-        factorsReady = true;
-        refreshUI();
-        statusDiv.innerText = `✔️ ${globalCountries.length} countries · WHR factor layer active (${factorData.size} matched)`;
-      } catch(e) {
-        factorsReady = true;
-        statusDiv.innerText = `⚠️ WHR optional layer missing — showing base scores only.`;
-        refreshUI();
+        const whrData = await loadWHR();
+        factorMap = whrData;
+        whrReady = true;
+        refreshDashboard();
+        statusDiv.innerText = `✓ ${globalCountries.length} countries · factor layer active (${factorMap.size} matched)`;
+      } catch (fe) {
+        whrReady = true;
+        statusDiv.innerText = `⚠️ WHR factor layer optional — scores fully functional.`;
+        refreshDashboard();
       }
     } catch(err) {
-      statusDiv.innerText = "❌ data error: " + err.message;
+      statusDiv.innerText = "⚠️ data load error: " + err.message;
       console.error(err);
     }
   }
 
-  searchInput.addEventListener("input", (e) => { searchQuery = e.target.value; refreshUI(); });
-  window.addEventListener("resize", () => refreshUI());
-  init();
+  searchInput.addEventListener("input", (e) => { searchFilter = e.target.value; refreshDashboard(); });
+  window.addEventListener("resize", () => refreshDashboard());
+  bootstrap();
 </script>
 </body>
 </html>
-```
