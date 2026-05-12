@@ -706,18 +706,18 @@
       <section class="panel card">
         <div class="panel-title">
           <span>Associated factors</span>
-          <small>WHR contribution</small>
+          <small>Score-only mode</small>
         </div>
         <div id="factors" class="factors"></div>
         <p class="note">
-          These are World Happiness Report explanatory contributions, not proof that any single factor directly causes happiness.
+          This live version uses OWID Cantril Ladder scores for ranking, map pulse size, and trend. Factor-level WHR decomposition can be added later after normalising the workbook.
         </p>
       </section>
 
       <section class="panel card">
         <div class="panel-title">
           <span>Trend and comparison</span>
-          <small>OWID + WHR</small>
+          <small>OWID</small>
         </div>
         <svg id="trend"></svg>
         <svg id="compare"></svg>
@@ -726,7 +726,7 @@
     </section>
 
     <footer class="footer">
-      <strong>Data note:</strong> Country scores and factor contributions are loaded from the World Happiness Report Figure 2.1 workbook in <code>docs/data</code>. Trends use Our World in Data's Cantril Ladder CSV. The grey map is intentional; red heartbeat rings encode higher happiness scores visually.
+      <strong>Data note:</strong> Country scores, rankings, trends, and pulse size are loaded from Our World in Data's Cantril Ladder CSV. The grey map is intentional; red heartbeat rings encode higher happiness scores visually.
     </footer>
   </main>
 
@@ -829,6 +829,17 @@
       return Number.isFinite(n) ? n : null;
     }
 
+    function emptyDrivers() {
+      return {
+        gdp: null,
+        social: null,
+        life: null,
+        freedom: null,
+        generosity: null,
+        corruption: null
+      };
+    }
+
     async function fetchFirst(urls, asArrayBuffer = false) {
       let lastError;
 
@@ -912,7 +923,8 @@
             ...d,
             score: latest.score,
             latestYear: latest.year,
-            trend: latest.score - firstVisible.score
+            trend: latest.score - firstVisible.score,
+            drivers: emptyDrivers()
           };
         })
         .filter(d => Number.isFinite(d.score))
@@ -938,7 +950,7 @@
 
     function worldAverage(driverKey = null) {
       return driverKey
-        ? average(state.data, d => d.drivers[driverKey])
+        ? average(state.data, d => (d.drivers || emptyDrivers())[driverKey])
         : average(state.data, d => d.score);
     }
 
@@ -996,7 +1008,7 @@
       $("regionAvg").textContent = regionAverage(d.region).toFixed(2);
       $("worldAvg").textContent = worldAverage().toFixed(2);
 
-      const maxDriver = d3.max(state.data.flatMap(row => drivers.map(m => row.drivers[m[0]]))) || 1;
+      const maxDriver = d3.max(state.data.flatMap(row => drivers.map(m => (row.drivers || emptyDrivers())[m[0]]))) || 1;
 
       d3.select("#factors")
         .selectAll(".factor")
@@ -1004,7 +1016,7 @@
         .join("div")
         .attr("class", "factor")
         .html(m => {
-          const value = d.drivers[m[0]] || 0;
+          const value = (d.drivers || emptyDrivers())[m[0]] || 0;
           const pct = Math.max(2, Math.min(100, value / maxDriver * 100));
 
           return `
@@ -1020,7 +1032,7 @@
         });
 
       const ranked = drivers
-        .map(m => ({ name: m[1], value: d.drivers[m[0]] || 0 }))
+        .map(m => ({ name: m[1], value: (d.drivers || emptyDrivers())[m[0]] || 0 }))
         .sort((a, b) => b.value - a.value);
 
       const trend = state.trends.get(d.key) || [];
@@ -1209,7 +1221,7 @@
 
       const rows = drivers.map(m => ({
         name: m[1],
-        country: d.drivers[m[0]] || 0,
+        country: (d.drivers || emptyDrivers())[m[0]] || 0,
         world: worldAverage(m[0])
       }));
 
