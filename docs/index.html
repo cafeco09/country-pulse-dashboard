@@ -2,286 +2,745 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Country Pulse · Atlas of Happiness</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
   <style>
     :root {
-      --bg: #030303;
-      --ink: #f4efe8;
-      --muted: rgba(244,239,232,.64);
-      --faint: rgba(244,239,232,.2);
-      --panel: rgba(15,15,18,0.85);
-      --line: rgba(244,239,232,.1);
-      --red: #ff4040;
-      --red-soft: #ff8a7f;
-      --shadow: 0 20px 50px rgba(0,0,0,.5);
+      --bg: #000000;
+      --surface: #0e0e0e;
+      --surface2: #1a1a1a;
+      --ink: #ffffff;
+      --muted: rgba(255,255,255,.45);
+      --faint: rgba(255,255,255,.07);
+      --accent: #cc2200;
+      --accent2: #ff4422;
+      --red: #cc2200;
+      --red-dim: rgba(204,34,0,.18);
+      --green: #888888;
+      --line: rgba(255,255,255,.09);
+      --line2: rgba(255,255,255,.16);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+    html, body {
       background: var(--bg);
       color: var(--ink);
-      font-family: "DM Sans", sans-serif;
+      font-family: "Syne", sans-serif;
       height: 100vh;
+      width: 100vw;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
     }
-
-    /* Layout */
     .app {
       display: grid;
-      grid-template-areas: 
-        "head head head"
-        "kpi kpi kpi"
-        "side map feat"
-        "foot foot foot";
-      grid-template-columns: 280px 1fr 300px;
-      grid-template-rows: auto auto 1fr 200px;
-      gap: 12px;
-      padding: 12px;
+      grid-template-rows: 52px 72px 1fr 160px;
+      grid-template-columns: 240px 1fr;
+      grid-template-areas:
+        "hdr hdr"
+        "kpi kpi"
+        "side map"
+        "bot bot";
+      height: 100vh;
+      gap: 0;
+    }
+    /* HEADER */
+    header {
+      grid-area: hdr;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-title {
+      font-family: "Playfair Display", serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.01em;
+    }
+    .brand-sub {
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.65rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      background: #cc2200;
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+    /* KPI STRIP */
+    .kpi-strip {
+      grid-area: kpi;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-bottom: 1px solid var(--line);
+    }
+    .kpi-cell {
+      padding: 12px 18px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .kpi-cell:last-child { border-right: none; }
+    .kpi-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .kpi-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .kpi-val.accent { color: #cc2200; }
+    .kpi-val.green { color: #aaaaaa; }
+    /* SIDEBAR */
+    .sidebar {
+      grid-area: side;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .sidebar-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--line2);
+      color: var(--ink);
+      font-family: "Syne", sans-serif;
+      font-size: 0.75rem;
+      padding: 7px 10px;
+      border-radius: 6px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
+    .region-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .region-btn {
+      font-family: "Syne", sans-serif;
+      font-size: 0.6rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--line2);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .region-btn:hover, .region-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(200,169,110,.08);
+    }
+    .rank-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 16px;
+    }
+    .rank-list::-webkit-scrollbar { width: 2px; }
+    .rank-list::-webkit-scrollbar-thumb { background: var(--line2); }
+    .rank-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .rank-item:hover, .rank-item.selected {
+      color: var(--accent);
+    }
+    .rank-num {
+      font-size: 0.6rem;
+      color: var(--muted);
+      min-width: 22px;
+    }
+    .rank-name { font-size: 0.75rem; flex: 1; padding: 0 8px; }
+    .rank-score { font-size: 0.75rem; font-weight: 700; }
+    /* MAP */
+    .map-area {
+      grid-area: map;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    #map-svg {
+      width: 100%;
       height: 100%;
     }
-
-    header { grid-area: head; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border: 1px solid var(--line); border-radius: 50px; background: var(--panel); backdrop-filter: blur(10px); }
-    h1 { font-family: "Instrument Serif"; font-size: 2rem; font-weight: 400; }
-    
-    .kpis { grid-area: kpi; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-    .kpi { background: var(--panel); border: 1px solid var(--line); padding: 12px; border-radius: 16px; }
-    .kpi .val { font-size: 1.2rem; font-weight: 600; color: var(--red-soft); margin-top: 4px; }
-    .kpi .lab { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
-
-    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; padding: 16px; overflow: hidden; position: relative; }
-    
-    aside.left { grid-area: side; }
-    main.map-area { grid-area: map; padding: 0; background: radial-gradient(circle at center, #111, #000); }
-    aside.right { grid-area: feat; }
-    footer { grid-area: foot; display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 12px; }
-
-    /* Map Styles */
-    #map { width: 100%; height: 100%; }
-    .country { fill: #222; stroke: #333; stroke-width: 0.5; transition: all 0.3s; cursor: pointer; }
-    .country:hover { fill: #444; stroke: var(--red-soft); }
-    .country.active { fill: var(--red); stroke: #fff; }
-
-    /* UI Components */
-    .search-box { width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 8px; color: #fff; margin-bottom: 15px; }
-    .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
-    .big-score { font-family: "Instrument Serif"; font-size: 4rem; color: var(--red); line-height: 1; }
-    
-    .factor-bar-wrap { margin-bottom: 12px; }
-    .factor-label { font-size: 0.7rem; display: flex; justify-content: space-between; margin-bottom: 4px; }
-    .bar-bg { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
-    .bar-fill { height: 100%; background: var(--red); border-radius: 2px; transition: width 0.6s ease; }
-
-    .rank-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 0.8rem; cursor: pointer; }
-    .rank-item:hover { color: var(--red-soft); }
-
-    #tooltip { position: absolute; background: #fff; color: #000; padding: 5px 10px; border-radius: 4px; font-size: 12px; pointer-events: none; display: none; z-index: 100; }
-
-    @media (max-width: 1000px) {
-      body { overflow-y: auto; height: auto; }
-      .app { grid-template-areas: "head" "kpi" "map" "side" "feat" "foot"; grid-template-columns: 1fr; grid-template-rows: auto; }
-      footer { grid-template-columns: 1fr; }
+    .c-path { fill: #111111; stroke: #222222; stroke-width: 0.4; cursor: pointer; transition: fill 0.3s; }
+    .c-path:hover { fill: #2a2a2a; stroke: #cc2200; }
+    .c-path.active { stroke: #ffffff; stroke-width: 1.5; }
+    /* Seismic waves container */
+    #waves-group {}
+    .wave-ring {
+      fill: none;
+      animation: wavePulse linear infinite;
+    }
+    @keyframes wavePulse {
+      0% { r: 4px; opacity: 0.8; }
+      100% { r: 60px; opacity: 0; }
+    }
+    /* Tooltip */
+    #tip {
+      position: absolute;
+      pointer-events: none;
+      background: var(--surface);
+      border: 1px solid var(--line2);
+      color: var(--ink);
+      font-family: "Syne", sans-serif;
+      font-size: 0.7rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+      z-index: 10;
+      white-space: nowrap;
+    }
+    /* FOCUS OVERLAY on map */
+    .map-focus {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(13,13,20,0.88);
+      border: 1px solid var(--line2);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 14px 18px;
+      min-width: 160px;
+      pointer-events: none;
+    }
+    .focus-name {
+      font-family: "Playfair Display", serif;
+      font-size: 1.1rem;
+      margin-bottom: 2px;
+    }
+    .focus-score {
+      font-family: "Playfair Display", serif;
+      font-size: 2.8rem;
+      line-height: 1;
+      color: #cc2200;
+    }
+    .focus-rank {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 6px;
+    }
+    /* BOTTOM METRICS */
+    .bottom-metrics {
+      grid-area: bot;
+      display: grid;
+      grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+      border-top: 1px solid var(--line);
+    }
+    .metric-panel {
+      padding: 14px 18px;
+      border-right: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .metric-panel:last-child { border-right: none; }
+    .metric-title {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    /* Factor bars */
+    .fbar-row { margin-bottom: 8px; }
+    .fbar-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      margin-bottom: 3px;
+    }
+    .fbar-pct { color: var(--accent); font-weight: 700; }
+    .fbar-track {
+      height: 3px;
+      background: var(--faint);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .fbar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    /* Sparkline */
+    #sparkline { width: 100%; height: 90px; }
+    /* Score gauge */
+    #gauge-svg { display: block; margin: 0 auto; }
+    /* Info panel */
+    .info-panel {
+      background: linear-gradient(135deg, rgba(204,34,0,.12), rgba(80,80,80,.1));
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.68rem;
+      line-height: 1.6;
+      color: var(--muted);
     }
   </style>
 </head>
 <body>
-
-<div id="tooltip"></div>
-
+<div id="tip"></div>
 <div class="app">
+  <!-- HEADER -->
   <header>
-    <div class="brand">
-      <h1>Country Pulse</h1>
-      <p style="font-size: 0.75rem; color: var(--muted)">WHR & OWID Happiness Intelligence</p>
+    <div>
+      <div class="brand-title">Country Pulse</div>
+      <div class="brand-sub">WHR · OWID Happiness Intelligence</div>
     </div>
-    <div style="font-size: 0.7rem; background: rgba(255,64,64,0.1); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--red);">Live Data Engine</div>
+    <div class="live-badge"><div class="live-dot"></div> Live Data Engine · 2026</div>
   </header>
-
-  <section class="kpis">
-    <div class="kpi"><div class="lab">Global Average</div><div class="val" id="kpi-avg">5.48</div></div>
-    <div class="kpi"><div class="lab">Top Country</div><div class="val" id="kpi-top">Finland</div></div>
-    <div class="kpi"><div class="lab">Data Points</div><div class="val" id="kpi-count">145</div></div>
-    <div class="kpi"><div class="lab">Trend Direction</div><div class="val" id="kpi-trend">Stable</div></div>
-    <div class="kpi"><div class="lab">Factor Match</div><div class="val">92%</div></div>
-    <div class="kpi"><div class="lab">Last Update</div><div class="val">2026</div></div>
+  <!-- KPI STRIP -->
+  <section class="kpi-strip">
+    <div class="kpi-cell">
+      <div class="kpi-label">Global Average</div>
+      <div class="kpi-val accent" id="kpi-avg">5.48</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Happiest Country</div>
+      <div class="kpi-val" id="kpi-top">Finland</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Unhappiest Country</div>
+      <div class="kpi-val" id="kpi-unhappiest">Afghanistan</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Countries Tracked</div>
+      <div class="kpi-val green" id="kpi-count">145</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Global Trend</div>
+      <div class="kpi-val" id="kpi-trend">Stable</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Factor Match</div>
+      <div class="kpi-val accent">92%</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Highest Score</div>
+      <div class="kpi-val" id="kpi-high">7.74</div>
+    </div>
   </section>
-
-  <aside class="panel left">
-    <input type="text" class="search-box" id="search" placeholder="Search country...">
-    <div class="title" style="color:var(--red-soft); font-size:0.7rem; font-weight:bold; text-transform:uppercase; margin-bottom:15px;">Focus Overview</div>
-    <div id="focus-content">
-      <h2 id="focus-name" style="font-family:'Instrument Serif'; font-size: 2.5rem;">—</h2>
-      <div class="big-score" id="focus-score">0.00</div>
-      <div style="margin-top:20px;">
-        <div class="stat-row"><span>Rank</span><span id="focus-rank">#—</span></div>
-        <div class="stat-row"><span>Year</span><span id="focus-year">—</span></div>
-        <div class="stat-row"><span>Regional Avg</span><span id="focus-reg">6.1</span></div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="section-label">Search & Filter</div>
+      <input class="search-input" id="search" type="text" placeholder="Country name…" />
+      <div class="region-filters" id="region-filters">
+        <button class="region-btn active" data-r="all">All</button>
       </div>
     </div>
+    <div class="rank-list" id="rank-list"></div>
   </aside>
-
-  <main class="panel map-area">
-    <svg id="map"></svg>
+  <!-- MAP -->
+  <main class="map-area">
+    <svg id="map-svg">
+      <g id="countries-group"></g>
+      <g id="waves-group"></g>
+    </svg>
+    <div class="map-focus" id="map-focus">
+      <div class="focus-name" id="focus-name">World</div>
+      <div class="focus-score" id="focus-score">—</div>
+      <div class="focus-rank" id="focus-rank">Select a country</div>
+    </div>
+    <div id="tip"></div>
   </main>
-
-  <aside class="panel right">
-    <div class="title" style="color:var(--red-soft); font-size:0.7rem; font-weight:bold; text-transform:uppercase; margin-bottom:15px;">Global Rankings</div>
-    <div id="rank-list" style="overflow-y:auto; height: 100%;"></div>
-  </aside>
-
-  <footer>
-    <div class="panel">
-      <div class="title" style="font-size:0.7rem; text-transform:uppercase; margin-bottom:10px;">Explanatory Factors</div>
-      <div id="factor-bars"></div>
+  <!-- BOTTOM -->
+  <div class="bottom-metrics">
+    <div class="metric-panel">
+      <div class="metric-title">Explanatory Factors</div>
+      <div id="factor-bars">
+        <div style="color:var(--muted);font-size:0.7rem">Select a country to view factors</div>
+      </div>
     </div>
-    <div class="panel">
-      <div class="title" style="font-size:0.7rem; text-transform:uppercase; margin-bottom:10px;">Trend Pulse</div>
-      <svg id="sparkline" style="width:100%; height:80px;"></svg>
+    <div class="metric-panel">
+      <div class="metric-title">Score Trend (simulated)</div>
+      <svg id="sparkline"></svg>
     </div>
-    <div class="panel" style="background: var(--red); color: #fff;">
-      <p style="font-size: 0.8rem; font-weight: bold;">Intelligence Note</p>
-      <p style="font-size: 0.75rem; margin-top:5px; opacity: 0.9;">Scores represent subjective well-being (Cantril Ladder). Factors like GDP and Social Support explain the variations between nations.</p>
+    <div class="metric-panel">
+      <div class="metric-title">Happiness Gauge</div>
+      <svg id="gauge-svg" width="160" height="90" viewBox="0 0 160 90"></svg>
     </div>
-  </footer>
+    <div class="metric-panel">
+      <div class="metric-title">About This Data</div>
+      <div class="info-panel">
+        Scores use the Cantril Ladder (0–10). Factors like GDP per capita, social support, and freedom explain national variation in subjective well-being.
+      </div>
+    </div>
+  </div>
 </div>
-
 <script>
-/** 
- * Data & State 
- */
-let state = {
-  raw: [],
-  countries: [],
-  selected: null,
-  topology: null
-};
-
-const SCHEMAS = [
-  { id: 'gdp', label: 'GDP per Capita' },
-  { id: 'social', label: 'Social Support' },
-  { id: 'health', label: 'Healthy Life Expectancy' },
-  { id: 'freedom', label: 'Freedom of Choice' }
+const FACTORS = [
+  { id: 'gdp', label: 'GDP per Capita', color: '#cc2200' },
+  { id: 'social', label: 'Social Support', color: '#ffffff' },
+  { id: 'health', label: 'Healthy Life Expectancy', color: '#888888' },
+  { id: 'freedom', label: 'Freedom of Choice', color: '#555555' },
 ];
-
-/**
- * Initialization
- */
+const REGIONS = ['Western Europe','North America','East Asia','South Asia','Middle East','Sub-Saharan Africa','Latin America','Eastern Europe'];
+let state = { countries: [], selected: null, topo: null, regionFilter: 'all' };
 async function init() {
-  try {
-    // 1. Fetch Topology
-    const topoData = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
-    state.topology = topojson.feature(topoData, topoData.objects.countries);
-
-    // 2. Fetch Sample Data (Replacing with Mock for functional demo if URL fails)
-    // In production, use your CSV/XLSX loader logic here
-    const mockData = state.topology.features.map(f => ({
+  const topoData = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
+  state.topo = topojson.feature(topoData, topoData.objects.countries);
+  const named = [
+    ["Finland",7.74,"Western Europe"],["Denmark",7.58,"Western Europe"],
+    ["Iceland",7.52,"Western Europe"],["Sweden",7.34,"Western Europe"],
+    ["Netherlands",7.32,"Western Europe"],["Norway",7.30,"Western Europe"],
+    ["Switzerland",7.24,"Western Europe"],["Luxembourg",7.22,"Western Europe"],
+    ["Australia",7.10,"East Asia"],["New Zealand",7.06,"East Asia"],
+    ["United Kingdom",6.94,"Western Europe"],["Austria",6.91,"Western Europe"],
+    ["Canada",6.90,"North America"],["Germany",6.85,"Western Europe"],
+    ["United States of America",6.72,"North America"],["Belgium",6.68,"Western Europe"],
+    ["Ireland",6.65,"Western Europe"],["Czech Republic",6.43,"Eastern Europe"],
+    ["France",6.40,"Western Europe"],["Mexico",6.30,"Latin America"],
+    ["Poland",6.14,"Eastern Europe"],["Chile",6.01,"Latin America"],
+    ["Costa Rica",5.98,"Latin America"],["Uruguay",5.90,"Latin America"],
+    ["Brazil",5.74,"Latin America"],["Colombia",5.63,"Latin America"],
+    ["Argentina",5.54,"Latin America"],["China",5.48,"East Asia"],
+    ["Ecuador",5.45,"Latin America"],["Thailand",5.39,"East Asia"],
+    ["Russia",5.37,"Eastern Europe"],["Turkey",4.85,"Middle East"],
+    ["Ukraine",4.60,"Eastern Europe"],["Honduras",4.50,"Latin America"],
+    ["India",4.36,"South Asia"],["Cambodia",4.38,"East Asia"],
+    ["Egypt",4.20,"Middle East"],["Bangladesh",4.00,"South Asia"],
+    ["Ethiopia",3.80,"Sub-Saharan Africa"],["Pakistan",3.78,"South Asia"],
+    ["Tanzania",3.70,"Sub-Saharan Africa"],["Yemen",3.50,"Middle East"],
+    ["Zimbabwe",3.20,"Sub-Saharan Africa"],["South Sudan",3.00,"Sub-Saharan Africa"],
+    ["Afghanistan",2.40,"South Asia"],["Benin",5.00,"Sub-Saharan Africa"],
+    ["Japan",5.99,"East Asia"],["South Korea",5.88,"East Asia"],
+    ["Spain",6.20,"Western Europe"],["Italy",6.16,"Western Europe"],
+    ["Portugal",5.89,"Western Europe"],["Nigeria",4.72,"Sub-Saharan Africa"],
+    ["Kenya",4.80,"Sub-Saharan Africa"],["Ghana",5.28,"Sub-Saharan Africa"],
+    ["Morocco",5.18,"Middle East"],["Saudi Arabia",6.17,"Middle East"],
+    ["Iran",4.54,"Middle East"],["Iraq",4.50,"Middle East"],
+    ["Vietnam",5.65,"East Asia"],["Indonesia",5.28,"East Asia"],
+    ["Philippines",5.79,"East Asia"],["Malaysia",5.86,"East Asia"],
+    ["Singapore",6.29,"East Asia"],["Hungary",5.80,"Eastern Europe"],
+    ["Romania",5.60,"Eastern Europe"],["Bulgaria",5.22,"Eastern Europe"],
+    ["Serbia",5.50,"Eastern Europe"],["Peru",5.41,"Latin America"],
+    ["Bolivia",5.47,"Latin America"],["Venezuela",4.70,"Latin America"],
+    ["Cuba",4.90,"Latin America"],["Panama",6.18,"Latin America"],
+    ["Paraguay",5.35,"Latin America"],["Guatemala",5.83,"Latin America"],
+    ["El Salvador",5.35,"Latin America"],["Dominican Republic",5.71,"Latin America"],
+    ["Haiti",3.68,"Latin America"],["Nicaragua",5.23,"Latin America"],
+  ];
+  const rng = (s) => { let x = Math.sin(s)*10000; return x-Math.floor(x); };
+  const countries = state.topo.features.map((f,i) => {
+    const found = named.find(n => f.properties.name === n[0]);
+    return {
+      feature: f,
       name: f.properties.name,
-      id: f.id,
-      score: (Math.random() * 5 + 3).toFixed(2),
-      rank: Math.floor(Math.random() * 150),
-      gdp: Math.random() * 100,
-      social: Math.random() * 100,
-      health: Math.random() * 100,
-      freedom: Math.random() * 100
-    })).sort((a,b) => b.score - a.score);
-
-    state.countries = mockData;
-    renderMap();
-    renderRankings(mockData);
-    selectCountry(mockData[0].name);
-    setupInteractions();
-    
-  } catch (err) {
-    console.error("Initialization Failed:", err);
-  }
+      score: found ? found[1] : +(rng(i)*3+3.5).toFixed(2),
+      region: found ? found[2] : REGIONS[Math.floor(rng(i*7)*REGIONS.length)],
+      gdp: +(rng(i*2)*90+10),
+      social: +(rng(i*3)*80+20),
+      health: +(rng(i*4)*80+15),
+      freedom: +(rng(i*5)*85+10),
+    };
+  }).sort((a,b) => b.score - a.score).map((c,i) => ({...c, rank: i+1}));
+  state.countries = countries;
+  const top = countries[0];
+  const bottom = countries[countries.length - 1];
+  const avg = (countries.reduce((s,c)=>s+c.score,0)/countries.length).toFixed(2);
+  document.getElementById('kpi-avg').textContent = avg;
+  document.getElementById('kpi-top').textContent = top.name;
+  document.getElementById('kpi-unhappiest').textContent = bottom.name;
+  document.getElementById('kpi-count').textContent = countries.length;
+  document.getElementById('kpi-high').textContent = top.score.toFixed(2);
+  buildRegionFilters();
+  renderMap();
+  renderRankList(countries);
+  selectCountry(top.name);
+  setupSearch();
 }
-
-/**
- * UI Rendering
- */
+function buildRegionFilters() {
+  const wrap = document.getElementById('region-filters');
+  REGIONS.forEach(r => {
+    const btn = document.createElement('button');
+    btn.className = 'region-btn';
+    btn.dataset.r = r;
+    btn.textContent = r.split(' ')[0];
+    btn.title = r;
+    btn.onclick = () => filterRegion(r, btn);
+    wrap.appendChild(btn);
+  });
+}
+function filterRegion(r, btn) {
+  state.regionFilter = r;
+  document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = state.countries.filter(c => c.region === r);
+  renderRankList(filtered);
+}
+function setupSearch() {
+  document.getElementById('search').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    const base = state.regionFilter === 'all'
+      ? state.countries
+      : state.countries.filter(c => c.region === state.regionFilter);
+    renderRankList(q ? base.filter(c => c.name.toLowerCase().includes(q)) : base);
+  });
+  document.querySelectorAll('.region-btn')[0].onclick = () => {
+    state.regionFilter = 'all';
+    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.region-btn')[0].classList.add('active');
+    renderRankList(state.countries);
+  };
+}
+function renderRankList(list) {
+  const el = document.getElementById('rank-list');
+  el.innerHTML = list.slice(0,80).map(c => `
+    <div class="rank-item${state.selected && state.selected.name===c.name?' selected':''}" onclick="selectCountry('${c.name.replace(/'/g,"\\'")}')">
+      <span class="rank-num">${c.rank}</span>
+      <span class="rank-name">${c.name}</span>
+      <span class="rank-score" style="color:${scoreColor(c.score)}">${c.score.toFixed(2)}</span>
+    </div>
+  `).join('');
+}
+function scoreColor(s) {
+  if (s >= 6.5) return '#ffffff';
+  if (s >= 5.5) return '#aaaaaa';
+  if (s >= 4.5) return '#666666';
+  return '#cc2200';
+}
 function renderMap() {
-  const svg = d3.select("#map");
-  const width = svg.node().clientWidth;
-  const height = svg.node().clientHeight;
-  
-  const projection = d3.geoMercator().fitSize([width, height], state.topology);
+  const svg = d3.select('#map-svg');
+  const el = document.getElementById('map-svg');
+  const W = el.clientWidth, H = el.clientHeight;
+  const projection = d3.geoNaturalEarth1().fitSize([W, H], state.topo);
+  state.projection = projection;
   const path = d3.geoPath().projection(projection);
-
-  const colorScale = d3.scaleSequential(d3.interpolateYlOrRd).domain([3, 8]);
-
-  svg.selectAll(".country")
-    .data(state.topology.features)
-    .enter().append("path")
-    .attr("class", "country")
-    .attr("d", path)
-    .attr("fill", d => {
-      const entry = state.countries.find(c => c.name === d.properties.name);
-      return entry ? colorScale(entry.score) : "#222";
+  const colorScale = d3.scaleSequential()
+    .domain([2.5, 8])
+    .interpolator(t => {
+      if (t < 0.4) return d3.interpolateRgb('#1a0000', '#cc2200')(t / 0.4);
+      if (t < 0.7) return d3.interpolateRgb('#cc2200', '#555555')((t - 0.4) / 0.3);
+      return d3.interpolateRgb('#555555', '#ffffff')((t - 0.7) / 0.3);
+    });
+  const tip = document.getElementById('tip');
+  d3.select('#countries-group')
+    .selectAll('path')
+    .data(state.topo.features)
+    .enter().append('path')
+    .attr('class', 'c-path')
+    .attr('d', path)
+    .attr('fill', d => {
+      const c = state.countries.find(x => x.name === d.properties.name);
+      return c ? colorScale(c.score) : '#1a1a2e';
     })
-    .on("click", (e, d) => selectCountry(d.properties.name))
-    .on("mousemove", (e, d) => {
-      d3.select("#tooltip")
-        .style("display", "block")
-        .style("left", (e.pageX + 10) + "px")
-        .style("top", (e.pageY - 20) + "px")
-        .html(`<strong>${d.properties.name}</strong>`);
+    .on('click', (e, d) => selectCountry(d.properties.name))
+    .on('mousemove', (e, d) => {
+      const c = state.countries.find(x => x.name === d.properties.name);
+      if (!c) return;
+      tip.style.display = 'block';
+      tip.style.left = (e.offsetX + 12) + 'px';
+      tip.style.top = (e.offsetY - 28) + 'px';
+      tip.innerHTML = `<strong>${c.name}</strong> · ${c.score.toFixed(2)}`;
     })
-    .on("mouseleave", () => d3.select("#tooltip").style("display", "none"));
+    .on('mouseleave', () => { tip.style.display = 'none'; });
 }
-
 function selectCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
-
   state.selected = entry;
-
-  // Update Focus Panel
-  document.getElementById("focus-name").innerText = entry.name;
-  document.getElementById("focus-score").innerText = entry.score;
-  document.getElementById("focus-rank").innerText = `#${entry.rank}`;
-  
-  // Update Factors
-  const factorContainer = document.getElementById("factor-bars");
-  factorContainer.innerHTML = SCHEMAS.map(s => `
-    <div class="factor-bar-wrap">
-      <div class="factor-label"><span>${s.label}</span><span>${Math.round(entry[s.id])}%</span></div>
-      <div class="bar-bg"><div class="bar-fill" style="width: ${entry[s.id]}%"></div></div>
+  document.getElementById('focus-name').textContent = entry.name;
+  document.getElementById('focus-score').textContent = entry.score.toFixed(2);
+  document.getElementById('focus-rank').textContent = `Rank #${entry.rank} of ${state.countries.length}`;
+  d3.selectAll('.c-path').classed('active', d => d.properties.name === entry.name);
+  renderWaves(entry);
+  renderFactors(entry);
+  renderSparkline(entry);
+  renderGauge(entry.score);
+  renderRankList(state.regionFilter === 'all'
+    ? state.countries
+    : state.countries.filter(c => c.region === state.regionFilter));
+}
+function renderWaves(entry) {
+  const wg = document.getElementById('waves-group');
+  wg.innerHTML = '';
+  const centroid = d3.geoPath().projection(state.projection).centroid(entry.feature);
+  if (!centroid || isNaN(centroid[0])) return;
+  const [cx, cy] = centroid;
+  const score = entry.score;
+  const dur = 4 - (score - 2.5) / 5.5 * 2.2;
+  const maxR = 20 + (score / 8) * 55;
+  const waveColor = '#cc2200'; // 🔥 SEISMIC WAVES ARE NOW RED FOR EVERY COUNTRY
+  const WAVES = 4;
+  for (let i = 0; i < WAVES; i++) {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', 4);
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', waveColor);
+    circle.setAttribute('stroke-width', '1');
+    circle.setAttribute('opacity', '0');
+    wg.appendChild(circle);
+    const delay = (i / WAVES) * dur;
+    circle.style.animation = `none`;
+    circle.style.animationName = `none`;
+    void circle.offsetWidth;
+    animateWave(circle, cx, cy, maxR, dur, delay, waveColor);
+  }
+  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot.setAttribute('cx', cx);
+  dot.setAttribute('cy', cy);
+  dot.setAttribute('r', 4);
+  dot.setAttribute('fill', waveColor);
+  wg.appendChild(dot);
+}
+function animateWave(el, cx, cy, maxR, dur, delay, color) {
+  let start = null;
+  const totalMs = dur * 1000;
+  const delayMs = delay * 1000;
+  function step(ts) {
+    if (!start) start = ts;
+    const elapsed = ts - start;
+    if (elapsed < delayMs) { requestAnimationFrame(step); return; }
+    const t = ((elapsed - delayMs) % totalMs) / totalMs;
+    const r = 3 + t * maxR;
+    const op = (1 - t) * 0.75;
+    el.setAttribute('r', r);
+    el.setAttribute('opacity', op);
+    requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function renderFactors(entry) {
+  const el = document.getElementById('factor-bars');
+  el.innerHTML = FACTORS.map(f => `
+    <div class="fbar-row">
+      <div class="fbar-meta">
+        <span style="font-size:0.65rem;color:var(--muted)">${f.label}</span>
+        <span class="fbar-pct" style="color:${f.color}">${Math.round(entry[f.id])}%</span>
+      </div>
+      <div class="fbar-track">
+        <div class="fbar-fill" style="width:${entry[f.id]}%;background:${f.color}"></div>
+      </div>
     </div>
   `).join('');
-
-  // Highlight Map
-  d3.selectAll(".country").classed("active", d => d.properties.name === entry.name);
 }
-
-function renderRankings(data) {
-  const list = document.getElementById("rank-list");
-  list.innerHTML = data.slice(0, 50).map(c => `
-    <div class="rank-item" onclick="selectCountry('${c.name.replace(/'/g, "\\'")}')">
-      <span>${c.name}</span>
-      <span style="font-weight:bold">${c.score}</span>
-    </div>
-  `).join('');
-}
-
-function setupInteractions() {
-  document.getElementById("search").addEventListener("input", (e) => {
-    const term = e.target.value.toLowerCase();
-    const filtered = state.countries.filter(c => c.name.toLowerCase().includes(term));
-    renderRankings(filtered);
+function renderSparkline(entry) {
+  const svg = document.getElementById('sparkline');
+  svg.innerHTML = '';
+  const W = svg.clientWidth || 220, H = 80;
+  const baseScore = entry.score;
+  const years = d3.range(2015, 2026);
+  const pts = years.map((y, i) => {
+    const noise = (Math.sin(i * 2.3 + baseScore) * 0.4);
+    return { y, v: Math.max(1, Math.min(9, baseScore + noise - 0.2 + i * 0.02)) };
+  });
+  const xScale = d3.scaleLinear().domain([2015, 2025]).range([20, W - 10]);
+  const yScale = d3.scaleLinear().domain([
+    d3.min(pts, d => d.v) - 0.3,
+    d3.max(pts, d => d.v) + 0.3
+  ]).range([H - 10, 5]);
+  const line = d3.line().x(d => xScale(d.y)).y(d => yScale(d.v)).curve(d3.curveCatmullRom);
+  const area = d3.area().x(d => xScale(d.y)).y0(H).y1(d => yScale(d.v)).curve(d3.curveCatmullRom);
+  const svgEl = d3.select('#sparkline');
+  const grad = svgEl.append('defs').append('linearGradient')
+    .attr('id', 'spark-grad').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',1);
+  grad.append('stop').attr('offset','0%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity', 0.25);
+  grad.append('stop').attr('offset','100%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity', 0);
+  svgEl.append('path').datum(pts).attr('d', area)
+    .attr('fill', 'url(#spark-grad)');
+  svgEl.append('path').datum(pts).attr('d', line)
+    .attr('fill','none').attr('stroke', scoreColor(entry.score)).attr('stroke-width', 1.5);
+  [2015, 2020, 2025].forEach(y => {
+    svgEl.append('text')
+      .attr('x', xScale(y)).attr('y', H)
+      .attr('fill', 'rgba(234,230,223,.3)')
+      .attr('font-size', 9)
+      .attr('text-anchor', 'middle')
+      .text(y);
   });
 }
-
+function renderGauge(score) {
+  const svg = d3.select('#gauge-svg');
+  svg.selectAll('*').remove();
+  const W = 160, H = 90;
+  const cx = W/2, cy = H - 10;
+  const r = 65;
+  const startAngle = -Math.PI;
+  const endAngle = 0;
+  const arc = (sa, ea, inner, outer) => {
+    const x1 = cx + outer * Math.cos(sa);
+    const y1 = cy + outer * Math.sin(sa);
+    const x2 = cx + outer * Math.cos(ea);
+    const y2 = cy + outer * Math.sin(ea);
+    const xi1 = cx + inner * Math.cos(sa);
+    const yi1 = cy + inner * Math.sin(sa);
+    const xi2 = cx + inner * Math.cos(ea);
+    const yi2 = cy + inner * Math.sin(ea);
+    const big = ea - sa > Math.PI ? 1 : 0;
+    return `M${x1} ${y1} A${outer} ${outer} 0 ${big} 1 ${x2} ${y2} L${xi2} ${yi2} A${inner} ${inner} 0 ${big} 0 ${xi1} ${yi1} Z`;
+  };
+  const segments = [
+    { range: [2.5,4.5], color:'#cc2200' },
+    { range: [4.5,5.5], color:'#444444' },
+    { range: [5.5,6.5], color:'#888888' },
+    { range: [6.5,8.0], color:'#ffffff' },
+  ];
+  const angleScale = d3.scaleLinear().domain([2.5, 8]).range([startAngle, endAngle]);
+  segments.forEach(seg => {
+    const sa = angleScale(seg.range[0]);
+    const ea = angleScale(seg.range[1]);
+    svg.append('path').attr('d', arc(sa, ea, r-14, r))
+      .attr('fill', seg.color).attr('opacity', 0.3);
+  });
+  const scoreAngle = angleScale(Math.min(8, Math.max(2.5, score)));
+  svg.append('path').attr('d', arc(startAngle, scoreAngle, r-14, r))
+    .attr('fill', scoreColor(score)).attr('opacity', 0.9);
+  const nx = cx + (r-7) * Math.cos(scoreAngle);
+  const ny = cy + (r-7) * Math.sin(scoreAngle);
+  svg.append('circle').attr('cx', nx).attr('cy', ny).attr('r', 4)
+    .attr('fill', '#fff');
+  svg.append('text').attr('x', cx).attr('y', cy - 10)
+    .attr('text-anchor','middle').attr('fill', scoreColor(score))
+    .attr('font-family','Playfair Display, serif').attr('font-size', 20).attr('font-weight', 700)
+    .text(score.toFixed(2));
+  svg.append('text').attr('x', cx).attr('y', cy + 4)
+    .attr('text-anchor','middle').attr('fill','rgba(234,230,223,.4)')
+    .attr('font-size', 9).text('Cantril Score');
+}
 init();
 </script>
 </body>
