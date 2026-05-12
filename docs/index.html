@@ -416,7 +416,7 @@ const FACTORS = [
   { id: 'freedom', label: 'Freedom of Choice', color: '#555555' },
 ];
 const REGIONS = ['Western Europe','North America','East Asia','South Asia','Middle East','Sub-Saharan Africa','Latin America','Eastern Europe'];
-let state = { countries: [], selected: null, topo: null, regionFilter: 'all', projection: null };
+let state = { countries: [], selected: null, topo: null, regionFilter: 'all', projection: null, searchFocus: null };
 let previewed = null;
 
 async function init() {
@@ -488,7 +488,7 @@ async function init() {
   document.getElementById('kpi-high').textContent = top.score.toFixed(2);
   buildRegionFilters();
   renderMap();
-  initAllPulses();           // ← clean single PULSE per country (bigger for happier)
+  initAllPulses();
   renderRankList(countries);
   selectCountry(top.name);
   setupSearch();
@@ -517,18 +517,59 @@ function filterRegion(r, btn) {
 
 function setupSearch() {
   const searchInput = document.getElementById('search');
+  // live search as you type
   searchInput.addEventListener('input', e => {
     const q = e.target.value.toLowerCase().trim();
     let base = state.regionFilter === 'all' ? state.countries : state.countries.filter(c => c.region === state.regionFilter);
     if (q) base = base.filter(c => c.name.toLowerCase().includes(q));
     renderRankList(base);
   });
+
+  // ENTER KEY → only the searched country + its pulse/details visible
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const q = searchInput.value.toLowerCase().trim();
+      if (!q) return;
+
+      // find best match (exact first, then partial)
+      let match = state.countries.find(c => c.name.toLowerCase() === q);
+      if (!match) match = state.countries.find(c => c.name.toLowerCase().includes(q));
+
+      if (match) {
+        state.searchFocus = match.name;
+        selectCountry(match.name);
+        applySearchFocus();
+      }
+    }
+  });
+
   document.querySelectorAll('.region-btn')[0].onclick = () => {
     state.regionFilter = 'all';
     document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.region-btn')[0].classList.add('active');
     renderRankList(state.countries);
   };
+}
+
+function applySearchFocus() {
+  // dim every country except the focused one
+  d3.selectAll('.c-path').attr('fill-opacity', d => {
+    return d.properties.name === state.searchFocus ? 1 : 0.09;
+  });
+
+  // clear all pulses and show ONLY the focused country’s pulse
+  const wg = document.getElementById('waves-group');
+  wg.innerHTML = '';
+  const focused = state.countries.find(c => c.name === state.searchFocus);
+  if (focused) createSinglePulse(focused);
+}
+
+function resetMapVisuals() {
+  state.searchFocus = null;
+  d3.selectAll('.c-path').attr('fill-opacity', 1);
+  const wg = document.getElementById('waves-group');
+  wg.innerHTML = '';
+  initAllPulses(); // restore all pulses
 }
 
 function renderRankList(list) {
@@ -578,7 +619,11 @@ function renderMap() {
       const c = state.countries.find(x => x.name === d.properties.name);
       return c ? colorScale(c.score) : '#1a1a2e';
     })
-    .on('click', (e, d) => selectCountry(d.properties.name))
+    .on('click', (e, d) => {
+      // clicking map always resets focus mode
+      if (state.searchFocus) resetMapVisuals();
+      selectCountry(d.properties.name);
+    })
     .on('mousemove', (e, d) => {
       const c = state.countries.find(x => x.name === d.properties.name);
       if (!c) return;
@@ -597,45 +642,54 @@ function initAllPulses() {
     if (!country.feature) return;
     const centroid = d3.geoPath().projection(state.projection).centroid(country.feature);
     if (!centroid || isNaN(centroid[0])) return;
-    const [cx, cy] = centroid;
-    const score = country.score;
-    // Pulse size scales directly with happiness
-    const maxR = 6 + (score / 8) * 38;        // bigger for happier countries
-    const pulseColor = '#cc2200';
-
-    // Main pulsing ring
-    const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    pulse.setAttribute('cx', cx);
-    pulse.setAttribute('cy', cy);
-    pulse.setAttribute('r', 3);
-    pulse.setAttribute('fill', 'none');
-    pulse.setAttribute('stroke', pulseColor);
-    pulse.setAttribute('stroke-width', '1.1');
-    pulse.setAttribute('opacity', '0.85');
-    wg.appendChild(pulse);
-
-    // Small permanent center dot
-    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    dot.setAttribute('cx', cx);
-    dot.setAttribute('cy', cy);
-    dot.setAttribute('r', 1.9);
-    dot.setAttribute('fill', pulseColor);
-    dot.setAttribute('opacity', '0.9');
-    wg.appendChild(dot);
-
-    animatePulse(pulse, maxR);
+    createSinglePulse(country, wg);
   });
+}
+
+function createSinglePulse(country, container = null) {
+  const wg = container || document.getElementById('waves-group');
+  const centroid = d3.geoPath().projection(state.projection).centroid(country.feature);
+  if (!centroid || isNaN(centroid[0])) return;
+  const [cx, cy] = centroid;
+  const score = country.score;
+
+  // BIGGER PULSE FOR HAPPIER COUNTRIES — clear difference in size
+  const maxR = 8 + (score / 8) * 44;
+
+  const pulseColor = '#cc2200';
+
+  // single expanding pulse ring (classic pulse, not wave)
+  const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  pulse.setAttribute('cx', cx);
+  pulse.setAttribute('cy', cy);
+  pulse.setAttribute('r', 4);
+  pulse.setAttribute('fill', 'none');
+  pulse.setAttribute('stroke', pulseColor);
+  pulse.setAttribute('stroke-width', '1.25');
+  pulse.setAttribute('opacity', '0.95');
+  wg.appendChild(pulse);
+
+  // permanent center dot
+  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot.setAttribute('cx', cx);
+  dot.setAttribute('cy', cy);
+  dot.setAttribute('r', 2.1);
+  dot.setAttribute('fill', pulseColor);
+  dot.setAttribute('opacity', '0.95');
+  wg.appendChild(dot);
+
+  animatePulse(pulse, maxR);
 }
 
 function animatePulse(el, maxR) {
   let start = null;
-  const cycleMs = 1650;                     // smooth continuous pulse for all countries
+  const cycleMs = 1350; // snappy pulse feel
   function step(ts) {
     if (!start) start = ts;
     const elapsed = (ts - start) % cycleMs;
-    const t = elapsed / cycleMs;            // 0 → 1 loop
-    const radius = 3 + t * maxR;
-    const opacity = Math.max(0.05, 1 - t * 1.65);   // quick fade
+    const t = elapsed / cycleMs;
+    const radius = 4 + (t * t) * maxR;        // quadratic growth = sharper pulse
+    const opacity = Math.max(0.03, 1 - t * 1.8); // fast fade
     el.setAttribute('r', radius);
     el.setAttribute('opacity', opacity);
     requestAnimationFrame(step);
@@ -665,14 +719,22 @@ function endPreview() {
 function selectCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
+
+  // if we were in search-focus mode and clicked a different country → reset
+  if (state.searchFocus && state.searchFocus !== name) {
+    resetMapVisuals();
+  }
+
   state.selected = entry;
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
   document.getElementById('focus-rank').textContent = `Rank #${entry.rank} of ${state.countries.length}`;
   d3.selectAll('.c-path').classed('active', d => d.properties.name === entry.name);
+
   renderFactors(entry);
   renderSparkline(entry);
   renderGauge(entry.score);
+
   const filtered = state.regionFilter === 'all'
     ? state.countries
     : state.countries.filter(c => c.region === state.regionFilter);
@@ -782,4 +844,3 @@ init();
 </script>
 </body>
 </html>
-```
