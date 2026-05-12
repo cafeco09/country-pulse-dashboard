@@ -3,625 +3,625 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Country Pulse | Global Happiness Dashboard</title>
-  <meta name="description" content="A real-data dashboard showing global happiness scores, heartbeat-style country pulses, and World Happiness Report factor contributions." />
+
+  <title>Country Pulse | Global Happiness Map</title>
+  <meta name="description" content="Country Pulse visualises global life-evaluation scores as heartbeat-style country pulses using real OWID Cantril Ladder data." />
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
-      --bg: #030303;
-      --panel: rgba(14, 14, 14, 0.92);
-      --panel2: rgba(24, 24, 24, 0.76);
-      --line: rgba(245, 241, 232, 0.16);
-      --text: #f5f1e8;
-      --muted: rgba(245, 241, 232, 0.68);
-      --soft: rgba(245, 241, 232, 0.38);
-      --red: #ff3434;
-      --red2: #ff7777;
-      --darkred: #7a0b0b;
-      --map: #4a4a4a;
-      --mapHi: #747474;
+      --black: #070605;
+      --black-2: #0d0b09;
+      --paper: #f4efe7;
+      --paper-2: #e9dfd1;
+      --ink: #16110d;
+      --muted: #776d62;
+      --line-dark: rgba(244, 239, 231, 0.15);
+      --line-paper: rgba(22, 17, 13, 0.13);
+      --map: #56534f;
+      --map-muted: #393735;
+      --map-selected: #e6d7c3;
+      --red: #e63946;
+      --red-soft: rgba(230, 57, 70, 0.28);
+      --red-faint: rgba(230, 57, 70, 0.12);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
+    html,
     body {
       margin: 0;
-      min-height: 100vh;
-      color: var(--text);
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background:
-        radial-gradient(circle at 18% 16%, rgba(255, 52, 52, 0.14), transparent 28%),
-        radial-gradient(circle at 82% 18%, rgba(245, 241, 232, 0.06), transparent 30%),
-        #030303;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        radial-gradient(circle at 18% 18%, rgba(230, 57, 70, 0.16), transparent 30%),
+        radial-gradient(circle at 84% 12%, rgba(244, 239, 231, 0.07), transparent 28%),
+        linear-gradient(180deg, #090807 0%, #020202 100%);
+      color: var(--paper);
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
     }
 
     .app {
-      width: min(1720px, calc(100vw - 28px));
-      margin: 0 auto;
-      padding: 16px 0 26px;
+      height: 100vh;
+      width: 100vw;
+      padding: 14px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) 214px;
+      gap: 12px;
     }
 
     .topbar {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 18px;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+      gap: 16px;
       align-items: center;
-      padding: 16px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--line-dark);
       border-radius: 24px;
-      background: rgba(10, 10, 10, 0.84);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+      padding: 12px 14px;
+      background: rgba(7, 6, 5, 0.76);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
       backdrop-filter: blur(18px);
     }
 
     .brand {
       display: flex;
-      align-items: center;
       gap: 14px;
+      align-items: center;
       min-width: 0;
     }
 
-    .logo {
-      width: 56px;
-      height: 56px;
+    .mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
       display: grid;
       place-items: center;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 52, 52, 0.55);
-      background: radial-gradient(circle, rgba(255, 52, 52, 0.35), rgba(80, 0, 0, 0.35));
-      box-shadow: 0 0 38px rgba(255, 52, 52, 0.35);
+      border: 1px solid rgba(230, 57, 70, 0.52);
+      background:
+        radial-gradient(circle, rgba(230, 57, 70, 0.35), rgba(95, 8, 15, 0.32));
+      box-shadow: 0 0 42px rgba(230, 57, 70, 0.32);
       flex: 0 0 auto;
     }
 
-    .logo svg {
-      width: 36px;
-      height: 24px;
+    .mark svg {
+      width: 34px;
+      height: 22px;
       fill: none;
-      stroke: var(--text);
-      stroke-width: 2.4;
+      stroke: var(--paper);
+      stroke-width: 2.25;
       stroke-linecap: round;
       stroke-linejoin: round;
-      filter: drop-shadow(0 0 8px rgba(255, 52, 52, 0.9));
+      filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.9));
     }
 
     h1 {
       margin: 0;
       font-family: "Cormorant Garamond", Georgia, serif;
-      text-transform: none;
-      letter-spacing: -0.035em;
-      line-height: .9;
+      font-size: clamp(2.4rem, 4.2vw, 5.1rem);
       font-weight: 600;
-      font-size: clamp(2.2rem, 3.6vw, 4.6rem);
+      line-height: 0.86;
+      letter-spacing: -0.045em;
     }
 
-    .subtitle {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: .92rem;
-      letter-spacing: .01em;
+    .tagline {
+      margin: 6px 0 0;
+      color: rgba(244, 239, 231, 0.68);
+      font-size: 0.96rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .period {
-      justify-self: end;
-      border: 1px solid rgba(255, 52, 52, 0.45);
-      background: rgba(255, 52, 52, 0.08);
-      color: var(--red2);
-      border-radius: 999px;
-      padding: 10px 15px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .controls {
+    .search-wrap {
       display: grid;
-      grid-template-columns: minmax(240px, 1fr) 220px minmax(260px, 380px);
-      gap: 10px;
+      gap: 8px;
     }
 
-    .control {
-      height: 42px;
-      display: flex;
-      align-items: center;
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      background: rgba(15,15,15,.88);
-      overflow: hidden;
-    }
-
-    input, select {
-      width: 100%;
-      height: 100%;
-      color: var(--text);
-      background: transparent;
-      border: 0;
-      outline: 0;
-      padding: 0 15px;
-      font: inherit;
-    }
-
-    input::placeholder { color: var(--soft); }
-
-    .legend {
-      gap: 11px;
-      padding: 0 15px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .scale {
-      flex: 1;
-      height: 9px;
+    .search {
+      height: 46px;
+      border: 1px solid var(--line-dark);
       border-radius: 999px;
-      background: linear-gradient(90deg, #353535, #595959 35%, #a83232 68%, var(--red));
-      box-shadow: 0 0 24px rgba(255, 52, 52, 0.26);
+      background: rgba(244, 239, 231, 0.065);
+      color: var(--paper);
+      padding: 0 17px;
+      outline: none;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 390px;
-      gap: 14px;
+    .search::placeholder {
+      color: rgba(244, 239, 231, 0.42);
     }
 
-    .panel {
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: var(--panel);
-      box-shadow: 0 26px 90px rgba(0, 0, 0, 0.45);
-      overflow: hidden;
+    .source {
+      color: rgba(244, 239, 231, 0.58);
+      font-size: 0.78rem;
+      text-align: right;
     }
 
-    .map-panel {
-      min-height: 620px;
+    .map-stage {
       position: relative;
+      min-height: 0;
+      border: 1px solid var(--line-dark);
+      border-radius: 28px;
+      overflow: hidden;
       background:
-        linear-gradient(rgba(245, 241, 232, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(245, 241, 232, 0.035) 1px, transparent 1px),
-        radial-gradient(circle at 48% 45%, rgba(255, 52, 52, 0.08), transparent 32%),
-        #050505;
-      background-size: 32px 32px, 32px 32px, auto, auto;
+        linear-gradient(rgba(244, 239, 231, 0.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244, 239, 231, 0.032) 1px, transparent 1px),
+        radial-gradient(circle at 50% 48%, rgba(230, 57, 70, 0.08), transparent 35%),
+        #050504;
+      background-size: 34px 34px, 34px 34px, auto, auto;
+      box-shadow: 0 34px 120px rgba(0, 0, 0, 0.48);
     }
 
     #map {
       width: 100%;
-      height: 620px;
+      height: 100%;
       display: block;
     }
 
-    .map-status {
+    .map-meta {
       position: absolute;
+      left: 18px;
+      top: 18px;
       z-index: 5;
-      left: 16px;
-      top: 16px;
-      max-width: 560px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(0, 0, 0, 0.75);
-      color: var(--muted);
-      font-size: 0.9rem;
-      backdrop-filter: blur(10px);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: calc(100% - 36px);
+      pointer-events: none;
+    }
+
+    .pill {
+      border: 1px solid var(--line-dark);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: rgba(244, 239, 231, 0.72);
+      background: rgba(7, 6, 5, 0.68);
+      backdrop-filter: blur(12px);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .pill strong {
+      color: var(--paper);
+      font-weight: 600;
+    }
+
+    .pulse-key {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 5;
+      width: min(310px, calc(100% - 36px));
+      border: 1px solid var(--line-dark);
+      border-radius: 18px;
+      padding: 11px 12px;
+      color: rgba(244, 239, 231, 0.66);
+      background: rgba(7, 6, 5, 0.62);
+      backdrop-filter: blur(12px);
+      font-size: 0.8rem;
+    }
+
+    .pulse-key-title {
+      color: var(--paper);
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+
+    .key-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3e3b38, #615d58, #9a343a, var(--red));
+      box-shadow: 0 0 20px rgba(230, 57, 70, 0.28);
+      margin-bottom: 7px;
     }
 
     .country {
-      fill: var(--map);
-      stroke: #090909;
+      fill: var(--map-muted);
+      stroke: #050504;
       stroke-width: 0.45px;
-      opacity: 0.42;
+      opacity: 0.45;
       transition: opacity 0.18s ease, fill 0.18s ease, stroke 0.18s ease;
     }
 
     .country.has-data {
-      opacity: 0.94;
+      fill: var(--map);
+      opacity: 0.92;
       cursor: pointer;
     }
 
     .country.filtered-out {
-      opacity: 0.14;
+      opacity: 0.12;
     }
 
     .country:hover {
-      fill: var(--mapHi);
-      stroke: var(--text);
+      fill: #77716a;
+      stroke: var(--paper);
       stroke-width: 1px;
     }
 
     .country.selected {
-      fill: #787878;
-      stroke: var(--text);
-      stroke-width: 1.5px;
-      filter: drop-shadow(0 0 14px rgba(245, 241, 232, 0.22));
+      fill: var(--map-selected);
+      stroke: var(--paper);
+      stroke-width: 1.25px;
+      filter: drop-shadow(0 0 13px rgba(244, 239, 231, 0.25));
     }
 
-    .pulse-group { pointer-events: none; }
+    .pulse-group {
+      pointer-events: none;
+    }
 
     .pulse-ring {
       fill: none;
       stroke: var(--red);
-      stroke-width: 1.25;
-      opacity: 0.52;
+      stroke-width: 1.15;
+      opacity: 0.5;
       transform-box: fill-box;
       transform-origin: center;
       animation: seismicPulse 2.8s ease-out infinite;
-      filter: drop-shadow(0 0 10px rgba(255, 52, 52, 0.72));
+      filter: drop-shadow(0 0 10px rgba(230, 57, 70, 0.78));
     }
 
-    .pulse-ring.r2 { animation-delay: 0.7s; opacity: 0.34; }
-    .pulse-ring.r3 { animation-delay: 1.4s; opacity: 0.2; }
+    .pulse-ring.r2 {
+      animation-delay: 0.72s;
+      opacity: 0.34;
+    }
+
+    .pulse-ring.r3 {
+      animation-delay: 1.44s;
+      opacity: 0.2;
+    }
 
     .pulse-dot {
       fill: var(--red);
-      stroke: var(--text);
-      stroke-width: 0.8;
-      filter: drop-shadow(0 0 16px rgba(255, 52, 52, 0.95));
+      stroke: var(--paper);
+      stroke-width: 0.7;
+      filter: drop-shadow(0 0 14px rgba(230, 57, 70, 0.95));
     }
 
     .pulse-wave {
       fill: none;
-      stroke: var(--text);
-      stroke-width: 1.55;
+      stroke: var(--paper);
+      stroke-width: 1.45;
       stroke-linecap: round;
       stroke-linejoin: round;
-      filter: drop-shadow(0 0 8px rgba(255, 52, 52, 0.9));
+      filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.95));
     }
 
     @keyframes seismicPulse {
-      0% { transform: scale(0.45); opacity: 0.68; }
-      72% { transform: scale(1.48); opacity: 0.04; }
-      100% { transform: scale(1.48); opacity: 0; }
+      0% {
+        transform: scale(0.46);
+        opacity: 0.65;
+      }
+      74% {
+        transform: scale(1.48);
+        opacity: 0.04;
+      }
+      100% {
+        transform: scale(1.48);
+        opacity: 0;
+      }
     }
 
     .tooltip {
       position: absolute;
       z-index: 20;
       pointer-events: none;
-      min-width: 165px;
       display: none;
+      min-width: 170px;
       padding: 10px 12px;
-      border: 1px solid rgba(255, 52, 52, 0.48);
-      border-radius: 13px;
-      background: rgba(5, 5, 5, 0.94);
-      color: var(--text);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 28px rgba(255, 52, 52, 0.18);
-      transform: translate(-50%, -120%);
+      border: 1px solid rgba(230, 57, 70, 0.48);
+      border-radius: 14px;
+      background: rgba(8, 7, 6, 0.92);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 30px rgba(230, 57, 70, 0.18);
+      transform: translate(-50%, -122%);
+      color: var(--paper);
     }
 
-    .tooltip strong { display: block; margin-bottom: 4px; }
-    .tooltip span { display: block; color: var(--muted); font-size: 0.86rem; }
+    .tooltip strong {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
 
-    .side {
+    .tooltip span {
+      display: block;
+      color: rgba(244, 239, 231, 0.66);
+      font-size: 0.85rem;
+    }
+
+    .story {
       min-height: 0;
       display: grid;
-      grid-template-columns: 310px minmax(260px, .95fr) minmax(330px, 1.1fr);
-      grid-template-rows: minmax(0, 1fr);
-      gap: 10px;
-      padding: 10px;
-    }
-
-    .panel-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      grid-template-columns: 300px minmax(0, 1fr) 320px;
       gap: 12px;
-      margin-bottom: 13px;
-      color: var(--text);
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.055em;
-      font-weight: 600;
     }
 
-    .panel-title small {
-      color: var(--red2);
-      font-size: 0.75rem;
-      font-weight: 600;
+    .paper-card {
+      min-height: 0;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(230, 57, 70, 0.07), transparent 35%),
+        var(--paper);
+      color: var(--ink);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 26px 90px rgba(0, 0, 0, 0.38);
+      overflow: hidden;
     }
 
-    .rank-list {
+    .selected-card {
+      padding: 18px;
       display: grid;
-      gap: 7px;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
     }
 
-    .rank-row {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 34px 1fr auto;
-      gap: 10px;
+    .country-line {
+      display: flex;
+      gap: 12px;
       align-items: center;
-      text-align: left;
-      border: 1px solid rgba(245, 241, 232, 0.08);
-      background: rgba(255, 255, 255, 0.025);
-      border-radius: 13px;
-      padding: 10px;
-      color: var(--text);
-      cursor: pointer;
-      transition: 0.2s ease;
+      min-width: 0;
     }
 
-    .rank-row:hover, .rank-row.active {
-      border-color: rgba(255, 52, 52, 0.55);
-      background: rgba(255, 52, 52, 0.08);
-      transform: translateX(2px);
+    .rank-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: var(--ink);
+      color: var(--paper);
+      font-weight: 600;
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.1);
     }
 
-    .rank-country {
+    h2 {
+      margin: 0;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 2.15rem;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .rank-score {
-      color: var(--red2);
-      font-weight: 600;
+    .selected-meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.86rem;
     }
 
-    .bottom {
+    .score-row {
       display: grid;
-      grid-template-columns: 330px minmax(0, 1fr) minmax(420px, 0.9fr);
-      gap: 14px;
-      margin-top: 14px;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 10px;
     }
 
-    .card {
-      min-height: 350px;
-      padding: 18px;
-    }
-
-    .selected-head {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .badge {
-      width: 58px;
-      height: 58px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      border: 1px solid rgba(245, 241, 232, 0.24);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--red2);
+    .score {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 4.2rem;
+      line-height: 0.76;
+      letter-spacing: -0.06em;
+      color: var(--red);
       font-weight: 600;
-      box-shadow: inset 0 0 20px rgba(255,255,255,.05), 0 0 24px rgba(255,52,52,.15);
-      flex: 0 0 auto;
     }
 
-    h2 {
-      margin: 0;
-      font-size: 1.85rem;
-      line-height: 1.05;
-      letter-spacing: -0.035em;
-    }
-
-    .meta {
+    .score small {
       color: var(--muted);
-      margin-top: 4px;
-      font-size: 0.92rem;
-    }
-
-    .rank-pill {
-      display: inline-flex;
-      padding: 10px 14px;
-      margin-bottom: 18px;
-      border: 1px solid rgba(255, 52, 52, 0.55);
-      border-radius: 13px;
-      color: var(--text);
-      background: linear-gradient(180deg, rgba(255,52,52,.2), rgba(255,52,52,.07));
-      font-weight: 600;
-      box-shadow: 0 0 24px rgba(255,52,52,.14);
-    }
-
-    .score-label {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 3px;
-    }
-
-    .big-score {
-      color: var(--red2);
-      font-size: 4.1rem;
-      line-height: 0.9;
-      font-weight: 600;
-      letter-spacing: -0.065em;
-    }
-
-    .big-score small {
-      color: var(--muted);
-      font-size: 1.18rem;
+      font-family: "DM Sans", sans-serif;
+      font-size: 0.95rem;
       letter-spacing: 0;
     }
 
-    .stats {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 9px;
-    }
-
-    .stat {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.025);
-      border-radius: 14px;
-      padding: 11px;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 1.35rem;
-    }
-
-    .stat span {
-      display: block;
+    .score-caption {
       color: var(--muted);
       font-size: 0.82rem;
-      margin-top: 2px;
+      text-align: right;
+      padding-bottom: 5px;
     }
 
-    .factors {
-      min-height: 0;
+    .story-card {
+      padding: 18px 20px;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      grid-template-rows: auto 1fr;
+      gap: 10px;
     }
 
-    .factor {
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      padding: 8px;
-      background: rgba(255,255,255,.025);
-      min-height: 68px;
+    .story-kicker {
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      font-weight: 700;
     }
 
-    .factor-top {
+    .story-text {
+      margin: 0;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      color: var(--ink);
+      font-size: clamp(1.35rem, 2.1vw, 2.25rem);
+      line-height: 1.03;
+      letter-spacing: -0.035em;
+      font-weight: 500;
+    }
+
+    .metrics-card {
+      padding: 14px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .metrics-title {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
-      min-height: 38px;
-      font-size: 0.88rem;
-    }
-
-    .factor-top b {
-      color: var(--red2);
-    }
-
-    .factor-value {
-      margin-top: 5px;
-      color: var(--text);
-      font-size: .98rem;
-      font-weight: 600;
-    }
-
-    .bar-track {
-      margin-top: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(245,241,232,.12);
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--darkred), var(--red));
-      box-shadow: 0 0 14px rgba(255,52,52,.45);
-    }
-
-    .note, .insight {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 9px;
-      background: rgba(255,255,255,.025);
+      gap: 10px;
+      align-items: center;
       color: var(--muted);
-      font-size: .8rem;
-      line-height: 1.42;
-      max-height: 72px;
-      overflow: auto;
-    }
-
-    .insight {
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      padding: 12px;
-      background: rgba(255,255,255,.025);
-      margin-top: 12px;
-    }
-
-    .insight b {
-      color: var(--red2);
+      font-size: 0.8rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
+      font-weight: 700;
     }
 
-    #trend, #compare {
-      width: 100%;
-      height: 235px;
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      min-height: 0;
     }
 
-    .axis text {
-      fill: var(--muted);
-      font-size: 11px;
+    .metric {
+      border: 1px solid var(--line-paper);
+      border-radius: 16px;
+      padding: 11px;
+      background: rgba(255, 255, 255, 0.28);
     }
 
-    .axis path, .axis line {
-      stroke: rgba(245, 241, 232, 0.18);
+    .metric strong {
+      display: block;
+      color: var(--ink);
+      font-size: 1.26rem;
+      line-height: 1;
+      font-weight: 700;
     }
 
-    .grid-line line {
-      stroke: rgba(245, 241, 232, 0.08);
+    .metric span {
+      display: block;
+      color: var(--muted);
+      margin-top: 5px;
+      font-size: 0.76rem;
     }
 
-    .grid-line path {
-      stroke-width: 0;
+    .rank-strip {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .rank-chip {
+      min-width: 0;
+      border: 1px solid rgba(244, 239, 231, 0.18);
+      border-radius: 999px;
+      padding: 8px 10px;
+      color: rgba(244, 239, 231, 0.78);
+      background: rgba(7, 6, 5, 0.62);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.76rem;
+    }
+
+    .rank-chip:hover,
+    .rank-chip.active {
+      border-color: rgba(230, 57, 70, 0.58);
+      background: rgba(230, 57, 70, 0.12);
+      color: var(--paper);
+    }
+
+    .rank-chip .country-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rank-chip .chip-score {
+      color: var(--red2);
+      font-weight: 700;
     }
 
     .error {
+      position: absolute;
+      z-index: 30;
+      top: 72px;
+      right: 18px;
+      max-width: 440px;
       display: none;
-      margin: 14px 0;
-      padding: 15px;
-      border: 1px solid rgba(255, 52, 52, 0.6);
-      border-radius: 17px;
-      background: rgba(255, 52, 52, 0.1);
-      color: var(--text);
-      line-height: 1.55;
+      padding: 12px 14px;
+      border: 1px solid rgba(230, 57, 70, 0.52);
+      border-radius: 16px;
+      background: rgba(40, 0, 0, 0.82);
+      color: var(--paper);
+      line-height: 1.45;
+      font-size: 0.84rem;
+      backdrop-filter: blur(12px);
     }
 
-    .footer {
-      margin-top: 14px;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-radius: 17px;
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.55;
-      background: rgba(255,255,255,.025);
-    }
+    @media (max-width: 1100px) {
+      html,
+      body {
+        overflow: auto;
+      }
 
-    .footer strong {
-      color: var(--text);
-    }
+      .app {
+        height: auto;
+        min-height: 100vh;
+        grid-template-rows: auto auto auto;
+      }
 
-    code {
-      color: var(--text);
-      background: rgba(255,255,255,.08);
-      padding: 1px 4px;
-      border-radius: 5px;
-    }
-
-    @media (max-width: 1250px) {
-      .topbar, .controls, .layout, .bottom {
+      .topbar,
+      .story {
         grid-template-columns: 1fr;
       }
 
-      .period {
-        justify-self: start;
+      .map-stage {
+        height: 62vh;
+        min-height: 460px;
       }
 
-      .map-panel, #map {
-        min-height: 560px;
-        height: 560px;
+      .rank-strip {
+        display: none;
       }
 
-      .factors {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .source {
+        text-align: left;
       }
     }
 
-    @media (max-width: 700px) {
-      .app { width: min(100vw - 16px, 1720px); }
-      .factors, .stats { grid-template-columns: 1fr; }
-      .big-score { font-size: 3.2rem; }
+    @media (max-width: 680px) {
+      .app {
+        padding: 10px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pulse-key {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -630,116 +630,96 @@
   <main class="app">
     <header class="topbar">
       <div class="brand">
-        <div class="logo" aria-hidden="true">
+        <div class="mark" aria-hidden="true">
           <svg viewBox="0 0 42 22">
             <path d="M1 11h8l4-8 7 17 5-9h16" />
           </svg>
         </div>
         <div>
           <h1>Country Pulse</h1>
-          <p class="subtitle">The pulse of happiness around the world</p>
+          <p class="tagline">The world’s life-evaluation signal, visualised as a heartbeat.</p>
         </div>
       </div>
-      <div class="period">2023–2025 average</div>
+
+      <div class="search-wrap">
+        <input id="search" class="search" type="search" placeholder="Search a country..." autocomplete="off" />
+        <div class="source">Real data: Our World in Data · Cantril Ladder life evaluation</div>
+      </div>
     </header>
 
-    <section class="controls">
-      <label class="control">
-        <input id="search" type="search" placeholder="Search country..." autocomplete="off" />
-      </label>
-
-      <label class="control">
-        <select id="region">
-          <option value="All">All regions</option>
-        </select>
-      </label>
-
-      <div class="control legend">
-        <span>Score</span>
-        <div class="scale"></div>
-        <span>0</span>
-        <span>10</span>
+    <section class="map-stage">
+      <div class="map-meta">
+        <div class="pill"><strong id="countryCountPill">—</strong> countries loaded</div>
+        <div class="pill">Grey map · red pulse = higher score</div>
+        <div class="pill">Click any pulsing country</div>
       </div>
+
+      <div class="pulse-key">
+        <div class="pulse-key-title">Pulse intensity</div>
+        <div class="key-bar"></div>
+        Larger seismic rings represent higher reported life evaluation.
+      </div>
+
+      <div id="error" class="error"></div>
+      <svg id="map" role="img" aria-label="World map showing happiness pulse by country"></svg>
+      <div id="tooltip" class="tooltip"></div>
+      <div id="rankStrip" class="rank-strip"></div>
     </section>
 
-    <div id="error" class="error"></div>
-
-    <section class="layout">
-      <section class="panel map-panel">
-        <div id="mapStatus" class="map-status">Loading World Happiness Report data…</div>
-        <svg id="map" role="img" aria-label="World map showing happiness pulse by country"></svg>
-        <div id="tooltip" class="tooltip"></div>
-      </section>
-
-      <aside class="panel side">
-        <div class="panel-title">
-          <span>Top 10 happiest</span>
-          <small>heartbeat rank</small>
-        </div>
-        <div id="rankList" class="rank-list"></div>
-      </aside>
-    </section>
-
-    <section class="bottom">
-      <section class="panel card">
-        <div class="selected-head">
-          <div id="badge" class="badge">#—</div>
-          <div>
-            <h2 id="countryName">—</h2>
-            <div id="countryMeta" class="meta">—</div>
+    <section class="story">
+      <section class="paper-card selected-card">
+        <div class="country-line">
+          <div id="rankBadge" class="rank-badge">#—</div>
+          <div style="min-width:0">
+            <h2 id="countryName">Loading…</h2>
+            <div id="countryMeta" class="selected-meta">Fetching happiness data</div>
           </div>
         </div>
 
-        <div id="rankPill" class="rank-pill">#—</div>
-
-        <div class="score-label">Happiness score</div>
-        <div class="big-score"><span id="scoreBig">—</span> <small>/ 10</small></div>
-
-        <div class="stats">
-          <div class="stat"><strong id="rankSmall">—</strong><span>Rank</span></div>
-          <div class="stat"><strong id="countryCount">—</strong><span>Countries loaded</span></div>
-          <div class="stat"><strong id="regionAvg">—</strong><span>Region average</span></div>
-          <div class="stat"><strong id="worldAvg">—</strong><span>World average</span></div>
+        <div class="score-row">
+          <div>
+            <div id="score" class="score">— <small>/10</small></div>
+          </div>
+          <div class="score-caption">Latest life evaluation score</div>
         </div>
       </section>
 
-      <section class="panel card">
-        <div class="panel-title">
-          <span>Associated factors</span>
-          <small>Score-only mode</small>
-        </div>
-        <div id="factors" class="factors"></div>
-        <p class="note">
-          This live version uses OWID Cantril Ladder scores for ranking, map pulse size, and trend. Factor-level WHR decomposition can be added later after normalising the workbook.
+      <section class="paper-card story-card">
+        <div class="story-kicker">Pulse story</div>
+        <p id="storyText" class="story-text">
+          Loading the global happiness signal…
         </p>
       </section>
 
-      <section class="panel card">
-        <div class="panel-title">
-          <span>Trend and comparison</span>
-          <small>OWID</small>
+      <section class="paper-card metrics-card">
+        <div class="metrics-title">
+          <span>Signal summary</span>
+          <span id="latestYear">—</span>
         </div>
-        <svg id="trend"></svg>
-        <svg id="compare"></svg>
-        <div id="insight" class="insight"><b>Insight</b><br />Select a country.</div>
+
+        <div class="metric-grid">
+          <div class="metric">
+            <strong id="rankMetric">—</strong>
+            <span>Rank among loaded countries</span>
+          </div>
+          <div class="metric">
+            <strong id="trendMetric">—</strong>
+            <span>Change across visible trend window</span>
+          </div>
+          <div class="metric">
+            <strong id="worldAvgMetric">—</strong>
+            <span>Loaded-country average</span>
+          </div>
+          <div class="metric">
+            <strong id="sampleMetric">—</strong>
+            <span>Country code</span>
+          </div>
+        </div>
       </section>
     </section>
-
-    <footer class="footer">
-      <strong>Data note:</strong> Country scores, rankings, trends, and pulse size are loaded from Our World in Data's Cantril Ladder CSV. The grey map is intentional; red heartbeat rings encode higher happiness scores visually.
-    </footer>
   </main>
 
   <script>
-    window.addEventListener("error", event => {
-      showError("JavaScript error: " + event.message);
-    });
-
-    window.addEventListener("unhandledrejection", event => {
-      const reason = event.reason && event.reason.message ? event.reason.message : event.reason;
-      showError("Loading error: " + reason);
-    });
-
     const SOURCES = {
       owid: [
         "data/happiness-cantril-ladder.csv",
@@ -747,15 +727,6 @@
       ],
       world: "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
     };
-
-    const drivers = [
-      ["gdp", "GDP per capita", "GDP"],
-      ["social", "Social support", "SS"],
-      ["life", "Healthy life expectancy", "HL"],
-      ["freedom", "Freedom", "FR"],
-      ["generosity", "Generosity", "GE"],
-      ["corruption", "Corruption perception", "CP"]
-    ];
 
     const aliases = {
       "united states of america": "united states",
@@ -767,6 +738,8 @@
       "russian federation": "russian federation",
       "south korea": "south korea",
       "korea republic of": "south korea",
+      "north korea": "north korea",
+      "korea democratic peoples republic of": "north korea",
       "czech republic": "czechia",
       "czechia": "czechia",
       "vietnam": "viet nam",
@@ -777,6 +750,10 @@
       "syrian arab republic": "syria",
       "laos": "lao pdr",
       "lao pdr": "lao pdr",
+      "moldova": "moldova",
+      "republic of moldova": "moldova",
+      "tanzania": "tanzania",
+      "united republic of tanzania": "tanzania",
       "democratic republic of the congo": "congo kinshasa",
       "congo democratic republic of the": "congo kinshasa",
       "republic of the congo": "congo brazzaville",
@@ -789,21 +766,19 @@
     };
 
     const state = {
-      data: [],
+      countries: [],
       byKey: new Map(),
-      trends: new Map(),
       world: null,
       selected: null,
-      query: "",
-      region: "All"
+      query: ""
     };
 
     const $ = id => document.getElementById(id);
 
     function showError(message) {
-      const box = $("error");
-      box.style.display = "block";
-      box.innerHTML = "<strong>Dashboard issue:</strong><br>" + message;
+      const error = $("error");
+      error.style.display = "block";
+      error.innerHTML = "<strong>Dashboard issue:</strong><br>" + message;
       console.error(message);
     }
 
@@ -829,25 +804,14 @@
       return Number.isFinite(n) ? n : null;
     }
 
-    function emptyDrivers() {
-      return {
-        gdp: null,
-        social: null,
-        life: null,
-        freedom: null,
-        generosity: null,
-        corruption: null
-      };
-    }
-
-    async function fetchFirst(urls, asArrayBuffer = false) {
+    async function fetchFirst(urls) {
       let lastError;
 
       for (const url of urls) {
         try {
           const response = await fetch(url, { cache: "no-store" });
           if (!response.ok) throw new Error(url + " returned " + response.status);
-          return asArrayBuffer ? await response.arrayBuffer() : await response.text();
+          return await response.text();
         } catch (err) {
           lastError = err;
         }
@@ -855,21 +819,6 @@
 
       throw lastError;
     }
-
-    function findColumn(headers, candidates) {
-      const cleanedHeaders = headers.map(clean);
-
-      for (const candidate of candidates) {
-        const terms = candidate.map(clean);
-        const idx = cleanedHeaders.findIndex(header => terms.every(term => header.includes(term)));
-        if (idx >= 0) return idx;
-      }
-
-      return -1;
-    }
-
-
-
 
     function parseOWID(csvText) {
       const rows = d3.csvParse(csvText);
@@ -898,18 +847,18 @@
 
         if (!country || !Number.isFinite(year) || score === null) return;
 
-        const k = keyName(country);
+        const key = keyName(country);
 
-        if (!grouped.has(k)) {
-          grouped.set(k, {
+        if (!grouped.has(key)) {
+          grouped.set(key, {
             country,
-            key: k,
+            key,
             code: code || "",
             values: []
           });
         }
 
-        grouped.get(k).values.push({ year, score });
+        grouped.get(key).values.push({ year, score });
       });
 
       return Array.from(grouped.values())
@@ -923,9 +872,7 @@
             ...d,
             score: latest.score,
             latestYear: latest.year,
-            trend: latest.score - firstVisible.score,
-            drivers: emptyDrivers(),
-            drivers: emptyDrivers()
+            trend: latest.score - firstVisible.score
           };
         })
         .filter(d => Number.isFinite(d.score))
@@ -936,56 +883,68 @@
         }));
     }
 
+    function visibleCountries() {
+      const q = state.query.trim().toLowerCase();
 
-    function visibleData() {
-      return state.data.filter(d => {
-        const matchesQuery = !state.query || d.country.toLowerCase().includes(state.query.toLowerCase());
-        const matchesRegion = state.region === "All" || d.region === state.region;
-        return matchesQuery && matchesRegion;
+      return state.countries.filter(d => {
+        if (!q) return true;
+        return d.country.toLowerCase().includes(q) || d.code.toLowerCase().includes(q);
       });
     }
 
-    function average(rows, getter) {
-      return d3.mean(rows, getter) || 0;
+    function worldAverage() {
+      return d3.mean(state.countries, d => d.score) || 0;
     }
 
-    function worldAverage(driverKey = null) {
-      return driverKey
-        ? average(state.data, d => (d.drivers || emptyDrivers())[driverKey])
-        : average(state.data, d => d.score);
-    }
-
-    function regionAverage(region) {
-      const rows = state.data.filter(d => d.region === region);
-      return average(rows, d => d.score) || worldAverage();
-    }
-
-    function rankLabel(rank) {
-      if (rank === 1) return "Happiest country";
-      if (rank <= 10) return "Top 10 happiness pulse";
-      if (rank <= 30) return "High happiness pulse";
-      if (rank <= 70) return "Mid-table pulse";
-      return "Lower happiness pulse";
+    function trendPhrase(d) {
+      if (!d || !Number.isFinite(d.trend)) return "does not yet have a visible trend signal";
+      if (Math.abs(d.trend) < 0.03) return "has remained broadly stable across the visible trend window";
+      if (d.trend > 0) return `has risen by ${d.trend.toFixed(2)} points across the visible trend window`;
+      return `has fallen by ${Math.abs(d.trend).toFixed(2)} points across the visible trend window`;
     }
 
     function render() {
-      renderRankList();
-      renderDetails();
       drawMap();
-      drawTrend();
-      drawCompare();
+      renderStory();
+      renderRankStrip();
     }
 
-    function renderRankList() {
-      d3.select("#rankList")
-        .selectAll("button")
-        .data(state.data.slice(0, 10), d => d.key)
+    function renderStory() {
+      const d = state.selected || state.countries[0];
+      if (!d) return;
+
+      state.selected = d;
+
+      $("rankBadge").textContent = "#" + d.rank;
+      $("countryName").textContent = d.country;
+      $("countryMeta").textContent = `${d.code || "—"} · latest ${d.latestYear}`;
+      $("score").innerHTML = `${d.score.toFixed(2)} <small>/10</small>`;
+      $("rankMetric").textContent = `${d.rank} / ${state.countries.length}`;
+      $("trendMetric").textContent = `${d.trend >= 0 ? "+" : ""}${d.trend.toFixed(2)}`;
+      $("worldAvgMetric").textContent = worldAverage().toFixed(2);
+      $("sampleMetric").textContent = d.code || "—";
+      $("latestYear").textContent = `Latest year: ${d.latestYear}`;
+      $("countryCountPill").textContent = state.countries.length;
+
+      const relation = d.score >= worldAverage()
+        ? "above the loaded-country average"
+        : "below the loaded-country average";
+
+      $("storyText").textContent =
+        `${d.country}'s latest life-evaluation score is ${d.score.toFixed(2)} out of 10, ranking #${d.rank} among loaded countries. Its pulse sits ${relation}, and it ${trendPhrase(d)}.`;
+    }
+
+    function renderRankStrip() {
+      const strip = d3.select("#rankStrip");
+
+      strip.selectAll("button")
+        .data(state.countries.slice(0, 10), d => d.key)
         .join("button")
-        .attr("class", d => "rank-row " + (state.selected && state.selected.key === d.key ? "active" : ""))
+        .attr("class", d => "rank-chip " + (state.selected && state.selected.key === d.key ? "active" : ""))
         .html(d => `
-          <span>${d.rank}</span>
-          <span class="rank-country">${d.country}</span>
-          <span class="rank-score">${d.score.toFixed(2)}</span>
+          <span>#${d.rank}</span>
+          <span class="country-name">${d.country}</span>
+          <span class="chip-score">${d.score.toFixed(2)}</span>
         `)
         .on("click", (event, d) => {
           state.selected = d;
@@ -993,94 +952,38 @@
         });
     }
 
-    function renderDetails() {
-      const d = state.selected || state.data[0];
-      if (!d) return;
-
-      state.selected = d;
-
-      $("badge").textContent = "#" + d.rank;
-      $("countryName").textContent = d.country;
-      $("countryMeta").textContent = d.region + (d.lower && d.upper ? ` · 95% CI ${d.lower.toFixed(2)}–${d.upper.toFixed(2)}` : "");
-      $("rankPill").textContent = "#" + d.rank + " " + rankLabel(d.rank);
-      $("scoreBig").textContent = d.score.toFixed(2);
-      $("rankSmall").textContent = d.rank + " / " + state.data.length;
-      $("countryCount").textContent = state.data.length;
-      $("regionAvg").textContent = regionAverage(d.region).toFixed(2);
-      $("worldAvg").textContent = worldAverage().toFixed(2);
-
-      const maxDriver = d3.max(state.data.flatMap(row => drivers.map(m => (row.drivers || emptyDrivers())[m[0]]))) || 1;
-
-      d3.select("#factors")
-        .selectAll(".factor")
-        .data(drivers)
-        .join("div")
-        .attr("class", "factor")
-        .html(m => {
-          const value = (d.drivers || emptyDrivers())[m[0]] || 0;
-          const pct = Math.max(2, Math.min(100, value / maxDriver * 100));
-
-          return `
-            <div class="factor-top">
-              <span>${m[1]}</span>
-              <b>${m[2]}</b>
-            </div>
-            <div class="factor-value">${value.toFixed(2)}</div>
-            <div class="bar-track">
-              <div class="bar-fill" style="width:${pct}%"></div>
-            </div>
-          `;
-        });
-
-      const ranked = drivers
-        .map(m => ({ name: m[1], value: (d.drivers || emptyDrivers())[m[0]] || 0 }))
-        .sort((a, b) => b.value - a.value);
-
-      const trend = state.trends.get(d.key) || [];
-      const change = trend.length > 1 ? trend[trend.length - 1].score - trend[0].score : null;
-
-      $("insight").innerHTML = `
-        <b>Insight</b><br>
-        ${d.country}'s score is ${d.score.toFixed(2)} out of 10.
-        Its strongest modelled contribution is ${ranked[0].name.toLowerCase()}.
-        ${
-          change === null
-            ? "No matched OWID trend is available in this view."
-            : change >= 0
-              ? `The visible trend has risen by ${change.toFixed(2)} points.`
-              : `The visible trend has fallen by ${Math.abs(change).toFixed(2)} points.`
-        }
-      `;
-    }
-
     function drawMap() {
       const svg = d3.select("#map");
       svg.selectAll("*").remove();
 
-      const width = svg.node().clientWidth || 1000;
-      const height = svg.node().clientHeight || 620;
+      const node = svg.node();
+      const width = node.clientWidth || 1200;
+      const height = node.clientHeight || 600;
 
       svg.attr("viewBox", `0 0 ${width} ${height}`);
 
       const geographies = topojson.feature(state.world, state.world.objects.countries).features;
+
       const projection = d3.geoNaturalEarth1().fitExtent(
-        [[18, 18], [width - 18, height - 18]],
+        [[20, 20], [width - 20, height - 20]],
         { type: "FeatureCollection", features: geographies }
       );
 
       const path = d3.geoPath(projection);
       const geographyByKey = new Map(geographies.map(g => [keyName(g.properties.name), g]));
-      const visibleKeys = new Set(visibleData().map(d => d.key));
+      const visible = visibleCountries();
+      const visibleKeys = new Set(visible.map(d => d.key));
 
       svg.append("g")
         .selectAll("path")
         .data(geographies)
         .join("path")
         .attr("class", geo => {
-          const k = keyName(geo.properties.name);
-          const hasData = state.byKey.has(k);
-          const isSelected = state.selected && state.selected.key === k;
-          return `country ${hasData ? "has-data" : ""} ${hasData && !visibleKeys.has(k) ? "filtered-out" : ""} ${isSelected ? "selected" : ""}`;
+          const key = keyName(geo.properties.name);
+          const hasData = state.byKey.has(key);
+          const isVisible = visibleKeys.has(key);
+          const isSelected = state.selected && state.selected.key === key;
+          return `country ${hasData ? "has-data" : ""} ${hasData && !isVisible ? "filtered-out" : ""} ${isSelected ? "selected" : ""}`;
         })
         .attr("d", path)
         .on("mousemove", (event, geo) => {
@@ -1094,7 +997,7 @@
             .html(`
               <strong>${d.country}</strong>
               <span>Score: ${d.score.toFixed(2)}</span>
-              <span>Rank: ${d.rank}</span>
+              <span>Rank: #${d.rank}</span>
             `);
         })
         .on("mouseleave", () => d3.select("#tooltip").style("display", "none"))
@@ -1105,12 +1008,10 @@
           render();
         });
 
+      const scoreExtent = d3.extent(state.countries, d => d.score);
       const pulseLayer = svg.append("g");
-      const scoreExtent = d3.extent(state.data, d => d.score);
 
-      state.data.forEach(d => {
-        if (!visibleKeys.has(d.key)) return;
-
+      visible.forEach(d => {
         const geo = geographyByKey.get(d.key);
         if (!geo) return;
 
@@ -1118,24 +1019,24 @@
         if (!Number.isFinite(x) || !Number.isFinite(y)) return;
 
         const score01 = (d.score - scoreExtent[0]) / Math.max(0.1, scoreExtent[1] - scoreExtent[0]);
-        const rankBoost = d.rank <= 10 ? 1.5 : d.rank <= 25 ? 1.18 : 1;
-        const r = (7 + score01 * 30) * rankBoost;
+        const rankBoost = d.rank <= 10 ? 1.55 : d.rank <= 25 ? 1.22 : 1;
+        const radius = (7 + score01 * 30) * rankBoost;
 
         const group = pulseLayer
           .append("g")
           .attr("class", "pulse-group")
           .attr("transform", `translate(${x},${y})`);
 
-        group.append("circle").attr("class", "pulse-ring").attr("r", r);
-        group.append("circle").attr("class", "pulse-ring r2").attr("r", r * 1.42);
+        group.append("circle").attr("class", "pulse-ring").attr("r", radius);
+        group.append("circle").attr("class", "pulse-ring r2").attr("r", radius * 1.42);
 
         if (d.rank <= 35) {
-          group.append("circle").attr("class", "pulse-ring r3").attr("r", r * 1.9);
+          group.append("circle").attr("class", "pulse-ring r3").attr("r", radius * 1.9);
         }
 
         group.append("circle")
           .attr("class", "pulse-dot")
-          .attr("r", d.rank <= 10 ? 4.2 : 3.1);
+          .attr("r", d.rank <= 10 ? 4.2 : 3);
 
         if (d.rank <= 40) {
           group.append("path")
@@ -1143,181 +1044,33 @@
             .attr("d", "M-13 0h6l2-7 4 16 4-9h10");
         }
       });
-
-      $("mapStatus").textContent = `${state.data.length} WHR countries loaded · ${visibleKeys.size} visible · click a pulsing country`;
     }
-
-    function drawTrend() {
-      const d = state.selected || state.data[0];
-      const data = d ? state.trends.get(d.key) || [] : [];
-
-      const svg = d3.select("#trend");
-      svg.selectAll("*").remove();
-
-      const width = svg.node().clientWidth || 360;
-      const height = svg.node().clientHeight || 235;
-      const margin = { top: 18, right: 14, bottom: 30, left: 36 };
-
-      svg.attr("viewBox", `0 0 ${width} ${height}`);
-
-      if (!data.length) {
-        svg.append("text")
-          .attr("x", width / 2)
-          .attr("y", height / 2)
-          .attr("text-anchor", "middle")
-          .attr("fill", "rgba(245,241,232,.65)")
-          .text("No matched OWID trend");
-        return;
-      }
-
-      const x = d3.scaleLinear()
-        .domain(d3.extent(data, p => p.year))
-        .range([margin.left, width - margin.right]);
-
-      const y = d3.scaleLinear()
-        .domain([0, 10])
-        .range([height - margin.bottom, margin.top]);
-
-      const line = d3.line()
-        .x(p => x(p.year))
-        .y(p => y(p.score))
-        .curve(d3.curveMonotoneX);
-
-      svg.append("g")
-        .attr("class", "axis")
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));
-
-      svg.append("g")
-        .attr("class", "axis")
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y).ticks(4));
-
-      svg.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "var(--red)")
-        .attr("stroke-width", 3)
-        .attr("filter", "drop-shadow(0 0 8px rgba(255,52,52,.65))")
-        .attr("d", line);
-
-      svg.selectAll("circle")
-        .data(data)
-        .join("circle")
-        .attr("cx", p => x(p.year))
-        .attr("cy", p => y(p.score))
-        .attr("r", 3.6)
-        .attr("fill", "var(--text)")
-        .attr("stroke", "var(--red)")
-        .attr("stroke-width", 2);
-    }
-
-    function drawCompare() {
-      const d = state.selected || state.data[0];
-
-      const svg = d3.select("#compare");
-      svg.selectAll("*").remove();
-
-      if (!d) return;
-
-      const rows = drivers.map(m => ({
-        name: m[1],
-        country: (d.drivers || emptyDrivers())[m[0]] || 0,
-        world: worldAverage(m[0])
-      }));
-
-      const width = svg.node().clientWidth || 360;
-      const height = svg.node().clientHeight || 235;
-      const margin = { top: 8, right: 30, bottom: 25, left: 116 };
-
-      svg.attr("viewBox", `0 0 ${width} ${height}`);
-
-      const x = d3.scaleLinear()
-        .domain([0, d3.max(rows, r => Math.max(r.country, r.world)) || 1])
-        .nice()
-        .range([margin.left, width - margin.right]);
-
-      const y = d3.scaleBand()
-        .domain(rows.map(r => r.name))
-        .range([margin.top, height - margin.bottom])
-        .padding(0.22);
-
-      svg.append("g")
-        .attr("class", "axis")
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y).tickSize(0));
-
-      svg.append("g")
-        .attr("class", "axis")
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(4));
-
-      svg.selectAll(".world")
-        .data(rows)
-        .join("rect")
-        .attr("x", margin.left)
-        .attr("y", r => y(r.name) + y.bandwidth() * 0.55)
-        .attr("width", r => x(r.world) - margin.left)
-        .attr("height", y.bandwidth() * 0.30)
-        .attr("fill", "rgba(245,241,232,.38)");
-
-      svg.selectAll(".country")
-        .data(rows)
-        .join("rect")
-        .attr("x", margin.left)
-        .attr("y", r => y(r.name) + y.bandwidth() * 0.12)
-        .attr("width", r => x(r.country) - margin.left)
-        .attr("height", y.bandwidth() * 0.34)
-        .attr("fill", "var(--red)");
-    }
-
-    function populateRegions() {
-      const regions = [
-        "All",
-        ...Array.from(new Set(state.data.map(d => d.region))).filter(Boolean).sort()
-      ];
-
-      $("region").innerHTML = regions
-        .map(region => `<option value="${region}">${region}</option>`)
-        .join("");
-    }
-
 
     async function init() {
-      const [owidCSV, world] = await Promise.all([
-        fetchFirst(SOURCES.owid, false),
-        d3.json(SOURCES.world)
-      ]);
+      try {
+        const [csvText, world] = await Promise.all([
+          fetchFirst(SOURCES.owid),
+          d3.json(SOURCES.world)
+        ]);
 
-      state.countries = parseOWID(owidCSV);
+        state.countries = parseOWID(csvText);
 
-      if (!Array.isArray(state.countries)) {
-        state.countries = Array.from(state.countries.values ? state.countries.values() : []);
+        if (!Array.isArray(state.countries)) {
+          throw new Error("OWID parser did not return an array.");
+        }
+
+        state.byKey = new Map(state.countries.map(d => [d.key, d]));
+        state.world = world;
+        state.selected = state.countries[0];
+
+        render();
+      } catch (err) {
+        showError(err.message);
       }
-
-      if (!Array.isArray(state.countries)) {
-        state.countries = Array.from(state.countries.values ? state.countries.values() : []);
-      }
-
-      if (!Array.isArray(state.countries)) {
-        state.countries = Array.from(state.countries.values ? state.countries.values() : []);
-      }
-      state.byKey = new Map(state.countries.map(d => [d.key, d]));
-      state.whrFactors = new Map();
-      state.world = world;
-      state.selected = state.countries[0];
-
-      render();
     }
-
 
     $("search").addEventListener("input", event => {
       state.query = event.target.value;
-      render();
-    });
-
-    $("region").addEventListener("change", event => {
-      state.region = event.target.value;
       render();
     });
 
@@ -1325,10 +1078,7 @@
       if (state.world) render();
     });
 
-    init().catch(err => {
-      showError(err.message);
-      $("mapStatus").textContent = "Data loading failed.";
-    });
+    init();
   </script>
 </body>
 </html>
