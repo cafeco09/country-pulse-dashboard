@@ -859,6 +859,7 @@
 
 
 
+
     function parseOWID(csvText) {
       const rows = d3.csvParse(csvText);
       const columns = rows.columns || [];
@@ -1276,6 +1277,10 @@
       ]);
 
       state.countries = parseOWID(owidCSV);
+
+      if (!Array.isArray(state.countries)) {
+        state.countries = Array.from(state.countries.values ? state.countries.values() : []);
+      }
 
       if (!Array.isArray(state.countries)) {
         state.countries = Array.from(state.countries.values ? state.countries.values() : []);
