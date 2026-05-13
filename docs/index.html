@@ -20,22 +20,24 @@
     }
 
     :root {
-      --bg: #020202;
-      --surface: #090909;
+      --bg: #010101;
+      --surface: #080808;
       --surface2: #141414;
       --ink: #ffffff;
-      --muted: rgba(255,255,255,.43);
-      --faint: rgba(255,255,255,.06);
+      --muted: rgba(255,255,255,.45);
+      --faint: rgba(255,255,255,.065);
       --accent: #dc1717;
       --accent2: #ff3434;
       --accent3: #ff8a8a;
-      --line: rgba(255,255,255,.075);
-      --line2: rgba(255,255,255,.14);
+      --line: rgba(255,255,255,.08);
+      --line2: rgba(255,255,255,.15);
     }
 
     html,
     body {
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top, rgba(110, 0, 0, 0.16), transparent 42%),
+        #010101;
       color: var(--ink);
       font-family: "Syne", sans-serif;
       height: 100vh;
@@ -45,16 +47,26 @@
 
     .app {
       display: grid;
-      grid-template-rows: 34px 42px minmax(0, 1fr) 70px;
-      grid-template-columns: 124px minmax(0, 1fr);
+      grid-template-rows: 36px 46px minmax(0, 1fr) 160px;
+      grid-template-columns: 132px minmax(0, 1fr);
       grid-template-areas:
         "hdr hdr"
         "kpi kpi"
         "side map"
         "bot bot";
-      height: 100vh;
-      width: 100vw;
+
+      width: calc(100vw - 20px);
+      height: calc(100vh - 20px);
+      margin: 10px;
       overflow: hidden;
+
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(8,8,8,0.98), rgba(2,2,2,0.99));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.02) inset,
+        0 18px 60px rgba(0,0,0,0.68),
+        0 0 42px rgba(120, 0, 0, 0.09);
     }
 
     /* HEADER */
@@ -65,21 +77,21 @@
       justify-content: space-between;
       padding: 0 14px;
       border-bottom: 1px solid var(--line);
-      background: rgba(3,3,3,0.96);
+      background: rgba(5,5,5,0.94);
     }
 
     .brand-title {
       font-family: "Playfair Display", serif;
-      font-size: 0.92rem;
+      font-size: 0.98rem;
       letter-spacing: 0.01em;
       line-height: 1;
     }
 
     .brand-sub {
-      font-size: 0.43rem;
+      font-size: 0.45rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 1.7px;
+      letter-spacing: 1.8px;
       margin-top: 2px;
     }
 
@@ -87,10 +99,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.49rem;
+      font-size: 0.52rem;
       color: var(--accent2);
       text-transform: uppercase;
-      letter-spacing: 1.25px;
+      letter-spacing: 1.35px;
       white-space: nowrap;
     }
 
@@ -114,12 +126,12 @@
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
       border-bottom: 1px solid var(--line);
-      background: rgba(7,7,7,0.96);
+      background: rgba(8,8,8,0.94);
       overflow: hidden;
     }
 
     .kpi-cell {
-      padding: 5px 9px;
+      padding: 6px 10px;
       border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
@@ -132,16 +144,16 @@
     }
 
     .kpi-label {
-      font-size: 0.36rem;
+      font-size: 0.38rem;
       text-transform: uppercase;
-      letter-spacing: 1.45px;
+      letter-spacing: 1.55px;
       color: var(--muted);
       margin-bottom: 2px;
       white-space: nowrap;
     }
 
     .kpi-val {
-      font-size: 0.72rem;
+      font-size: 0.76rem;
       font-weight: 500;
       color: var(--ink);
       line-height: 1;
@@ -152,7 +164,7 @@
 
     .kpi-val.accent {
       color: var(--accent2);
-      text-shadow: 0 0 10px rgba(255,52,52,0.28);
+      text-shadow: 0 0 10px rgba(255,52,52,0.3);
     }
 
     .kpi-val.green {
@@ -166,20 +178,20 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      background: var(--surface);
+      background: rgba(8,8,8,0.96);
     }
 
     .sidebar-section {
-      padding: 8px 9px;
+      padding: 9px 10px;
       border-bottom: 1px solid var(--line);
     }
 
     .section-label {
-      font-size: 0.38rem;
+      font-size: 0.4rem;
       text-transform: uppercase;
-      letter-spacing: 1.55px;
+      letter-spacing: 1.7px;
       color: var(--muted);
-      margin-bottom: 6px;
+      margin-bottom: 7px;
     }
 
     .search-input {
@@ -188,9 +200,9 @@
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.57rem;
+      font-size: 0.6rem;
       padding: 5px 7px;
-      border-radius: 6px;
+      border-radius: 7px;
       outline: none;
     }
 
@@ -207,13 +219,13 @@
       display: flex;
       flex-wrap: wrap;
       gap: 3px;
-      margin-top: 6px;
+      margin-top: 7px;
     }
 
     .region-btn {
       font-family: "Syne", sans-serif;
-      font-size: 0.44rem;
-      padding: 2px 5px;
+      font-size: 0.46rem;
+      padding: 2px 6px;
       border-radius: 20px;
       border: 1px solid var(--line2);
       background: transparent;
@@ -221,7 +233,7 @@
       cursor: pointer;
       transition: all 0.2s;
       text-transform: uppercase;
-      letter-spacing: .8px;
+      letter-spacing: .85px;
     }
 
     .region-btn:hover,
@@ -255,7 +267,7 @@
       border-bottom: 1px solid var(--line);
       cursor: pointer;
       transition: all 0.15s;
-      font-size: 0.53rem;
+      font-size: 0.54rem;
     }
 
     .rank-item:hover,
@@ -265,13 +277,13 @@
     }
 
     .rank-num {
-      font-size: 0.45rem;
+      font-size: 0.46rem;
       color: var(--muted);
       min-width: 16px;
     }
 
     .rank-name {
-      font-size: 0.53rem;
+      font-size: 0.54rem;
       flex: 1;
       min-width: 0;
       white-space: nowrap;
@@ -280,7 +292,7 @@
     }
 
     .rank-score {
-      font-size: 0.53rem;
+      font-size: 0.54rem;
       font-weight: 500;
       min-width: 24px;
       text-align: right;
@@ -292,9 +304,9 @@
       position: relative;
       overflow: hidden;
       background:
-        radial-gradient(circle at 50% 50%, rgba(110,0,0,0.12), transparent 38%),
+        radial-gradient(circle at 50% 45%, rgba(110,0,0,0.12), transparent 38%),
         radial-gradient(circle at 20% 24%, rgba(255,40,40,0.04), transparent 26%),
-        #010101;
+        #020202;
     }
 
     #map-svg {
@@ -325,67 +337,67 @@
     /* HEART PULSE — all countries, staggered lub-dub */
     @keyframes heartBeatLubDub {
       0% {
-        transform: scale(calc(var(--heart-scale) * 0.82));
-        opacity: calc(var(--heart-opacity) * 0.72);
+        transform: scale(var(--heart-rest));
+        opacity: 0.72;
       }
 
       /* lub */
       7% {
-        transform: scale(calc(var(--heart-scale) * 1.18));
-        opacity: var(--heart-opacity);
+        transform: scale(var(--heart-lub));
+        opacity: 1;
       }
 
       13% {
-        transform: scale(calc(var(--heart-scale) * 0.9));
-        opacity: calc(var(--heart-opacity) * 0.82);
+        transform: scale(var(--heart-soft));
+        opacity: 0.82;
       }
 
       /* dub */
       22% {
-        transform: scale(calc(var(--heart-scale) * 1.08));
-        opacity: calc(var(--heart-opacity) * 0.94);
+        transform: scale(var(--heart-dub));
+        opacity: 0.94;
       }
 
       31% {
-        transform: scale(calc(var(--heart-scale) * 0.86));
-        opacity: calc(var(--heart-opacity) * 0.76);
+        transform: scale(var(--heart-release));
+        opacity: 0.76;
       }
 
       100% {
-        transform: scale(calc(var(--heart-scale) * 0.82));
-        opacity: calc(var(--heart-opacity) * 0.72);
+        transform: scale(var(--heart-rest));
+        opacity: 0.72;
       }
     }
 
     @keyframes heartGlowLubDub {
       0% {
-        transform: scale(calc(var(--glow-scale) * 0.88));
-        opacity: calc(var(--glow-opacity) * 0.55);
+        transform: scale(var(--glow-rest));
+        opacity: 0.42;
       }
 
       7% {
-        transform: scale(calc(var(--glow-scale) * 1.14));
-        opacity: var(--glow-opacity);
+        transform: scale(var(--glow-lub));
+        opacity: 1;
       }
 
       13% {
-        transform: scale(calc(var(--glow-scale) * 0.94));
-        opacity: calc(var(--glow-opacity) * 0.65);
+        transform: scale(var(--glow-soft));
+        opacity: 0.58;
       }
 
       22% {
-        transform: scale(calc(var(--glow-scale) * 1.05));
-        opacity: calc(var(--glow-opacity) * 0.86);
+        transform: scale(var(--glow-dub));
+        opacity: 0.82;
       }
 
       31% {
-        transform: scale(calc(var(--glow-scale) * 0.92));
-        opacity: calc(var(--glow-opacity) * 0.58);
+        transform: scale(var(--glow-release));
+        opacity: 0.48;
       }
 
       100% {
-        transform: scale(calc(var(--glow-scale) * 0.88));
-        opacity: calc(var(--glow-opacity) * 0.55);
+        transform: scale(var(--glow-rest));
+        opacity: 0.42;
       }
     }
 
@@ -413,8 +425,8 @@
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.57rem;
-      padding: 4px 8px;
+      font-size: 0.6rem;
+      padding: 4px 9px;
       border-radius: 10px;
       display: none;
       z-index: 100;
@@ -424,30 +436,32 @@
 
     .map-focus {
       position: absolute;
-      top: 9px;
-      right: 9px;
-      background: rgba(5,5,5,0.88);
-      border: 1px solid var(--line2);
-      backdrop-filter: blur(12px);
-      border-radius: 14px;
-      padding: 9px 12px;
-      min-width: 126px;
-      max-width: 160px;
+      top: 12px;
+      right: 12px;
+      background: rgba(6,6,6,0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(14px);
+      border-radius: 18px;
+      padding: 12px 15px;
+      min-width: 150px;
+      max-width: 190px;
       pointer-events: none;
-      box-shadow: 0 8px 24px rgba(0,0,0,.55);
+      box-shadow:
+        0 10px 26px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,0.03) inset;
       z-index: 55;
     }
 
     .focus-name {
       font-family: "Playfair Display", serif;
-      font-size: 0.9rem;
+      font-size: 1rem;
       line-height: 1;
-      margin-bottom: 3px;
+      margin-bottom: 5px;
     }
 
     .focus-score {
       font-family: "Playfair Display", serif;
-      font-size: 2rem;
+      font-size: 2.35rem;
       line-height: 1;
       color: var(--accent2);
       font-weight: 700;
@@ -455,11 +469,11 @@
     }
 
     .focus-rank {
-      font-size: 0.48rem;
+      font-size: 0.52rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 1.15px;
-      margin-top: 4px;
+      letter-spacing: 1.25px;
+      margin-top: 5px;
     }
 
     /* BOTTOM METRICS */
@@ -473,7 +487,7 @@
     }
 
     .metric-panel {
-      padding: 7px 10px;
+      padding: 12px 14px;
       border-right: 1px solid var(--line);
       overflow: hidden;
       min-width: 0;
@@ -484,24 +498,24 @@
     }
 
     .metric-title {
-      font-size: 0.35rem;
+      font-size: 0.42rem;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       color: var(--muted);
-      margin-bottom: 5px;
+      margin-bottom: 10px;
       white-space: nowrap;
     }
 
     .fbar-row {
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
 
     .fbar-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.48rem;
-      margin-bottom: 1px;
-      gap: 8px;
+      font-size: 0.62rem;
+      margin-bottom: 3px;
+      gap: 10px;
     }
 
     .fbar-meta span:first-child {
@@ -515,7 +529,7 @@
     }
 
     .fbar-track {
-      height: 2px;
+      height: 4px;
       background: var(--faint);
       border-radius: 2px;
       overflow: hidden;
@@ -530,27 +544,27 @@
 
     #sparkline {
       width: 100%;
-      height: 50px;
+      height: 88px;
       display: block;
     }
 
     #gauge-svg {
-      width: 116px;
-      height: 56px;
+      width: 170px;
+      height: 96px;
       display: block;
       margin: 0 auto;
     }
 
     .info-panel {
       background: linear-gradient(135deg, rgba(220,23,23,.11), rgba(80,80,80,.06));
-      border: 1px solid rgba(255,255,255,.055);
-      border-radius: 8px;
-      padding: 6px;
-      font-size: 0.48rem;
-      line-height: 1.32;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 0.66rem;
+      line-height: 1.5;
       color: var(--muted);
-      max-height: 50px;
-      overflow: hidden;
+      min-height: 100px;
+      overflow: visible;
     }
   </style>
 </head>
@@ -660,7 +674,7 @@
     <div class="metric-panel">
       <div class="metric-title">Explanatory Factors</div>
       <div id="factor-bars">
-        <div style="color:var(--muted);font-size:0.52rem">Select a country to view factors</div>
+        <div style="color:var(--muted);font-size:0.62rem">Select a country to view factors</div>
       </div>
     </div>
 
@@ -671,7 +685,7 @@
 
     <div class="metric-panel">
       <div class="metric-title">Happiness Gauge</div>
-      <svg id="gauge-svg" width="116" height="56" viewBox="0 0 116 56"></svg>
+      <svg id="gauge-svg" width="170" height="96" viewBox="0 0 170 96"></svg>
     </div>
 
     <div class="metric-panel">
@@ -757,7 +771,9 @@ async function init() {
       const match = happinessMap.get(f.properties.name);
 
       let score = match ? match.score : 4.2 + (Math.sin(i * 1.73) * 0.9);
-      let region = match ? match.region : REGIONS[Math.floor(Math.abs(Math.sin(i * 2.17)) * REGIONS.length) % REGIONS.length];
+      let region = match
+        ? match.region
+        : REGIONS[Math.floor(Math.abs(Math.sin(i * 2.17)) * REGIONS.length) % REGIONS.length];
 
       score = typeof score === 'number' ? score : parseFloat(score);
 
@@ -798,15 +814,17 @@ async function init() {
 
   buildRegionFilters();
   renderMap();
-  renderAllHeartPulses(top, false);
   renderRankList(countries);
   selectCountry(top.name);
   setupSearch();
 
   window.addEventListener('resize', debounce(() => {
     renderMap();
-    renderAllHeartPulses(state.selected, false);
-    if (state.selected) selectCountry(state.selected.name, false);
+
+    if (state.selected) {
+      renderAllHeartPulses(state.selected, false);
+      selectCountry(state.selected.name, false);
+    }
   }, 180));
 }
 
@@ -863,6 +881,7 @@ function setupSearch() {
       if (!q) return;
 
       let match = state.countries.find(c => c.name.toLowerCase() === q);
+
       if (!match) {
         match = state.countries.find(c => c.name.toLowerCase().includes(q));
       }
@@ -878,7 +897,7 @@ function setupSearch() {
 
 function highlightSingleCountry(country) {
   d3.selectAll('.c-path')
-    .attr('fill-opacity', d => d.properties.name === country.name ? 1 : 0.2);
+    .attr('fill-opacity', d => d.properties.name === country.name ? 1 : 0.22);
 
   renderAllHeartPulses(country, true);
 }
@@ -895,7 +914,7 @@ function resetMapVisuals() {
 function renderRankList(list) {
   const container = document.getElementById('rank-list');
 
-  container.innerHTML = list.slice(0, 90).map(c => `
+  container.innerHTML = list.slice(0, 95).map(c => `
     <div class="rank-item ${state.selected && state.selected.name === c.name ? 'selected' : ''}"
          onclick="selectCountry('${escapeForInline(c.name)}')"
          onmouseover="previewCountry('${escapeForInline(c.name)}')"
@@ -931,9 +950,9 @@ function renderMap() {
   const height = document.getElementById('map-svg').clientHeight || 640;
 
   const projection = d3.geoNaturalEarth1()
-    .fitExtent([[4, -4], [width - 4, height + 4]], state.mapFeatures);
+    .fitExtent([[6, 4], [width - 6, height - 4]], state.mapFeatures);
 
-  projection.scale(projection.scale() * 1.18);
+  projection.scale(projection.scale() * 1.14);
 
   state.projection = projection;
 
@@ -1017,29 +1036,24 @@ function createHeartPulse(country, isFocus = false, isDimmed = false) {
 
   const [cx, cy] = centroid;
 
-  /*
-    Final metric score:
-    This is the number shown in the focus card.
-    Heart size is projected directly from this value.
-  */
   const finalMetricScore = country.score;
 
   const heartScaleByScore = d3.scaleSqrt()
     .domain([2.4, 7.8])
-    .range([0.24, 0.72])
+    .range([0.22, 0.62])
     .clamp(true);
 
   const glowScaleByScore = d3.scaleSqrt()
     .domain([2.4, 7.8])
-    .range([0.55, 1.08])
+    .range([0.48, 0.98])
     .clamp(true);
 
   const opacityByScore = d3.scaleLinear()
     .domain([2.4, 7.8])
-    .range([0.32, 0.78])
+    .range([0.34, 0.78])
     .clamp(true);
 
-  const focusBoost = isFocus ? 1.22 : 1;
+  const focusBoost = isFocus ? 1.26 : 1;
   const dimFactor = isDimmed && !isFocus ? 0.42 : 1;
 
   const heartScale = heartScaleByScore(finalMetricScore) * focusBoost;
@@ -1055,6 +1069,7 @@ function createHeartPulse(country, isFocus = false, isDimmed = false) {
   const root = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   root.setAttribute('transform', `translate(${cx},${cy})`);
   root.setAttribute('pointer-events', 'none');
+  root.setAttribute('opacity', opacity);
 
   const glowGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   glowGroup.setAttribute('class', 'heart-glow');
@@ -1062,11 +1077,17 @@ function createHeartPulse(country, isFocus = false, isDimmed = false) {
   const pulseGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   pulseGroup.setAttribute('class', 'heart-pulse');
 
-  glowGroup.style.setProperty('--glow-scale', glowScale);
-  glowGroup.style.setProperty('--glow-opacity', 0.12 + t * 0.18);
+  glowGroup.style.setProperty('--glow-rest', glowScale * 0.88);
+  glowGroup.style.setProperty('--glow-lub', glowScale * 1.14);
+  glowGroup.style.setProperty('--glow-soft', glowScale * 0.94);
+  glowGroup.style.setProperty('--glow-dub', glowScale * 1.05);
+  glowGroup.style.setProperty('--glow-release', glowScale * 0.92);
 
-  pulseGroup.style.setProperty('--heart-scale', heartScale);
-  pulseGroup.style.setProperty('--heart-opacity', opacity);
+  pulseGroup.style.setProperty('--heart-rest', heartScale * 0.82);
+  pulseGroup.style.setProperty('--heart-lub', heartScale * 1.18);
+  pulseGroup.style.setProperty('--heart-soft', heartScale * 0.9);
+  pulseGroup.style.setProperty('--heart-dub', heartScale * 1.08);
+  pulseGroup.style.setProperty('--heart-release', heartScale * 0.86);
 
   const delay = -((hashString(country.name) % 165) / 100);
   glowGroup.style.animationDelay = `${delay}s`;
@@ -1075,17 +1096,17 @@ function createHeartPulse(country, isFocus = false, isDimmed = false) {
   const outerAura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   outerAura.setAttribute('cx', '0');
   outerAura.setAttribute('cy', '0');
-  outerAura.setAttribute('r', 4.6 + t * 5.6);
+  outerAura.setAttribute('r', 4.4 + t * 5.2);
   outerAura.setAttribute('fill', 'url(#redAura)');
-  outerAura.setAttribute('opacity', 0.22 + t * 0.16);
+  outerAura.setAttribute('opacity', 0.24 + t * 0.18);
   outerAura.setAttribute('filter', 'url(#redGlow)');
 
   const heartShadow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   heartShadow.setAttribute('d', heartPath);
   heartShadow.setAttribute('fill', '#ff3f3f');
-  heartShadow.setAttribute('opacity', opacity * 0.22);
+  heartShadow.setAttribute('opacity', 0.26);
   heartShadow.setAttribute('filter', 'url(#redGlow)');
-  heartShadow.setAttribute('transform', 'scale(1.18)');
+  heartShadow.setAttribute('transform', 'scale(1.16)');
 
   const heart = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   heart.setAttribute('d', heartPath);
@@ -1093,13 +1114,12 @@ function createHeartPulse(country, isFocus = false, isDimmed = false) {
   heart.setAttribute('stroke', isFocus ? '#ffd3d3' : '#ff9696');
   heart.setAttribute('stroke-width', isFocus ? '0.5' : '0.28');
   heart.setAttribute('stroke-linejoin', 'round');
-  heart.setAttribute('opacity', opacity);
   heart.setAttribute('filter', 'url(#redGlow)');
 
   const innerHeart = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   innerHeart.setAttribute('d', heartPath);
   innerHeart.setAttribute('fill', '#ff6868');
-  innerHeart.setAttribute('opacity', opacity * 0.34);
+  innerHeart.setAttribute('opacity', '0.34');
   innerHeart.setAttribute('transform', 'scale(0.56)');
 
   const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -1107,7 +1127,7 @@ function createHeartPulse(country, isFocus = false, isDimmed = false) {
   highlight.setAttribute('cy', '-3.4');
   highlight.setAttribute('r', isFocus ? '1' : '0.62');
   highlight.setAttribute('fill', '#fff7f7');
-  highlight.setAttribute('opacity', opacity * 0.62);
+  highlight.setAttribute('opacity', '0.68');
 
   glowGroup.appendChild(outerAura);
   glowGroup.appendChild(heartShadow);
@@ -1129,7 +1149,7 @@ function previewCountry(name) {
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
   document.getElementById('focus-rank').innerHTML =
-    `Rank #${entry.rank} of ${state.countries.length} <span style="color:#ff4040;font-size:0.48rem">• PREVIEW</span>`;
+    `Rank #${entry.rank} of ${state.countries.length} <span style="color:#ff4040;font-size:0.5rem">• PREVIEW</span>`;
 
   d3.selectAll('.c-path')
     .classed('active', d => d.properties.name === entry.name);
@@ -1164,6 +1184,7 @@ function selectCountry(name, shouldRenderPulses = true) {
     `Rank #${entry.rank} of ${state.countries.length}`;
 
   d3.selectAll('.c-path')
+    .attr('fill-opacity', 1)
     .classed('active', d => d.properties.name === entry.name);
 
   if (shouldRenderPulses) {
@@ -1201,8 +1222,8 @@ function renderSparkline(entry) {
   const svg = document.getElementById('sparkline');
   svg.innerHTML = '';
 
-  const W = svg.clientWidth || 210;
-  const H = 50;
+  const W = svg.clientWidth || 260;
+  const H = 88;
   const years = d3.range(2014, 2026);
   const base = entry.score;
 
@@ -1211,10 +1232,10 @@ function renderSparkline(entry) {
     v: Math.min(9, Math.max(2.2, base + Math.sin(i * 0.7) * 0.35 + (i - 5) * 0.012))
   }));
 
-  const xScale = d3.scaleLinear().domain([2014, 2025]).range([16, W - 8]);
+  const xScale = d3.scaleLinear().domain([2014, 2025]).range([20, W - 12]);
   const yScale = d3.scaleLinear()
     .domain([d3.min(pts, d => d.v) - 0.3, d3.max(pts, d => d.v) + 0.3])
-    .range([H - 7, 5]);
+    .range([H - 16, 8]);
 
   const line = d3.line()
     .x(d => xScale(d.y))
@@ -1223,7 +1244,7 @@ function renderSparkline(entry) {
 
   const area = d3.area()
     .x(d => xScale(d.y))
-    .y1(H - 6)
+    .y1(H - 14)
     .y0(d => yScale(d.v))
     .curve(d3.curveCatmullRom);
 
@@ -1257,14 +1278,14 @@ function renderSparkline(entry) {
     .attr('d', line)
     .attr('fill', 'none')
     .attr('stroke', scoreColor(entry.score))
-    .attr('stroke-width', 1.25);
+    .attr('stroke-width', 1.5);
 
   [2015, 2020, 2025].forEach(y => {
     svgSel.append('text')
       .attr('x', xScale(y))
       .attr('y', H - 3)
-      .attr('fill', 'rgba(255,255,255,0.25)')
-      .attr('font-size', 5.5)
+      .attr('fill', 'rgba(255,255,255,0.28)')
+      .attr('font-size', 7)
       .attr('text-anchor', 'middle')
       .text(y);
   });
@@ -1274,11 +1295,11 @@ function renderGauge(score) {
   const svg = d3.select('#gauge-svg');
   svg.selectAll('*').remove();
 
-  const W = 116;
-  const H = 56;
+  const W = 170;
+  const H = 96;
   const cx = W / 2;
-  const cy = H - 6;
-  const r = 43;
+  const cy = H - 12;
+  const r = 62;
 
   const start = -Math.PI;
   const end = 0;
@@ -1313,34 +1334,34 @@ function renderGauge(score) {
     const ea = angleScale(high);
 
     svg.append('path')
-      .attr('d', arcPath(sa, ea, r - 9, r))
+      .attr('d', arcPath(sa, ea, r - 12, r))
       .attr('fill', col)
-      .attr('opacity', 0.32);
+      .attr('opacity', 0.34);
   });
 
   const valAngle = angleScale(Math.min(8, Math.max(2.5, score)));
 
   svg.append('path')
-    .attr('d', arcPath(start, valAngle, r - 9, r))
+    .attr('d', arcPath(start, valAngle, r - 12, r))
     .attr('fill', scoreColor(score))
-    .attr('opacity', 0.9);
+    .attr('opacity', 0.94);
 
-  const nx = cx + (r - 6) * Math.cos(valAngle);
-  const ny = cy + (r - 6) * Math.sin(valAngle);
+  const nx = cx + (r - 8) * Math.cos(valAngle);
+  const ny = cy + (r - 8) * Math.sin(valAngle);
 
   svg.append('circle')
     .attr('cx', nx)
     .attr('cy', ny)
-    .attr('r', 3)
+    .attr('r', 5)
     .attr('fill', '#fff');
 
   svg.append('text')
     .attr('x', cx)
-    .attr('y', cy - 9)
+    .attr('y', cy - 18)
     .attr('text-anchor', 'middle')
     .attr('fill', '#ff4040')
-    .attr('font-family', 'Playfair Display,serif')
-    .attr('font-size', 15)
+    .attr('font-family', 'Playfair Display, serif')
+    .attr('font-size', 24)
     .text(score.toFixed(2));
 }
 
