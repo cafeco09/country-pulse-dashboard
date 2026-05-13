@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Country Pulse · Purple Lights · Happiness Atlas</title>
+  <title>Country Pulse · Heartbeat Lights · Happiness Atlas</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,17 +20,17 @@
     }
 
     :root {
-      --bg: #030008;
-      --surface: #0d0714;
-      --surface2: #171020;
+      --bg: #030303;
+      --surface: #0d0d0d;
+      --surface2: #171717;
       --ink: #ffffff;
-      --muted: rgba(255,255,255,.48);
+      --muted: rgba(255,255,255,.46);
       --faint: rgba(255,255,255,.07);
-      --accent: #c83cff;
-      --accent2: #ff4dff;
-      --purple: #9d35ff;
-      --line: rgba(255,255,255,.09);
-      --line2: rgba(255,255,255,.16);
+      --accent: #d91414;
+      --accent2: #ff3434;
+      --accent3: #ff7a7a;
+      --line: rgba(255,255,255,.08);
+      --line2: rgba(255,255,255,.15);
     }
 
     html, body {
@@ -44,8 +44,8 @@
 
     .app {
       display: grid;
-      grid-template-rows: 48px 68px 1fr 130px;
-      grid-template-columns: 165px 1fr;
+      grid-template-rows: 42px 56px 1fr 102px;
+      grid-template-columns: 148px 1fr;
       grid-template-areas:
         "hdr hdr"
         "kpi kpi"
@@ -60,19 +60,19 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
+      padding: 0 16px;
       border-bottom: 1px solid var(--line);
-      background: rgba(4, 0, 9, 0.96);
+      background: rgba(4,4,4,0.96);
     }
 
     .brand-title {
       font-family: "Playfair Display", serif;
-      font-size: 1.1rem;
+      font-size: 1rem;
       letter-spacing: 0.01em;
     }
 
     .brand-sub {
-      font-size: 0.52rem;
+      font-size: 0.48rem;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -82,10 +82,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.58rem;
-      color: var(--accent);
+      font-size: 0.54rem;
+      color: var(--accent2);
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.4px;
     }
 
     .live-dot {
@@ -93,7 +93,7 @@
       height: 6px;
       background: var(--accent2);
       border-radius: 50%;
-      box-shadow: 0 0 12px rgba(255, 77, 255, 0.95);
+      box-shadow: 0 0 10px rgba(255, 52, 52, 0.9);
       animation: blink 2s ease-in-out infinite;
     }
 
@@ -108,11 +108,11 @@
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       border-bottom: 1px solid var(--line);
-      background: rgba(7, 2, 13, 0.96);
+      background: rgba(7,7,7,0.96);
     }
 
     .kpi-cell {
-      padding: 10px 16px;
+      padding: 8px 12px;
       border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
@@ -124,26 +124,27 @@
     }
 
     .kpi-label {
-      font-size: 0.48rem;
+      font-size: 0.43rem;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.8px;
       color: var(--muted);
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .kpi-val {
-      font-size: 0.98rem;
+      font-size: 0.88rem;
       font-weight: 500;
       color: var(--ink);
+      line-height: 1.05;
     }
 
     .kpi-val.accent {
-      color: var(--accent);
-      text-shadow: 0 0 14px rgba(200, 60, 255, 0.35);
+      color: var(--accent2);
+      text-shadow: 0 0 10px rgba(255,52,52,0.28);
     }
 
     .kpi-val.green {
-      color: #c8b7ff;
+      color: #d3d3d3;
     }
 
     /* SIDEBAR */
@@ -157,12 +158,12 @@
     }
 
     .sidebar-section {
-      padding: 12px 14px;
+      padding: 10px 12px;
       border-bottom: 1px solid var(--line);
     }
 
     .section-label {
-      font-size: 0.48rem;
+      font-size: 0.45rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       color: var(--muted);
@@ -175,15 +176,15 @@
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.68rem;
-      padding: 6px 9px;
+      font-size: 0.64rem;
+      padding: 6px 8px;
       border-radius: 6px;
       outline: none;
     }
 
     .search-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(200, 60, 255, 0.12);
+      box-shadow: 0 0 0 2px rgba(217,20,20,0.12);
     }
 
     .search-input::placeholder {
@@ -199,7 +200,7 @@
 
     .region-btn {
       font-family: "Syne", sans-serif;
-      font-size: 0.55rem;
+      font-size: 0.52rem;
       padding: 2px 7px;
       border-radius: 20px;
       border: 1px solid var(--line2);
@@ -214,15 +215,15 @@
     .region-btn:hover,
     .region-btn.active {
       border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(200, 60, 255, .11);
+      color: var(--accent2);
+      background: rgba(217,20,20,.1);
     }
 
     .rank-list {
       flex: 1;
       overflow-y: auto;
-      padding: 0 14px;
-      font-size: 0.78rem;
+      padding: 0 12px;
+      font-size: 0.74rem;
     }
 
     .rank-list::-webkit-scrollbar {
@@ -237,33 +238,33 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 5px 0;
+      padding: 4px 0;
       border-bottom: 1px solid var(--line);
       cursor: pointer;
       transition: all 0.15s;
-      font-size: 0.65rem;
+      font-size: 0.61rem;
     }
 
     .rank-item:hover,
     .rank-item.selected {
-      color: var(--accent);
-      background: rgba(200, 60, 255, .08);
+      color: var(--accent2);
+      background: rgba(217,20,20,.08);
     }
 
     .rank-num {
-      font-size: 0.52rem;
+      font-size: 0.5rem;
       color: var(--muted);
-      min-width: 20px;
+      min-width: 18px;
     }
 
     .rank-name {
-      font-size: 0.65rem;
+      font-size: 0.61rem;
       flex: 1;
-      padding: 0 7px;
+      padding: 0 6px;
     }
 
     .rank-score {
-      font-size: 0.65rem;
+      font-size: 0.61rem;
       font-weight: 500;
     }
 
@@ -273,9 +274,9 @@
       position: relative;
       overflow: hidden;
       background:
-        radial-gradient(circle at 52% 48%, rgba(85, 0, 130, 0.18), transparent 42%),
-        radial-gradient(circle at 20% 20%, rgba(132, 36, 255, 0.08), transparent 32%),
-        #020006;
+        radial-gradient(circle at 50% 50%, rgba(120,0,0,0.14), transparent 36%),
+        radial-gradient(circle at 22% 24%, rgba(255,40,40,0.05), transparent 28%),
+        #020202;
     }
 
     #map-svg {
@@ -286,101 +287,102 @@
 
     .c-path {
       fill: #111111;
-      stroke: #25202c;
+      stroke: #242424;
       stroke-width: 0.4;
       cursor: pointer;
       transition: fill 0.2s ease, stroke 0.15s, opacity 0.2s ease;
     }
 
     .c-path:hover {
-      fill: #2b1d36;
-      stroke: var(--accent);
+      fill: #2d1717;
+      stroke: var(--accent2);
     }
 
     .c-path.active {
       stroke: #ffffff;
-      stroke-width: 1.4;
-      filter: drop-shadow(0 0 5px rgba(200, 60, 255, 0.85));
+      stroke-width: 1.2;
+      filter: drop-shadow(0 0 4px rgba(217,20,20,0.7));
     }
 
-    /* PURPLE ENERGY PULSE */
-    @keyframes energyPulse {
+    /* HEART PULSE */
+    @keyframes heartBeatLubDub {
       0% {
-        transform: scale(0.72);
-        opacity: 0.68;
+        transform: scale(0.78);
+        opacity: 0.72;
       }
-
-      38% {
-        transform: scale(var(--pulse-max));
+      8% {
+        transform: scale(calc(var(--pulse-scale) * 1.02));
         opacity: 1;
       }
-
-      62% {
-        transform: scale(0.9);
-        opacity: 0.88;
+      14% {
+        transform: scale(0.88);
+        opacity: 0.86;
       }
-
+      23% {
+        transform: scale(var(--pulse-scale));
+        opacity: 0.98;
+      }
+      31% {
+        transform: scale(0.84);
+        opacity: 0.82;
+      }
       100% {
-        transform: scale(0.72);
-        opacity: 0.68;
+        transform: scale(0.78);
+        opacity: 0.72;
       }
     }
 
-    @keyframes flareStretch {
-      0%, 100% {
-        opacity: 0.32;
-        transform: scaleX(0.72);
+    @keyframes glowBeat {
+      0% {
+        transform: scale(0.84);
+        opacity: 0.22;
       }
-
-      45% {
-        opacity: 0.95;
-        transform: scaleX(1.15);
+      8% {
+        transform: scale(calc(var(--pulse-scale) * 1.12));
+        opacity: 0.55;
+      }
+      14% {
+        transform: scale(0.92);
+        opacity: 0.28;
+      }
+      23% {
+        transform: scale(calc(var(--pulse-scale) * 1.03));
+        opacity: 0.46;
+      }
+      31% {
+        transform: scale(0.9);
+        opacity: 0.24;
+      }
+      100% {
+        transform: scale(0.84);
+        opacity: 0.22;
       }
     }
 
-    @keyframes particleTwinkle {
-      0%, 100% {
-        opacity: 0.2;
-        transform: scale(0.7);
-      }
-
-      45% {
-        opacity: 0.9;
-        transform: scale(1.15);
-      }
-    }
-
-    .energy-pulse {
+    .heart-pulse {
       transform-box: fill-box;
       transform-origin: center;
-      animation: energyPulse 1.65s ease-in-out infinite;
+      animation: heartBeatLubDub 1.55s ease-in-out infinite;
       mix-blend-mode: screen;
     }
 
-    .energy-flare {
+    .heart-glow {
       transform-box: fill-box;
       transform-origin: center;
-      animation: flareStretch 1.65s ease-in-out infinite;
-      mix-blend-mode: screen;
-    }
-
-    .energy-particle {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: particleTwinkle 2.1s ease-in-out infinite;
+      animation: glowBeat 1.55s ease-in-out infinite;
       mix-blend-mode: screen;
     }
 
     #tip {
       position: absolute;
       pointer-events: none;
-      background: rgba(9, 4, 14, 0.96);
+      background: rgba(10,10,10,0.96);
       backdrop-filter: blur(8px);
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.65rem;
-      padding: 4px 10px;
+      font-size: 0.62rem;
+      padding: 4px 9px;
       border-radius: 10px;
       display: none;
       z-index: 100;
@@ -390,15 +392,15 @@
 
     .map-focus {
       position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(11, 4, 18, 0.92);
+      top: 10px;
+      right: 10px;
+      background: rgba(12,12,12,0.92);
       border: 1px solid var(--line2);
       backdrop-filter: blur(12px);
       border-radius: 12px;
-      padding: 9px 13px;
-      min-width: 128px;
-      max-width: 150px;
+      padding: 8px 12px;
+      min-width: 122px;
+      max-width: 146px;
       pointer-events: none;
       box-shadow: 0 6px 18px rgba(0,0,0,.5);
       z-index: 55;
@@ -406,25 +408,25 @@
 
     .focus-name {
       font-family: "Playfair Display", serif;
-      font-size: 0.9rem;
+      font-size: 0.84rem;
       line-height: 1;
       margin-bottom: 2px;
     }
 
     .focus-score {
       font-family: "Playfair Display", serif;
-      font-size: 2.15rem;
+      font-size: 1.95rem;
       line-height: 1;
-      color: var(--accent);
+      color: var(--accent2);
       font-weight: 700;
-      text-shadow: 0 0 18px rgba(200, 60, 255, 0.45);
+      text-shadow: 0 0 14px rgba(255,52,52,0.35);
     }
 
     .focus-rank {
-      font-size: 0.54rem;
+      font-size: 0.5rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 1.3px;
+      letter-spacing: 1.2px;
       margin-top: 3px;
     }
 
@@ -432,13 +434,13 @@
     .bottom-metrics {
       grid-area: bot;
       display: grid;
-      grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+      grid-template-columns: 2fr 1.45fr 1.35fr 1fr;
       border-top: 1px solid var(--line);
-      background: rgba(5, 0, 10, 0.97);
+      background: rgba(5,5,5,0.97);
     }
 
     .metric-panel {
-      padding: 12px 16px;
+      padding: 9px 12px;
       border-right: 1px solid var(--line);
       overflow: hidden;
     }
@@ -448,22 +450,22 @@
     }
 
     .metric-title {
-      font-size: 0.48rem;
+      font-size: 0.42rem;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.8px;
       color: var(--muted);
-      margin-bottom: 9px;
+      margin-bottom: 7px;
     }
 
     .fbar-row {
-      margin-bottom: 7px;
+      margin-bottom: 6px;
     }
 
     .fbar-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.62rem;
-      margin-bottom: 3px;
+      font-size: 0.56rem;
+      margin-bottom: 2px;
     }
 
     .fbar-pct {
@@ -481,12 +483,12 @@
       height: 100%;
       border-radius: 2px;
       transition: width 0.6s ease;
-      box-shadow: 0 0 10px currentColor;
+      box-shadow: 0 0 8px currentColor;
     }
 
     #sparkline {
       width: 100%;
-      height: 88px;
+      height: 72px;
     }
 
     #gauge-svg {
@@ -495,12 +497,12 @@
     }
 
     .info-panel {
-      background: linear-gradient(135deg, rgba(126, 29, 255, .18), rgba(255, 77, 255, .08));
-      border: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(135deg, rgba(217,20,20,.14), rgba(80,80,80,.08));
+      border: 1px solid rgba(255,255,255,.06);
       border-radius: 8px;
-      padding: 9px;
-      font-size: 0.65rem;
-      line-height: 1.55;
+      padding: 8px;
+      font-size: 0.57rem;
+      line-height: 1.45;
       color: var(--muted);
     }
   </style>
@@ -513,12 +515,12 @@
   <header>
     <div>
       <div class="brand-title">Country Pulse</div>
-      <div class="brand-sub">Purple Pulse · Happiness Intelligence</div>
+      <div class="brand-sub">Heartbeat Map · Happiness Intelligence</div>
     </div>
 
     <div class="live-badge">
       <div class="live-dot"></div>
-      pulse intensity = happiness score
+      heart intensity = happiness score
     </div>
   </header>
 
@@ -575,11 +577,10 @@
   <main class="map-area">
     <svg id="map-svg">
       <defs>
-        <!-- broad purple glow -->
-        <filter id="purpleGlow" x="-140%" y="-140%" width="380%" height="380%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur1" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur2" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur3" />
+        <filter id="redGlow" x="-150%" y="-150%" width="400%" height="400%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="blur1" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="6.5" result="blur2" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="11.5" result="blur3" />
           <feMerge>
             <feMergeNode in="blur3" />
             <feMergeNode in="blur2" />
@@ -588,25 +589,13 @@
           </feMerge>
         </filter>
 
-        <!-- bright orb aura -->
-        <radialGradient id="purpleAura" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-          <stop offset="16%" stop-color="#ffe0ff" stop-opacity="0.95" />
-          <stop offset="34%" stop-color="#ff4dff" stop-opacity="0.82" />
-          <stop offset="62%" stop-color="#9b35ff" stop-opacity="0.34" />
-          <stop offset="100%" stop-color="#2b0048" stop-opacity="0" />
+        <radialGradient id="redAura" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff4f4" stop-opacity="1" />
+          <stop offset="18%" stop-color="#ffb3b3" stop-opacity="0.95" />
+          <stop offset="38%" stop-color="#ff4f4f" stop-opacity="0.78" />
+          <stop offset="68%" stop-color="#d91414" stop-opacity="0.24" />
+          <stop offset="100%" stop-color="#420000" stop-opacity="0" />
         </radialGradient>
-
-        <!-- horizontal light streak -->
-        <linearGradient id="purpleFlare" x1="0%" y1="50%" x2="100%" y2="50%">
-          <stop offset="0%" stop-color="#7b1dff" stop-opacity="0" />
-          <stop offset="23%" stop-color="#8d28ff" stop-opacity="0.28" />
-          <stop offset="43%" stop-color="#ff42ff" stop-opacity="0.78" />
-          <stop offset="50%" stop-color="#ffffff" stop-opacity="1" />
-          <stop offset="58%" stop-color="#ff7cff" stop-opacity="0.72" />
-          <stop offset="78%" stop-color="#a12cff" stop-opacity="0.28" />
-          <stop offset="100%" stop-color="#6a00ff" stop-opacity="0" />
-        </linearGradient>
       </defs>
 
       <g id="countries-group"></g>
@@ -624,7 +613,7 @@
     <div class="metric-panel">
       <div class="metric-title">Explanatory Factors</div>
       <div id="factor-bars">
-        <div style="color:var(--muted);font-size:0.68rem">Select a country to view factors</div>
+        <div style="color:var(--muted);font-size:0.62rem">Select a country to view factors</div>
       </div>
     </div>
 
@@ -635,13 +624,13 @@
 
     <div class="metric-panel">
       <div class="metric-title">Happiness Gauge</div>
-      <svg id="gauge-svg" width="160" height="90" viewBox="0 0 160 90"></svg>
+      <svg id="gauge-svg" width="150" height="78" viewBox="0 0 150 78"></svg>
     </div>
 
     <div class="metric-panel">
       <div class="metric-title">About This Data</div>
       <div class="info-panel">
-        Cantril Ladder 0–10. Purple pulse size, glow and flare intensity grow with happiness — brighter pulse = higher score.
+        Cantril Ladder 0–10. Red heart size and pulse strength grow with happiness — higher score, stronger heartbeat.
       </div>
     </div>
   </div>
@@ -649,10 +638,10 @@
 
 <script>
 const FACTORS = [
-  { id: 'gdp', label: 'GDP per Capita', color: '#c83cff' },
+  { id: 'gdp', label: 'GDP per Capita', color: '#d91414' },
   { id: 'social', label: 'Social Support', color: '#ffffff' },
-  { id: 'health', label: 'Healthy Life Expectancy', color: '#a88cff' },
-  { id: 'freedom', label: 'Freedom of Choice', color: '#ff7cff' },
+  { id: 'health', label: 'Healthy Life Expectancy', color: '#ff8d8d' },
+  { id: 'freedom', label: 'Freedom of Choice', color: '#ff4f4f' },
 ];
 
 const REGIONS = [
@@ -716,7 +705,6 @@ async function init() {
 
       let score = match ? match.score : 4.2 + (Math.sin(i) * 0.9);
       let region = match ? match.region : REGIONS[Math.floor(Math.random() * REGIONS.length)];
-
       score = typeof score === 'number' ? score : parseFloat(score);
 
       const gdpBase = match ? 45 + (score - 2.4) * 6.5 : 35;
@@ -729,7 +717,6 @@ async function init() {
         name: f.properties.name,
         score: Math.min(7.9, Math.max(2.3, score)),
         region,
-        hasRealScore: Boolean(match),
         gdp: Math.min(96, Math.floor(gdpBase + (Math.random() * 8 - 4))),
         social: Math.min(94, Math.floor(socialBase + (Math.random() * 7 - 3))),
         health: Math.min(92, Math.floor(healthBase + (Math.random() * 8 - 4))),
@@ -771,7 +758,6 @@ async function init() {
 
 function buildRegionFilters() {
   const container = document.getElementById('region-filters');
-
   const allBtn = container.querySelector('[data-r="all"]');
   allBtn.onclick = () => filterRegion('all', allBtn);
 
@@ -808,11 +794,7 @@ function setupSearch() {
       : state.countries.filter(c => c.region === state.regionFilter);
 
     const q = e.target.value.trim().toLowerCase();
-
-    if (q) {
-      base = base.filter(c => c.name.toLowerCase().includes(q));
-    }
-
+    if (q) base = base.filter(c => c.name.toLowerCase().includes(q));
     renderRankList(base);
   });
 
@@ -822,9 +804,7 @@ function setupSearch() {
       if (!q) return;
 
       let match = state.countries.find(c => c.name.toLowerCase() === q);
-      if (!match) {
-        match = state.countries.find(c => c.name.toLowerCase().includes(q));
-      }
+      if (!match) match = state.countries.find(c => c.name.toLowerCase().includes(q));
 
       if (match) {
         if (state.searchFocus) resetMapVisuals();
@@ -851,8 +831,7 @@ function highlightSingleCountry(country) {
 function resetMapVisuals() {
   state.searchFocus = null;
 
-  d3.selectAll('.c-path')
-    .attr('fill-opacity', 1);
+  d3.selectAll('.c-path').attr('fill-opacity', 1);
 
   const wg = document.getElementById('waves-group');
   wg.innerHTML = '';
@@ -881,13 +860,12 @@ function escapeForInline(value) {
 
 function scoreColor(s) {
   if (s >= 6.5) return '#ffffff';
-  if (s >= 5.5) return '#d8b8ff';
-  if (s >= 4.5) return '#9b6cff';
-  return '#c83cff';
+  if (s >= 5.5) return '#ffd0d0';
+  if (s >= 4.5) return '#ff8d8d';
+  return '#ff4040';
 }
 
 function renderMap() {
-  const svg = d3.select('#map-svg');
   const width = document.getElementById('map-svg').clientWidth || 920;
   const height = document.getElementById('map-svg').clientHeight || 640;
 
@@ -898,7 +876,7 @@ function renderMap() {
 
   const colorScale = d3.scaleSequential()
     .domain([2.5, 8])
-    .interpolator(t => d3.interpolateRgb('#100018', '#5f189a')(t));
+    .interpolator(t => d3.interpolateRgb('#160707', '#8f1111')(t));
 
   d3.select('#countries-group')
     .selectAll('path')
@@ -922,14 +900,13 @@ function renderMap() {
       tip.style.display = 'block';
       tip.style.left = (e.offsetX + 12) + 'px';
       tip.style.top = (e.offsetY - 22) + 'px';
-      tip.innerHTML = `<strong>${c.name}</strong>  ✦ ${c.score.toFixed(2)}`;
+      tip.innerHTML = `<strong>${c.name}</strong>  ♥ ${c.score.toFixed(2)}`;
     })
     .on('mouseleave', () => {
       document.getElementById('tip').style.display = 'none';
     });
 }
 
-/* PURPLE ENERGY PULSE WITH LENS FLARE */
 function initAllPulses() {
   const wavesGroup = document.getElementById('waves-group');
   wavesGroup.innerHTML = '';
@@ -949,20 +926,14 @@ function createSinglePulse(country, isFocus = false) {
 
   const [cx, cy] = centroid;
   const score = country.score;
-
   const normalised = Math.max(0, Math.min(1, (score - 2.4) / (7.8 - 2.4)));
-
   const focusBoost = isFocus ? 1.55 : 1;
 
-  const orbRadius = (2.1 + normalised * 3.8) * focusBoost;
-  const auraRadius = (7 + normalised * 14) * focusBoost;
-  const outerAuraRadius = (13 + normalised * 25) * focusBoost;
+  const pulseScale = (0.42 + normalised * 0.78) * focusBoost;
+  const glowScale = (0.9 + normalised * 0.55) * focusBoost;
+  const opacity = 0.38 + normalised * 0.58;
 
-  const flareWidth = (18 + normalised * 46) * focusBoost;
-  const flareHeight = (0.9 + normalised * 2.1) * focusBoost;
-
-  const pulseMax = 1.04 + normalised * 0.68;
-  const opacity = 0.42 + normalised * 0.58;
+  const heartPath = "M 0 9 C -2 7, -8 2, -8 -3 C -8 -8, -3 -10, 0 -6 C 3 -10, 8 -8, 8 -3 C 8 2, 2 7, 0 9 Z";
 
   const wavesGroup = document.getElementById('waves-group');
 
@@ -970,87 +941,69 @@ function createSinglePulse(country, isFocus = false) {
   root.setAttribute('transform', `translate(${cx},${cy})`);
   root.setAttribute('pointer-events', 'none');
 
-  const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  pulse.setAttribute('class', 'energy-pulse');
-  pulse.style.setProperty('--pulse-max', pulseMax);
+  const glowGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  glowGroup.setAttribute('class', 'heart-glow');
+  glowGroup.style.setProperty('--pulse-scale', glowScale);
+
+  const pulseGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  pulseGroup.setAttribute('class', 'heart-pulse');
+  pulseGroup.style.setProperty('--pulse-scale', pulseScale);
 
   const outerAura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   outerAura.setAttribute('cx', '0');
   outerAura.setAttribute('cy', '0');
-  outerAura.setAttribute('r', outerAuraRadius);
-  outerAura.setAttribute('fill', 'url(#purpleAura)');
-  outerAura.setAttribute('opacity', opacity * 0.24);
-  outerAura.setAttribute('filter', 'url(#purpleGlow)');
+  outerAura.setAttribute('r', 8 + normalised * 14);
+  outerAura.setAttribute('fill', 'url(#redAura)');
+  outerAura.setAttribute('opacity', opacity * 0.22);
+  outerAura.setAttribute('filter', 'url(#redGlow)');
 
-  const aura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  aura.setAttribute('cx', '0');
-  aura.setAttribute('cy', '0');
-  aura.setAttribute('r', auraRadius);
-  aura.setAttribute('fill', 'url(#purpleAura)');
-  aura.setAttribute('opacity', opacity * 0.58);
-  aura.setAttribute('filter', 'url(#purpleGlow)');
+  const innerAura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  innerAura.setAttribute('cx', '0');
+  innerAura.setAttribute('cy', '0');
+  innerAura.setAttribute('r', 5 + normalised * 8);
+  innerAura.setAttribute('fill', 'url(#redAura)');
+  innerAura.setAttribute('opacity', opacity * 0.4);
+  innerAura.setAttribute('filter', 'url(#redGlow)');
 
-  const flare = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  flare.setAttribute('class', 'energy-flare');
-  flare.setAttribute('x', -flareWidth * 0.78);
-  flare.setAttribute('y', -flareHeight / 2);
-  flare.setAttribute('width', flareWidth);
-  flare.setAttribute('height', flareHeight);
-  flare.setAttribute('rx', flareHeight);
-  flare.setAttribute('fill', 'url(#purpleFlare)');
-  flare.setAttribute('opacity', opacity);
-  flare.setAttribute('filter', 'url(#purpleGlow)');
+  const heartOuter = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  heartOuter.setAttribute('d', heartPath);
+  heartOuter.setAttribute('fill', '#ff5c5c');
+  heartOuter.setAttribute('opacity', 0.28);
+  heartOuter.setAttribute('filter', 'url(#redGlow)');
+  heartOuter.setAttribute('transform', 'scale(1.35)');
 
-  const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  core.setAttribute('cx', '0');
-  core.setAttribute('cy', '0');
-  core.setAttribute('r', orbRadius);
-  core.setAttribute('fill', '#fffaff');
-  core.setAttribute('opacity', '0.98');
-  core.setAttribute('filter', 'url(#purpleGlow)');
+  const heart = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  heart.setAttribute('d', heartPath);
+  heart.setAttribute('fill', '#e01b1b');
+  heart.setAttribute('stroke', '#ffb1b1');
+  heart.setAttribute('stroke-width', '0.45');
+  heart.setAttribute('stroke-linejoin', 'round');
+  heart.setAttribute('opacity', '0.96');
+  heart.setAttribute('filter', 'url(#redGlow)');
 
-  const innerCore = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  innerCore.setAttribute('cx', '0');
-  innerCore.setAttribute('cy', '0');
-  innerCore.setAttribute('r', orbRadius * 0.58);
-  innerCore.setAttribute('fill', '#ff4dff');
-  innerCore.setAttribute('opacity', '0.76');
+  const innerHeart = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  innerHeart.setAttribute('d', heartPath);
+  innerHeart.setAttribute('fill', '#ff5a5a');
+  innerHeart.setAttribute('opacity', '0.5');
+  innerHeart.setAttribute('transform', 'scale(0.62)');
 
-  const spark = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  spark.setAttribute('cx', orbRadius * 0.34);
-  spark.setAttribute('cy', -orbRadius * 0.36);
-  spark.setAttribute('r', Math.max(0.55, orbRadius * 0.16));
-  spark.setAttribute('fill', '#ffffff');
-  spark.setAttribute('opacity', '0.92');
+  const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  highlight.setAttribute('cx', '-1.8');
+  highlight.setAttribute('cy', '-3.4');
+  highlight.setAttribute('r', 1.1);
+  highlight.setAttribute('fill', '#fff7f7');
+  highlight.setAttribute('opacity', '0.78');
 
-  const particleA = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  particleA.setAttribute('class', 'energy-particle');
-  particleA.setAttribute('cx', auraRadius * 0.52);
-  particleA.setAttribute('cy', -auraRadius * 0.24);
-  particleA.setAttribute('r', Math.max(0.45, orbRadius * 0.11));
-  particleA.setAttribute('fill', '#ffffff');
-  particleA.setAttribute('opacity', '0.45');
-  particleA.style.animationDelay = `${normalised * 0.6}s`;
+  glowGroup.appendChild(outerAura);
+  glowGroup.appendChild(innerAura);
+  glowGroup.appendChild(heartOuter);
 
-  const particleB = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  particleB.setAttribute('class', 'energy-particle');
-  particleB.setAttribute('cx', -auraRadius * 0.42);
-  particleB.setAttribute('cy', auraRadius * 0.18);
-  particleB.setAttribute('r', Math.max(0.35, orbRadius * 0.09));
-  particleB.setAttribute('fill', '#dba8ff');
-  particleB.setAttribute('opacity', '0.38');
-  particleB.style.animationDelay = `${0.35 + normalised * 0.5}s`;
+  pulseGroup.appendChild(heart);
+  pulseGroup.appendChild(innerHeart);
+  pulseGroup.appendChild(highlight);
 
-  pulse.appendChild(outerAura);
-  pulse.appendChild(aura);
-  pulse.appendChild(flare);
-  pulse.appendChild(core);
-  pulse.appendChild(innerCore);
-  pulse.appendChild(spark);
-  pulse.appendChild(particleA);
-  pulse.appendChild(particleB);
-
-  root.appendChild(pulse);
+  root.appendChild(glowGroup);
+  root.appendChild(pulseGroup);
   wavesGroup.appendChild(root);
 }
 
@@ -1059,10 +1012,9 @@ function previewCountry(name) {
   if (!entry) return;
 
   previewed = entry;
-
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
-  document.getElementById('focus-rank').innerHTML = `Rank #${entry.rank} of ${state.countries.length} <span style="color:#c83cff;font-size:0.52rem">• PREVIEW</span>`;
+  document.getElementById('focus-rank').innerHTML = `Rank #${entry.rank} of ${state.countries.length} <span style="color:#ff4040;font-size:0.5rem">• PREVIEW</span>`;
 
   d3.selectAll('.c-path')
     .classed('active', d => d.properties.name === entry.name);
@@ -1070,7 +1022,6 @@ function previewCountry(name) {
 
 function endPreview() {
   previewed = null;
-
   if (!state.selected) return;
 
   document.getElementById('focus-name').textContent = state.selected.name;
@@ -1085,9 +1036,7 @@ function selectCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
 
-  if (state.searchFocus && state.searchFocus !== name) {
-    resetMapVisuals();
-  }
+  if (state.searchFocus && state.searchFocus !== name) resetMapVisuals();
 
   state.selected = entry;
   state.searchFocus = null;
@@ -1131,8 +1080,7 @@ function renderSparkline(entry) {
   svg.innerHTML = '';
 
   const W = svg.clientWidth || 210;
-  const H = 88;
-
+  const H = 72;
   const years = d3.range(2014, 2026);
   const base = entry.score;
 
@@ -1141,7 +1089,7 @@ function renderSparkline(entry) {
     v: Math.min(9, Math.max(2.2, base + Math.sin(i * 0.7) * 0.35 + (i - 5) * 0.012))
   }));
 
-  const xScale = d3.scaleLinear().domain([2014, 2025]).range([20, W - 12]);
+  const xScale = d3.scaleLinear().domain([2014, 2025]).range([18, W - 10]);
   const yScale = d3.scaleLinear()
     .domain([d3.min(pts, d => d.v) - 0.3, d3.max(pts, d => d.v) + 0.3])
     .range([H - 8, 6]);
@@ -1158,7 +1106,6 @@ function renderSparkline(entry) {
     .curve(d3.curveCatmullRom);
 
   const svgSel = d3.select('#sparkline');
-
   const defs = svgSel.append('defs');
 
   const grad = defs.append('linearGradient')
@@ -1171,7 +1118,7 @@ function renderSparkline(entry) {
   grad.append('stop')
     .attr('offset', '0%')
     .attr('stop-color', scoreColor(entry.score))
-    .attr('stop-opacity', 0.42);
+    .attr('stop-opacity', 0.38);
 
   grad.append('stop')
     .attr('offset', '100%')
@@ -1188,14 +1135,14 @@ function renderSparkline(entry) {
     .attr('d', line)
     .attr('fill', 'none')
     .attr('stroke', scoreColor(entry.score))
-    .attr('stroke-width', 1.6);
+    .attr('stroke-width', 1.4);
 
   [2015, 2020, 2025].forEach(y => {
     svgSel.append('text')
       .attr('x', xScale(y))
-      .attr('y', H - 6)
-      .attr('fill', 'rgba(255,255,255,0.3)')
-      .attr('font-size', 7)
+      .attr('y', H - 4)
+      .attr('fill', 'rgba(255,255,255,0.28)')
+      .attr('font-size', 6)
       .attr('text-anchor', 'middle')
       .text(y);
   });
@@ -1205,11 +1152,11 @@ function renderGauge(score) {
   const svg = d3.select('#gauge-svg');
   svg.selectAll('*').remove();
 
-  const W = 160;
-  const H = 90;
+  const W = 150;
+  const H = 78;
   const cx = W / 2;
   const cy = H - 8;
-  const r = 66;
+  const r = 58;
 
   const start = -Math.PI;
   const end = 0;
@@ -1219,10 +1166,10 @@ function renderGauge(score) {
     .range([start, end]);
 
   const seg = [
-    [2.5, 4.5, '#5c177f'],
-    [4.5, 5.5, '#7d45a8'],
-    [5.5, 6.5, '#b78aff'],
-    [6.5, 8, '#ffffff']
+    [2.5, 4.5, '#5a1111'],
+    [4.5, 5.5, '#8a1818'],
+    [5.5, 6.5, '#cc2b2b'],
+    [6.5, 8, '#fff1f1']
   ];
 
   const arcPath = (sa, ea, ir, or) => {
@@ -1244,7 +1191,7 @@ function renderGauge(score) {
     const ea = angleScale(high);
 
     svg.append('path')
-      .attr('d', arcPath(sa, ea, r - 14, r))
+      .attr('d', arcPath(sa, ea, r - 12, r))
       .attr('fill', col)
       .attr('opacity', 0.35);
   });
@@ -1252,27 +1199,27 @@ function renderGauge(score) {
   const valAngle = angleScale(Math.min(8, Math.max(2.5, score)));
 
   svg.append('path')
-    .attr('d', arcPath(start, valAngle, r - 14, r))
+    .attr('d', arcPath(start, valAngle, r - 12, r))
     .attr('fill', scoreColor(score))
     .attr('opacity', 0.95);
 
-  const nx = cx + (r - 8) * Math.cos(valAngle);
-  const ny = cy + (r - 8) * Math.sin(valAngle);
+  const nx = cx + (r - 7) * Math.cos(valAngle);
+  const ny = cy + (r - 7) * Math.sin(valAngle);
 
   svg.append('circle')
     .attr('cx', nx)
     .attr('cy', ny)
-    .attr('r', 4)
+    .attr('r', 3.5)
     .attr('fill', '#fff')
-    .attr('filter', 'url(#purpleGlow)');
+    .attr('filter', 'url(#redGlow)');
 
   svg.append('text')
     .attr('x', cx)
-    .attr('y', cy - 12)
+    .attr('y', cy - 10)
     .attr('text-anchor', 'middle')
-    .attr('fill', '#c83cff')
+    .attr('fill', '#ff4040')
     .attr('font-family', 'Playfair Display,serif')
-    .attr('font-size', 19)
+    .attr('font-size', 17)
     .text(score.toFixed(2));
 }
 
