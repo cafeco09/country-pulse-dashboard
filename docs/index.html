@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Country Pulse · Heartbeat Lights · Happiness Atlas</title>
+  <title>Country Pulse · Heartbeat Happiness Atlas</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,20 +20,21 @@
     }
 
     :root {
-      --bg: #030303;
-      --surface: #0d0d0d;
-      --surface2: #171717;
+      --bg: #020202;
+      --surface: #090909;
+      --surface2: #141414;
       --ink: #ffffff;
-      --muted: rgba(255,255,255,.46);
-      --faint: rgba(255,255,255,.07);
-      --accent: #d91414;
+      --muted: rgba(255,255,255,.43);
+      --faint: rgba(255,255,255,.06);
+      --accent: #dc1717;
       --accent2: #ff3434;
-      --accent3: #ff7a7a;
-      --line: rgba(255,255,255,.08);
-      --line2: rgba(255,255,255,.15);
+      --accent3: #ff8a8a;
+      --line: rgba(255,255,255,.075);
+      --line2: rgba(255,255,255,.14);
     }
 
-    html, body {
+    html,
+    body {
       background: var(--bg);
       color: var(--ink);
       font-family: "Syne", sans-serif;
@@ -44,14 +45,16 @@
 
     .app {
       display: grid;
-      grid-template-rows: 42px 56px 1fr 102px;
-      grid-template-columns: 148px 1fr;
+      grid-template-rows: 34px 42px minmax(0, 1fr) 70px;
+      grid-template-columns: 124px minmax(0, 1fr);
       grid-template-areas:
         "hdr hdr"
         "kpi kpi"
         "side map"
         "bot bot";
       height: 100vh;
+      width: 100vw;
+      overflow: hidden;
     }
 
     /* HEADER */
@@ -60,40 +63,43 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 14px;
       border-bottom: 1px solid var(--line);
-      background: rgba(4,4,4,0.96);
+      background: rgba(3,3,3,0.96);
     }
 
     .brand-title {
       font-family: "Playfair Display", serif;
-      font-size: 1rem;
+      font-size: 0.92rem;
       letter-spacing: 0.01em;
+      line-height: 1;
     }
 
     .brand-sub {
-      font-size: 0.48rem;
+      font-size: 0.43rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.7px;
+      margin-top: 2px;
     }
 
     .live-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.54rem;
+      font-size: 0.49rem;
       color: var(--accent2);
       text-transform: uppercase;
-      letter-spacing: 1.4px;
+      letter-spacing: 1.25px;
+      white-space: nowrap;
     }
 
     .live-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       background: var(--accent2);
       border-radius: 50%;
-      box-shadow: 0 0 10px rgba(255, 52, 52, 0.9);
+      box-shadow: 0 0 10px rgba(255,52,52,0.85);
       animation: blink 2s ease-in-out infinite;
     }
 
@@ -106,17 +112,19 @@
     .kpi-strip {
       grid-area: kpi;
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       border-bottom: 1px solid var(--line);
       background: rgba(7,7,7,0.96);
+      overflow: hidden;
     }
 
     .kpi-cell {
-      padding: 8px 12px;
+      padding: 5px 9px;
       border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
       justify-content: center;
+      min-width: 0;
     }
 
     .kpi-cell:last-child {
@@ -124,18 +132,22 @@
     }
 
     .kpi-label {
-      font-size: 0.43rem;
+      font-size: 0.36rem;
       text-transform: uppercase;
-      letter-spacing: 1.8px;
+      letter-spacing: 1.45px;
       color: var(--muted);
       margin-bottom: 2px;
+      white-space: nowrap;
     }
 
     .kpi-val {
-      font-size: 0.88rem;
+      font-size: 0.72rem;
       font-weight: 500;
       color: var(--ink);
-      line-height: 1.05;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .kpi-val.accent {
@@ -144,7 +156,7 @@
     }
 
     .kpi-val.green {
-      color: #d3d3d3;
+      color: #d8d8d8;
     }
 
     /* SIDEBAR */
@@ -158,16 +170,16 @@
     }
 
     .sidebar-section {
-      padding: 10px 12px;
+      padding: 8px 9px;
       border-bottom: 1px solid var(--line);
     }
 
     .section-label {
-      font-size: 0.45rem;
+      font-size: 0.38rem;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1.55px;
       color: var(--muted);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .search-input {
@@ -176,15 +188,15 @@
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.64rem;
-      padding: 6px 8px;
+      font-size: 0.57rem;
+      padding: 5px 7px;
       border-radius: 6px;
       outline: none;
     }
 
     .search-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(217,20,20,0.12);
+      box-shadow: 0 0 0 2px rgba(220,23,23,0.12);
     }
 
     .search-input::placeholder {
@@ -194,14 +206,14 @@
     .region-filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 7px;
+      gap: 3px;
+      margin-top: 6px;
     }
 
     .region-btn {
       font-family: "Syne", sans-serif;
-      font-size: 0.52rem;
-      padding: 2px 7px;
+      font-size: 0.44rem;
+      padding: 2px 5px;
       border-radius: 20px;
       border: 1px solid var(--line2);
       background: transparent;
@@ -209,21 +221,21 @@
       cursor: pointer;
       transition: all 0.2s;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: .8px;
     }
 
     .region-btn:hover,
     .region-btn.active {
       border-color: var(--accent);
       color: var(--accent2);
-      background: rgba(217,20,20,.1);
+      background: rgba(220,23,23,.1);
     }
 
     .rank-list {
       flex: 1;
       overflow-y: auto;
-      padding: 0 12px;
-      font-size: 0.74rem;
+      padding: 0 9px;
+      font-size: 0.6rem;
     }
 
     .rank-list::-webkit-scrollbar {
@@ -238,34 +250,40 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 4px 0;
+      gap: 4px;
+      padding: 3px 0;
       border-bottom: 1px solid var(--line);
       cursor: pointer;
       transition: all 0.15s;
-      font-size: 0.61rem;
+      font-size: 0.53rem;
     }
 
     .rank-item:hover,
     .rank-item.selected {
       color: var(--accent2);
-      background: rgba(217,20,20,.08);
+      background: rgba(220,23,23,.08);
     }
 
     .rank-num {
-      font-size: 0.5rem;
+      font-size: 0.45rem;
       color: var(--muted);
-      min-width: 18px;
+      min-width: 16px;
     }
 
     .rank-name {
-      font-size: 0.61rem;
+      font-size: 0.53rem;
       flex: 1;
-      padding: 0 6px;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .rank-score {
-      font-size: 0.61rem;
+      font-size: 0.53rem;
       font-weight: 500;
+      min-width: 24px;
+      text-align: right;
     }
 
     /* MAP AREA */
@@ -274,9 +292,9 @@
       position: relative;
       overflow: hidden;
       background:
-        radial-gradient(circle at 50% 50%, rgba(120,0,0,0.14), transparent 36%),
-        radial-gradient(circle at 22% 24%, rgba(255,40,40,0.05), transparent 28%),
-        #020202;
+        radial-gradient(circle at 50% 50%, rgba(110,0,0,0.12), transparent 38%),
+        radial-gradient(circle at 20% 24%, rgba(255,40,40,0.04), transparent 26%),
+        #010101;
     }
 
     #map-svg {
@@ -287,90 +305,104 @@
 
     .c-path {
       fill: #111111;
-      stroke: #242424;
-      stroke-width: 0.4;
+      stroke: #282828;
+      stroke-width: 0.35;
       cursor: pointer;
       transition: fill 0.2s ease, stroke 0.15s, opacity 0.2s ease;
     }
 
     .c-path:hover {
-      fill: #2d1717;
+      fill: #2a1414;
       stroke: var(--accent2);
     }
 
     .c-path.active {
       stroke: #ffffff;
-      stroke-width: 1.2;
-      filter: drop-shadow(0 0 4px rgba(217,20,20,0.7));
+      stroke-width: 1.05;
+      filter: drop-shadow(0 0 4px rgba(255,52,52,0.55));
     }
 
-    /* HEART PULSE */
+    /* HEART PULSE — all countries, staggered lub-dub */
     @keyframes heartBeatLubDub {
       0% {
-        transform: scale(0.78);
-        opacity: 0.72;
+        transform: scale(calc(var(--heart-scale) * 0.82));
+        opacity: calc(var(--heart-opacity) * 0.72);
       }
-      8% {
-        transform: scale(calc(var(--pulse-scale) * 1.02));
-        opacity: 1;
+
+      /* lub */
+      7% {
+        transform: scale(calc(var(--heart-scale) * 1.18));
+        opacity: var(--heart-opacity);
       }
-      14% {
-        transform: scale(0.88);
-        opacity: 0.86;
+
+      13% {
+        transform: scale(calc(var(--heart-scale) * 0.9));
+        opacity: calc(var(--heart-opacity) * 0.82);
       }
-      23% {
-        transform: scale(var(--pulse-scale));
-        opacity: 0.98;
+
+      /* dub */
+      22% {
+        transform: scale(calc(var(--heart-scale) * 1.08));
+        opacity: calc(var(--heart-opacity) * 0.94);
       }
+
       31% {
-        transform: scale(0.84);
-        opacity: 0.82;
+        transform: scale(calc(var(--heart-scale) * 0.86));
+        opacity: calc(var(--heart-opacity) * 0.76);
       }
+
       100% {
-        transform: scale(0.78);
-        opacity: 0.72;
+        transform: scale(calc(var(--heart-scale) * 0.82));
+        opacity: calc(var(--heart-opacity) * 0.72);
       }
     }
 
-    @keyframes glowBeat {
+    @keyframes heartGlowLubDub {
       0% {
-        transform: scale(0.84);
-        opacity: 0.22;
+        transform: scale(calc(var(--glow-scale) * 0.88));
+        opacity: calc(var(--glow-opacity) * 0.55);
       }
-      8% {
-        transform: scale(calc(var(--pulse-scale) * 1.12));
-        opacity: 0.55;
+
+      7% {
+        transform: scale(calc(var(--glow-scale) * 1.14));
+        opacity: var(--glow-opacity);
       }
-      14% {
-        transform: scale(0.92);
-        opacity: 0.28;
+
+      13% {
+        transform: scale(calc(var(--glow-scale) * 0.94));
+        opacity: calc(var(--glow-opacity) * 0.65);
       }
-      23% {
-        transform: scale(calc(var(--pulse-scale) * 1.03));
-        opacity: 0.46;
+
+      22% {
+        transform: scale(calc(var(--glow-scale) * 1.05));
+        opacity: calc(var(--glow-opacity) * 0.86);
       }
+
       31% {
-        transform: scale(0.9);
-        opacity: 0.24;
+        transform: scale(calc(var(--glow-scale) * 0.92));
+        opacity: calc(var(--glow-opacity) * 0.58);
       }
+
       100% {
-        transform: scale(0.84);
-        opacity: 0.22;
+        transform: scale(calc(var(--glow-scale) * 0.88));
+        opacity: calc(var(--glow-opacity) * 0.55);
       }
     }
 
-    .heart-pulse {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: heartBeatLubDub 1.55s ease-in-out infinite;
-      mix-blend-mode: screen;
-    }
-
+    .heart-pulse,
     .heart-glow {
       transform-box: fill-box;
       transform-origin: center;
-      animation: glowBeat 1.55s ease-in-out infinite;
       mix-blend-mode: screen;
+      will-change: transform, opacity;
+    }
+
+    .heart-pulse {
+      animation: heartBeatLubDub 1.65s ease-in-out infinite;
+    }
+
+    .heart-glow {
+      animation: heartGlowLubDub 1.65s ease-in-out infinite;
     }
 
     #tip {
@@ -381,8 +413,8 @@
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.62rem;
-      padding: 4px 9px;
+      font-size: 0.57rem;
+      padding: 4px 8px;
       border-radius: 10px;
       display: none;
       z-index: 100;
@@ -392,30 +424,30 @@
 
     .map-focus {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(12,12,12,0.92);
+      top: 9px;
+      right: 9px;
+      background: rgba(5,5,5,0.88);
       border: 1px solid var(--line2);
       backdrop-filter: blur(12px);
-      border-radius: 12px;
-      padding: 8px 12px;
-      min-width: 122px;
-      max-width: 146px;
+      border-radius: 14px;
+      padding: 9px 12px;
+      min-width: 126px;
+      max-width: 160px;
       pointer-events: none;
-      box-shadow: 0 6px 18px rgba(0,0,0,.5);
+      box-shadow: 0 8px 24px rgba(0,0,0,.55);
       z-index: 55;
     }
 
     .focus-name {
       font-family: "Playfair Display", serif;
-      font-size: 0.84rem;
+      font-size: 0.9rem;
       line-height: 1;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .focus-score {
       font-family: "Playfair Display", serif;
-      font-size: 1.95rem;
+      font-size: 2rem;
       line-height: 1;
       color: var(--accent2);
       font-weight: 700;
@@ -423,26 +455,28 @@
     }
 
     .focus-rank {
-      font-size: 0.5rem;
+      font-size: 0.48rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 1.2px;
-      margin-top: 3px;
+      letter-spacing: 1.15px;
+      margin-top: 4px;
     }
 
     /* BOTTOM METRICS */
     .bottom-metrics {
       grid-area: bot;
       display: grid;
-      grid-template-columns: 2fr 1.45fr 1.35fr 1fr;
+      grid-template-columns: 1.8fr 1.45fr 1.25fr 1fr;
       border-top: 1px solid var(--line);
-      background: rgba(5,5,5,0.97);
+      background: rgba(4,4,4,0.98);
+      overflow: hidden;
     }
 
     .metric-panel {
-      padding: 9px 12px;
+      padding: 7px 10px;
       border-right: 1px solid var(--line);
       overflow: hidden;
+      min-width: 0;
     }
 
     .metric-panel:last-child {
@@ -450,22 +484,30 @@
     }
 
     .metric-title {
-      font-size: 0.42rem;
+      font-size: 0.35rem;
       text-transform: uppercase;
-      letter-spacing: 1.8px;
+      letter-spacing: 1.5px;
       color: var(--muted);
-      margin-bottom: 7px;
+      margin-bottom: 5px;
+      white-space: nowrap;
     }
 
     .fbar-row {
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .fbar-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.56rem;
-      margin-bottom: 2px;
+      font-size: 0.48rem;
+      margin-bottom: 1px;
+      gap: 8px;
+    }
+
+    .fbar-meta span:first-child {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .fbar-pct {
@@ -473,7 +515,7 @@
     }
 
     .fbar-track {
-      height: 3px;
+      height: 2px;
       background: var(--faint);
       border-radius: 2px;
       overflow: hidden;
@@ -483,27 +525,32 @@
       height: 100%;
       border-radius: 2px;
       transition: width 0.6s ease;
-      box-shadow: 0 0 8px currentColor;
+      box-shadow: 0 0 7px currentColor;
     }
 
     #sparkline {
       width: 100%;
-      height: 72px;
+      height: 50px;
+      display: block;
     }
 
     #gauge-svg {
+      width: 116px;
+      height: 56px;
       display: block;
       margin: 0 auto;
     }
 
     .info-panel {
-      background: linear-gradient(135deg, rgba(217,20,20,.14), rgba(80,80,80,.08));
-      border: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(135deg, rgba(220,23,23,.11), rgba(80,80,80,.06));
+      border: 1px solid rgba(255,255,255,.055);
       border-radius: 8px;
-      padding: 8px;
-      font-size: 0.57rem;
-      line-height: 1.45;
+      padding: 6px;
+      font-size: 0.48rem;
+      line-height: 1.32;
       color: var(--muted);
+      max-height: 50px;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -520,29 +567,29 @@
 
     <div class="live-badge">
       <div class="live-dot"></div>
-      heart intensity = happiness score
+      heart size = final score
     </div>
   </header>
 
   <section class="kpi-strip">
     <div class="kpi-cell">
       <div class="kpi-label">Global Average</div>
-      <div class="kpi-val accent" id="kpi-avg">5.48</div>
+      <div class="kpi-val accent" id="kpi-avg">—</div>
     </div>
 
     <div class="kpi-cell">
       <div class="kpi-label">Happiest Country</div>
-      <div class="kpi-val" id="kpi-top">Finland</div>
+      <div class="kpi-val" id="kpi-top">—</div>
     </div>
 
     <div class="kpi-cell">
       <div class="kpi-label">Unhappiest Country</div>
-      <div class="kpi-val" id="kpi-unhappiest">Afghanistan</div>
+      <div class="kpi-val" id="kpi-unhappiest">—</div>
     </div>
 
     <div class="kpi-cell">
       <div class="kpi-label">Countries Tracked</div>
-      <div class="kpi-val green" id="kpi-count">145</div>
+      <div class="kpi-val green" id="kpi-count">—</div>
     </div>
 
     <div class="kpi-cell">
@@ -557,14 +604,14 @@
 
     <div class="kpi-cell">
       <div class="kpi-label">Highest Score</div>
-      <div class="kpi-val" id="kpi-high">7.74</div>
+      <div class="kpi-val" id="kpi-high">—</div>
     </div>
   </section>
 
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="section-label">Search & Filter</div>
-      <input class="search-input" id="search" type="text" placeholder="Country name…" />
+      <input class="search-input" id="search" type="text" placeholder="Country…" />
 
       <div class="region-filters" id="region-filters">
         <button class="region-btn active" data-r="all">All</button>
@@ -577,10 +624,10 @@
   <main class="map-area">
     <svg id="map-svg">
       <defs>
-        <filter id="redGlow" x="-150%" y="-150%" width="400%" height="400%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="blur1" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="6.5" result="blur2" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="11.5" result="blur3" />
+        <filter id="redGlow" x="-110%" y="-110%" width="320%" height="320%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1.1" result="blur1" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="blur2" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="4.7" result="blur3" />
           <feMerge>
             <feMergeNode in="blur3" />
             <feMergeNode in="blur2" />
@@ -591,9 +638,9 @@
 
         <radialGradient id="redAura" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#fff4f4" stop-opacity="1" />
-          <stop offset="18%" stop-color="#ffb3b3" stop-opacity="0.95" />
-          <stop offset="38%" stop-color="#ff4f4f" stop-opacity="0.78" />
-          <stop offset="68%" stop-color="#d91414" stop-opacity="0.24" />
+          <stop offset="20%" stop-color="#ffb3b3" stop-opacity="0.82" />
+          <stop offset="45%" stop-color="#ff4444" stop-opacity="0.38" />
+          <stop offset="75%" stop-color="#d91414" stop-opacity="0.12" />
           <stop offset="100%" stop-color="#420000" stop-opacity="0" />
         </radialGradient>
       </defs>
@@ -613,7 +660,7 @@
     <div class="metric-panel">
       <div class="metric-title">Explanatory Factors</div>
       <div id="factor-bars">
-        <div style="color:var(--muted);font-size:0.62rem">Select a country to view factors</div>
+        <div style="color:var(--muted);font-size:0.52rem">Select a country to view factors</div>
       </div>
     </div>
 
@@ -624,13 +671,13 @@
 
     <div class="metric-panel">
       <div class="metric-title">Happiness Gauge</div>
-      <svg id="gauge-svg" width="150" height="78" viewBox="0 0 150 78"></svg>
+      <svg id="gauge-svg" width="116" height="56" viewBox="0 0 116 56"></svg>
     </div>
 
     <div class="metric-panel">
       <div class="metric-title">About This Data</div>
       <div class="info-panel">
-        Cantril Ladder 0–10. Red heart size and pulse strength grow with happiness — higher score, stronger heartbeat.
+        Cantril Ladder 0–10. Each heart pulses for a country. Heart size is projected from the final happiness score.
       </div>
     </div>
   </div>
@@ -638,7 +685,7 @@
 
 <script>
 const FACTORS = [
-  { id: 'gdp', label: 'GDP per Capita', color: '#d91414' },
+  { id: 'gdp', label: 'GDP per Capita', color: '#dc1717' },
   { id: 'social', label: 'Social Support', color: '#ffffff' },
   { id: 'health', label: 'Healthy Life Expectancy', color: '#ff8d8d' },
   { id: 'freedom', label: 'Freedom of Choice', color: '#ff4f4f' },
@@ -659,16 +706,22 @@ let state = {
   countries: [],
   selected: null,
   topo: null,
+  mapFeatures: null,
   regionFilter: 'all',
   projection: null,
   searchFocus: null
 };
 
-let previewed = null;
-
 async function init() {
   const topoData = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
-  state.topo = topojson.feature(topoData, topoData.objects.countries);
+  const worldFeatures = topojson.feature(topoData, topoData.objects.countries);
+
+  state.topo = worldFeatures;
+
+  state.mapFeatures = {
+    type: "FeatureCollection",
+    features: worldFeatures.features.filter(f => f.properties.name !== "Antarctica")
+  };
 
   const happinessMap = new Map();
 
@@ -699,36 +752,37 @@ async function init() {
     happinessMap.set(name, { score, region });
   });
 
-  const countries = state.topo.features
+  const countries = state.mapFeatures.features
     .map((f, i) => {
       const match = happinessMap.get(f.properties.name);
 
-      let score = match ? match.score : 4.2 + (Math.sin(i) * 0.9);
-      let region = match ? match.region : REGIONS[Math.floor(Math.random() * REGIONS.length)];
+      let score = match ? match.score : 4.2 + (Math.sin(i * 1.73) * 0.9);
+      let region = match ? match.region : REGIONS[Math.floor(Math.abs(Math.sin(i * 2.17)) * REGIONS.length) % REGIONS.length];
+
       score = typeof score === 'number' ? score : parseFloat(score);
 
-      const gdpBase = match ? 45 + (score - 2.4) * 6.5 : 35;
-      const socialBase = match ? 40 + (score - 2.4) * 7 : 38;
-      const healthBase = match ? 38 + (score - 2.4) * 7 : 40;
-      const freedomBase = match ? 35 + (score - 2.4) * 8 : 36;
+      const gdpBase = match ? 45 + (score - 2.4) * 6.5 : 35 + score * 4;
+      const socialBase = match ? 40 + (score - 2.4) * 7 : 34 + score * 5;
+      const healthBase = match ? 38 + (score - 2.4) * 7 : 32 + score * 5;
+      const freedomBase = match ? 35 + (score - 2.4) * 8 : 30 + score * 5;
 
       return {
         feature: f,
         name: f.properties.name,
         score: Math.min(7.9, Math.max(2.3, score)),
         region,
-        gdp: Math.min(96, Math.floor(gdpBase + (Math.random() * 8 - 4))),
-        social: Math.min(94, Math.floor(socialBase + (Math.random() * 7 - 3))),
-        health: Math.min(92, Math.floor(healthBase + (Math.random() * 8 - 4))),
-        freedom: Math.min(93, Math.floor(freedomBase + (Math.random() * 10 - 5))),
+        hasRealScore: Boolean(match),
+        gdp: Math.min(96, Math.max(5, Math.floor(gdpBase + (Math.random() * 8 - 4)))),
+        social: Math.min(94, Math.max(5, Math.floor(socialBase + (Math.random() * 7 - 3)))),
+        health: Math.min(92, Math.max(5, Math.floor(healthBase + (Math.random() * 8 - 4)))),
+        freedom: Math.min(93, Math.max(5, Math.floor(freedomBase + (Math.random() * 10 - 5)))),
       };
     })
-    .filter(c => c.name !== "Antarctica")
+    .sort((a, b) => b.score - a.score)
     .map((c, i, arr) => ({
       ...c,
       rank: arr.filter(x => x.score > c.score).length + 1
-    }))
-    .sort((a, b) => b.score - a.score);
+    }));
 
   state.countries = countries;
 
@@ -744,21 +798,22 @@ async function init() {
 
   buildRegionFilters();
   renderMap();
-  initAllPulses();
+  renderAllHeartPulses(top, false);
   renderRankList(countries);
   selectCountry(top.name);
   setupSearch();
 
   window.addEventListener('resize', debounce(() => {
     renderMap();
-    resetMapVisuals();
-    if (state.selected) selectCountry(state.selected.name);
+    renderAllHeartPulses(state.selected, false);
+    if (state.selected) selectCountry(state.selected.name, false);
   }, 180));
 }
 
 function buildRegionFilters() {
   const container = document.getElementById('region-filters');
   const allBtn = container.querySelector('[data-r="all"]');
+
   allBtn.onclick = () => filterRegion('all', allBtn);
 
   REGIONS.forEach(r => {
@@ -794,7 +849,11 @@ function setupSearch() {
       : state.countries.filter(c => c.region === state.regionFilter);
 
     const q = e.target.value.trim().toLowerCase();
-    if (q) base = base.filter(c => c.name.toLowerCase().includes(q));
+
+    if (q) {
+      base = base.filter(c => c.name.toLowerCase().includes(q));
+    }
+
     renderRankList(base);
   });
 
@@ -804,10 +863,11 @@ function setupSearch() {
       if (!q) return;
 
       let match = state.countries.find(c => c.name.toLowerCase() === q);
-      if (!match) match = state.countries.find(c => c.name.toLowerCase().includes(q));
+      if (!match) {
+        match = state.countries.find(c => c.name.toLowerCase().includes(q));
+      }
 
       if (match) {
-        if (state.searchFocus) resetMapVisuals();
         selectCountry(match.name);
         state.searchFocus = match.name;
         highlightSingleCountry(match);
@@ -818,37 +878,30 @@ function setupSearch() {
 
 function highlightSingleCountry(country) {
   d3.selectAll('.c-path')
-    .attr('fill-opacity', d => d.properties.name === country.name ? 1 : 0.1);
+    .attr('fill-opacity', d => d.properties.name === country.name ? 1 : 0.2);
 
-  const wg = document.getElementById('waves-group');
-  wg.innerHTML = '';
-
-  if (country && country.feature && state.projection) {
-    createSinglePulse(country, true);
-  }
+  renderAllHeartPulses(country, true);
 }
 
 function resetMapVisuals() {
   state.searchFocus = null;
 
-  d3.selectAll('.c-path').attr('fill-opacity', 1);
+  d3.selectAll('.c-path')
+    .attr('fill-opacity', 1);
 
-  const wg = document.getElementById('waves-group');
-  wg.innerHTML = '';
-
-  initAllPulses();
+  renderAllHeartPulses(state.selected, false);
 }
 
 function renderRankList(list) {
   const container = document.getElementById('rank-list');
 
-  container.innerHTML = list.slice(0, 85).map(c => `
+  container.innerHTML = list.slice(0, 90).map(c => `
     <div class="rank-item ${state.selected && state.selected.name === c.name ? 'selected' : ''}"
          onclick="selectCountry('${escapeForInline(c.name)}')"
          onmouseover="previewCountry('${escapeForInline(c.name)}')"
          onmouseout="endPreview()">
       <span class="rank-num">${c.rank}</span>
-      <span class="rank-name">${c.name}</span>
+      <span class="rank-name" title="${escapeHtml(c.name)}">${c.name}</span>
       <span class="rank-score" style="color:${scoreColor(c.score)}">${c.score.toFixed(2)}</span>
     </div>
   `).join('');
@@ -858,29 +911,41 @@ function escapeForInline(value) {
   return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function scoreColor(s) {
-  if (s >= 6.5) return '#ffffff';
-  if (s >= 5.5) return '#ffd0d0';
-  if (s >= 4.5) return '#ff8d8d';
-  return '#ff4040';
+  if (s >= 6.5) return '#fff2f2';
+  if (s >= 5.5) return '#ffb9b9';
+  if (s >= 4.5) return '#ff7373';
+  return '#ff3434';
 }
 
 function renderMap() {
   const width = document.getElementById('map-svg').clientWidth || 920;
   const height = document.getElementById('map-svg').clientHeight || 640;
 
-  const projection = d3.geoNaturalEarth1().fitSize([width, height], state.topo);
+  const projection = d3.geoNaturalEarth1()
+    .fitExtent([[4, -4], [width - 4, height + 4]], state.mapFeatures);
+
+  projection.scale(projection.scale() * 1.18);
+
   state.projection = projection;
 
   const pathGen = d3.geoPath().projection(projection);
 
   const colorScale = d3.scaleSequential()
     .domain([2.5, 8])
-    .interpolator(t => d3.interpolateRgb('#160707', '#8f1111')(t));
+    .interpolator(t => d3.interpolateRgb('#100606', '#761010')(t));
 
   d3.select('#countries-group')
     .selectAll('path')
-    .data(state.topo.features)
+    .data(state.mapFeatures.features)
     .join('path')
     .attr('class', 'c-path')
     .attr('d', pathGen)
@@ -900,38 +965,88 @@ function renderMap() {
       tip.style.display = 'block';
       tip.style.left = (e.offsetX + 12) + 'px';
       tip.style.top = (e.offsetY - 22) + 'px';
-      tip.innerHTML = `<strong>${c.name}</strong>  ♥ ${c.score.toFixed(2)}`;
+      tip.innerHTML = `<strong>${c.name}</strong> &nbsp; ♥ ${c.score.toFixed(2)}`;
     })
     .on('mouseleave', () => {
       document.getElementById('tip').style.display = 'none';
     });
 }
 
-function initAllPulses() {
+function renderAllHeartPulses(focusCountry = state.selected, dimOthers = false) {
   const wavesGroup = document.getElementById('waves-group');
   wavesGroup.innerHTML = '';
 
+  const focusName = focusCountry ? focusCountry.name : null;
+
   state.countries.forEach(country => {
-    if (country.feature && state.projection && country.name !== "Antarctica") {
-      createSinglePulse(country, false);
-    }
+    if (!country.feature || !state.projection) return;
+    if (country.name === focusName) return;
+
+    createHeartPulse(country, false, dimOthers);
   });
+
+  if (focusCountry && focusCountry.feature) {
+    createHeartPulse(focusCountry, true, false);
+  }
 }
 
-function createSinglePulse(country, isFocus = false) {
-  if (!state.projection || !country.feature) return;
-
+function getCountryCentroid(country) {
   const centroid = d3.geoPath().projection(state.projection).centroid(country.feature);
-  if (!centroid || isNaN(centroid[0]) || isNaN(centroid[1])) return;
+
+  if (!centroid || isNaN(centroid[0]) || isNaN(centroid[1])) {
+    return null;
+  }
+
+  return centroid;
+}
+
+function hashString(str) {
+  let hash = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+
+  return Math.abs(hash);
+}
+
+function createHeartPulse(country, isFocus = false, isDimmed = false) {
+  const centroid = getCountryCentroid(country);
+  if (!centroid) return;
 
   const [cx, cy] = centroid;
-  const score = country.score;
-  const normalised = Math.max(0, Math.min(1, (score - 2.4) / (7.8 - 2.4)));
-  const focusBoost = isFocus ? 1.55 : 1;
 
-  const pulseScale = (0.42 + normalised * 0.78) * focusBoost;
-  const glowScale = (0.9 + normalised * 0.55) * focusBoost;
-  const opacity = 0.38 + normalised * 0.58;
+  /*
+    Final metric score:
+    This is the number shown in the focus card.
+    Heart size is projected directly from this value.
+  */
+  const finalMetricScore = country.score;
+
+  const heartScaleByScore = d3.scaleSqrt()
+    .domain([2.4, 7.8])
+    .range([0.24, 0.72])
+    .clamp(true);
+
+  const glowScaleByScore = d3.scaleSqrt()
+    .domain([2.4, 7.8])
+    .range([0.55, 1.08])
+    .clamp(true);
+
+  const opacityByScore = d3.scaleLinear()
+    .domain([2.4, 7.8])
+    .range([0.32, 0.78])
+    .clamp(true);
+
+  const focusBoost = isFocus ? 1.22 : 1;
+  const dimFactor = isDimmed && !isFocus ? 0.42 : 1;
+
+  const heartScale = heartScaleByScore(finalMetricScore) * focusBoost;
+  const glowScale = glowScaleByScore(finalMetricScore) * focusBoost;
+  const opacity = opacityByScore(finalMetricScore) * dimFactor;
+
+  const t = Math.max(0, Math.min(1, (finalMetricScore - 2.4) / (7.8 - 2.4)));
 
   const heartPath = "M 0 9 C -2 7, -8 2, -8 -3 C -8 -8, -3 -10, 0 -6 C 3 -10, 8 -8, 8 -3 C 8 2, 2 7, 0 9 Z";
 
@@ -943,60 +1058,59 @@ function createSinglePulse(country, isFocus = false) {
 
   const glowGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   glowGroup.setAttribute('class', 'heart-glow');
-  glowGroup.style.setProperty('--pulse-scale', glowScale);
 
   const pulseGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   pulseGroup.setAttribute('class', 'heart-pulse');
-  pulseGroup.style.setProperty('--pulse-scale', pulseScale);
+
+  glowGroup.style.setProperty('--glow-scale', glowScale);
+  glowGroup.style.setProperty('--glow-opacity', 0.12 + t * 0.18);
+
+  pulseGroup.style.setProperty('--heart-scale', heartScale);
+  pulseGroup.style.setProperty('--heart-opacity', opacity);
+
+  const delay = -((hashString(country.name) % 165) / 100);
+  glowGroup.style.animationDelay = `${delay}s`;
+  pulseGroup.style.animationDelay = `${delay}s`;
 
   const outerAura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   outerAura.setAttribute('cx', '0');
   outerAura.setAttribute('cy', '0');
-  outerAura.setAttribute('r', 8 + normalised * 14);
+  outerAura.setAttribute('r', 4.6 + t * 5.6);
   outerAura.setAttribute('fill', 'url(#redAura)');
-  outerAura.setAttribute('opacity', opacity * 0.22);
+  outerAura.setAttribute('opacity', 0.22 + t * 0.16);
   outerAura.setAttribute('filter', 'url(#redGlow)');
 
-  const innerAura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  innerAura.setAttribute('cx', '0');
-  innerAura.setAttribute('cy', '0');
-  innerAura.setAttribute('r', 5 + normalised * 8);
-  innerAura.setAttribute('fill', 'url(#redAura)');
-  innerAura.setAttribute('opacity', opacity * 0.4);
-  innerAura.setAttribute('filter', 'url(#redGlow)');
-
-  const heartOuter = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  heartOuter.setAttribute('d', heartPath);
-  heartOuter.setAttribute('fill', '#ff5c5c');
-  heartOuter.setAttribute('opacity', 0.28);
-  heartOuter.setAttribute('filter', 'url(#redGlow)');
-  heartOuter.setAttribute('transform', 'scale(1.35)');
+  const heartShadow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  heartShadow.setAttribute('d', heartPath);
+  heartShadow.setAttribute('fill', '#ff3f3f');
+  heartShadow.setAttribute('opacity', opacity * 0.22);
+  heartShadow.setAttribute('filter', 'url(#redGlow)');
+  heartShadow.setAttribute('transform', 'scale(1.18)');
 
   const heart = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   heart.setAttribute('d', heartPath);
-  heart.setAttribute('fill', '#e01b1b');
-  heart.setAttribute('stroke', '#ffb1b1');
-  heart.setAttribute('stroke-width', '0.45');
+  heart.setAttribute('fill', '#e31b1b');
+  heart.setAttribute('stroke', isFocus ? '#ffd3d3' : '#ff9696');
+  heart.setAttribute('stroke-width', isFocus ? '0.5' : '0.28');
   heart.setAttribute('stroke-linejoin', 'round');
-  heart.setAttribute('opacity', '0.96');
+  heart.setAttribute('opacity', opacity);
   heart.setAttribute('filter', 'url(#redGlow)');
 
   const innerHeart = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   innerHeart.setAttribute('d', heartPath);
-  innerHeart.setAttribute('fill', '#ff5a5a');
-  innerHeart.setAttribute('opacity', '0.5');
-  innerHeart.setAttribute('transform', 'scale(0.62)');
+  innerHeart.setAttribute('fill', '#ff6868');
+  innerHeart.setAttribute('opacity', opacity * 0.34);
+  innerHeart.setAttribute('transform', 'scale(0.56)');
 
   const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
   highlight.setAttribute('cx', '-1.8');
   highlight.setAttribute('cy', '-3.4');
-  highlight.setAttribute('r', 1.1);
+  highlight.setAttribute('r', isFocus ? '1' : '0.62');
   highlight.setAttribute('fill', '#fff7f7');
-  highlight.setAttribute('opacity', '0.78');
+  highlight.setAttribute('opacity', opacity * 0.62);
 
   glowGroup.appendChild(outerAura);
-  glowGroup.appendChild(innerAura);
-  glowGroup.appendChild(heartOuter);
+  glowGroup.appendChild(heartShadow);
 
   pulseGroup.appendChild(heart);
   pulseGroup.appendChild(innerHeart);
@@ -1004,6 +1118,7 @@ function createSinglePulse(country, isFocus = false) {
 
   root.appendChild(glowGroup);
   root.appendChild(pulseGroup);
+
   wavesGroup.appendChild(root);
 }
 
@@ -1011,42 +1126,49 @@ function previewCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
 
-  previewed = entry;
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
-  document.getElementById('focus-rank').innerHTML = `Rank #${entry.rank} of ${state.countries.length} <span style="color:#ff4040;font-size:0.5rem">• PREVIEW</span>`;
+  document.getElementById('focus-rank').innerHTML =
+    `Rank #${entry.rank} of ${state.countries.length} <span style="color:#ff4040;font-size:0.48rem">• PREVIEW</span>`;
 
   d3.selectAll('.c-path')
     .classed('active', d => d.properties.name === entry.name);
+
+  renderAllHeartPulses(entry, true);
 }
 
 function endPreview() {
-  previewed = null;
   if (!state.selected) return;
 
   document.getElementById('focus-name').textContent = state.selected.name;
   document.getElementById('focus-score').textContent = state.selected.score.toFixed(2);
-  document.getElementById('focus-rank').textContent = `Rank #${state.selected.rank} of ${state.countries.length}`;
+  document.getElementById('focus-rank').textContent =
+    `Rank #${state.selected.rank} of ${state.countries.length}`;
 
   d3.selectAll('.c-path')
     .classed('active', d => d.properties.name === state.selected.name);
+
+  renderAllHeartPulses(state.selected, false);
 }
 
-function selectCountry(name) {
+function selectCountry(name, shouldRenderPulses = true) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
-
-  if (state.searchFocus && state.searchFocus !== name) resetMapVisuals();
 
   state.selected = entry;
   state.searchFocus = null;
 
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
-  document.getElementById('focus-rank').textContent = `Rank #${entry.rank} of ${state.countries.length}`;
+  document.getElementById('focus-rank').textContent =
+    `Rank #${entry.rank} of ${state.countries.length}`;
 
   d3.selectAll('.c-path')
     .classed('active', d => d.properties.name === entry.name);
+
+  if (shouldRenderPulses) {
+    renderAllHeartPulses(entry, false);
+  }
 
   renderFactors(entry);
   renderSparkline(entry);
@@ -1080,7 +1202,7 @@ function renderSparkline(entry) {
   svg.innerHTML = '';
 
   const W = svg.clientWidth || 210;
-  const H = 72;
+  const H = 50;
   const years = d3.range(2014, 2026);
   const base = entry.score;
 
@@ -1089,10 +1211,10 @@ function renderSparkline(entry) {
     v: Math.min(9, Math.max(2.2, base + Math.sin(i * 0.7) * 0.35 + (i - 5) * 0.012))
   }));
 
-  const xScale = d3.scaleLinear().domain([2014, 2025]).range([18, W - 10]);
+  const xScale = d3.scaleLinear().domain([2014, 2025]).range([16, W - 8]);
   const yScale = d3.scaleLinear()
     .domain([d3.min(pts, d => d.v) - 0.3, d3.max(pts, d => d.v) + 0.3])
-    .range([H - 8, 6]);
+    .range([H - 7, 5]);
 
   const line = d3.line()
     .x(d => xScale(d.y))
@@ -1118,7 +1240,7 @@ function renderSparkline(entry) {
   grad.append('stop')
     .attr('offset', '0%')
     .attr('stop-color', scoreColor(entry.score))
-    .attr('stop-opacity', 0.38);
+    .attr('stop-opacity', 0.34);
 
   grad.append('stop')
     .attr('offset', '100%')
@@ -1135,14 +1257,14 @@ function renderSparkline(entry) {
     .attr('d', line)
     .attr('fill', 'none')
     .attr('stroke', scoreColor(entry.score))
-    .attr('stroke-width', 1.4);
+    .attr('stroke-width', 1.25);
 
   [2015, 2020, 2025].forEach(y => {
     svgSel.append('text')
       .attr('x', xScale(y))
-      .attr('y', H - 4)
-      .attr('fill', 'rgba(255,255,255,0.28)')
-      .attr('font-size', 6)
+      .attr('y', H - 3)
+      .attr('fill', 'rgba(255,255,255,0.25)')
+      .attr('font-size', 5.5)
       .attr('text-anchor', 'middle')
       .text(y);
   });
@@ -1152,11 +1274,11 @@ function renderGauge(score) {
   const svg = d3.select('#gauge-svg');
   svg.selectAll('*').remove();
 
-  const W = 150;
-  const H = 78;
+  const W = 116;
+  const H = 56;
   const cx = W / 2;
-  const cy = H - 8;
-  const r = 58;
+  const cy = H - 6;
+  const r = 43;
 
   const start = -Math.PI;
   const end = 0;
@@ -1191,40 +1313,40 @@ function renderGauge(score) {
     const ea = angleScale(high);
 
     svg.append('path')
-      .attr('d', arcPath(sa, ea, r - 12, r))
+      .attr('d', arcPath(sa, ea, r - 9, r))
       .attr('fill', col)
-      .attr('opacity', 0.35);
+      .attr('opacity', 0.32);
   });
 
   const valAngle = angleScale(Math.min(8, Math.max(2.5, score)));
 
   svg.append('path')
-    .attr('d', arcPath(start, valAngle, r - 12, r))
+    .attr('d', arcPath(start, valAngle, r - 9, r))
     .attr('fill', scoreColor(score))
-    .attr('opacity', 0.95);
+    .attr('opacity', 0.9);
 
-  const nx = cx + (r - 7) * Math.cos(valAngle);
-  const ny = cy + (r - 7) * Math.sin(valAngle);
+  const nx = cx + (r - 6) * Math.cos(valAngle);
+  const ny = cy + (r - 6) * Math.sin(valAngle);
 
   svg.append('circle')
     .attr('cx', nx)
     .attr('cy', ny)
-    .attr('r', 3.5)
-    .attr('fill', '#fff')
-    .attr('filter', 'url(#redGlow)');
+    .attr('r', 3)
+    .attr('fill', '#fff');
 
   svg.append('text')
     .attr('x', cx)
-    .attr('y', cy - 10)
+    .attr('y', cy - 9)
     .attr('text-anchor', 'middle')
     .attr('fill', '#ff4040')
     .attr('font-family', 'Playfair Display,serif')
-    .attr('font-size', 17)
+    .attr('font-size', 15)
     .text(score.toFixed(2));
 }
 
 function debounce(fn, delay) {
   let timer;
+
   return function(...args) {
     clearTimeout(timer);
     timer = setTimeout(() => fn.apply(this, args), delay);
