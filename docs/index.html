@@ -3,12 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Country Pulse · Diamond Lights · Happiness Atlas</title>
+  <title>Country Pulse · Purple Lights · Happiness Atlas</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
   <style>
     * {
       margin: 0;
@@ -17,15 +20,15 @@
     }
 
     :root {
-      --bg: #000000;
-      --surface: #0e0e0e;
-      --surface2: #1a1a1a;
+      --bg: #030008;
+      --surface: #0d0714;
+      --surface2: #171020;
       --ink: #ffffff;
-      --muted: rgba(255,255,255,.45);
+      --muted: rgba(255,255,255,.48);
       --faint: rgba(255,255,255,.07);
-      --accent: #cc2200;
-      --accent2: #ff4422;
-      --red: #cc2200;
+      --accent: #c83cff;
+      --accent2: #ff4dff;
+      --purple: #9d35ff;
       --line: rgba(255,255,255,.09);
       --line2: rgba(255,255,255,.16);
     }
@@ -59,18 +62,22 @@
       justify-content: space-between;
       padding: 0 20px;
       border-bottom: 1px solid var(--line);
+      background: rgba(4, 0, 9, 0.96);
     }
+
     .brand-title {
       font-family: "Playfair Display", serif;
       font-size: 1.1rem;
       letter-spacing: 0.01em;
     }
+
     .brand-sub {
       font-size: 0.52rem;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 2px;
     }
+
     .live-badge {
       display: flex;
       align-items: center;
@@ -80,13 +87,20 @@
       text-transform: uppercase;
       letter-spacing: 1.5px;
     }
+
     .live-dot {
-      width: 6px; height: 6px;
-      background: #cc2200;
+      width: 6px;
+      height: 6px;
+      background: var(--accent2);
       border-radius: 50%;
+      box-shadow: 0 0 12px rgba(255, 77, 255, 0.95);
       animation: blink 2s ease-in-out infinite;
     }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .25; }
+    }
 
     /* KPI STRIP */
     .kpi-strip {
@@ -94,7 +108,9 @@
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       border-bottom: 1px solid var(--line);
+      background: rgba(7, 2, 13, 0.96);
     }
+
     .kpi-cell {
       padding: 10px 16px;
       border-right: 1px solid var(--line);
@@ -102,7 +118,11 @@
       flex-direction: column;
       justify-content: center;
     }
-    .kpi-cell:last-child { border-right: none; }
+
+    .kpi-cell:last-child {
+      border-right: none;
+    }
+
     .kpi-label {
       font-size: 0.48rem;
       text-transform: uppercase;
@@ -110,13 +130,21 @@
       color: var(--muted);
       margin-bottom: 3px;
     }
+
     .kpi-val {
       font-size: 0.98rem;
       font-weight: 500;
       color: var(--ink);
     }
-    .kpi-val.accent { color: #cc2200; }
-    .kpi-val.green { color: #aaaaaa; }
+
+    .kpi-val.accent {
+      color: var(--accent);
+      text-shadow: 0 0 14px rgba(200, 60, 255, 0.35);
+    }
+
+    .kpi-val.green {
+      color: #c8b7ff;
+    }
 
     /* SIDEBAR */
     .sidebar {
@@ -127,10 +155,12 @@
       overflow: hidden;
       background: var(--surface);
     }
+
     .sidebar-section {
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
     }
+
     .section-label {
       font-size: 0.48rem;
       text-transform: uppercase;
@@ -138,6 +168,7 @@
       color: var(--muted);
       margin-bottom: 8px;
     }
+
     .search-input {
       width: 100%;
       background: var(--surface2);
@@ -149,14 +180,23 @@
       border-radius: 6px;
       outline: none;
     }
-    .search-input:focus { border-color: var(--accent); }
-    .search-input::placeholder { color: var(--muted); }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(200, 60, 255, 0.12);
+    }
+
+    .search-input::placeholder {
+      color: var(--muted);
+    }
+
     .region-filters {
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
       margin-top: 7px;
     }
+
     .region-btn {
       font-family: "Syne", sans-serif;
       font-size: 0.55rem;
@@ -170,19 +210,29 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-    .region-btn:hover, .region-btn.active {
+
+    .region-btn:hover,
+    .region-btn.active {
       border-color: var(--accent);
       color: var(--accent);
-      background: rgba(204,34,0,.1);
+      background: rgba(200, 60, 255, .11);
     }
+
     .rank-list {
       flex: 1;
       overflow-y: auto;
       padding: 0 14px;
       font-size: 0.78rem;
     }
-    .rank-list::-webkit-scrollbar { width: 2px; }
-    .rank-list::-webkit-scrollbar-thumb { background: var(--line2); }
+
+    .rank-list::-webkit-scrollbar {
+      width: 2px;
+    }
+
+    .rank-list::-webkit-scrollbar-thumb {
+      background: var(--line2);
+    }
+
     .rank-item {
       display: flex;
       align-items: center;
@@ -193,83 +243,138 @@
       transition: all 0.15s;
       font-size: 0.65rem;
     }
-    .rank-item:hover, .rank-item.selected {
+
+    .rank-item:hover,
+    .rank-item.selected {
       color: var(--accent);
-      background: rgba(204,34,0,.08);
+      background: rgba(200, 60, 255, .08);
     }
+
     .rank-num {
       font-size: 0.52rem;
       color: var(--muted);
       min-width: 20px;
     }
-    .rank-name { font-size: 0.65rem; flex: 1; padding: 0 7px; }
-    .rank-score { font-size: 0.65rem; font-weight: 500; }
+
+    .rank-name {
+      font-size: 0.65rem;
+      flex: 1;
+      padding: 0 7px;
+    }
+
+    .rank-score {
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
 
     /* MAP AREA */
     .map-area {
       grid-area: map;
       position: relative;
       overflow: hidden;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 52% 48%, rgba(85, 0, 130, 0.18), transparent 42%),
+        radial-gradient(circle at 20% 20%, rgba(132, 36, 255, 0.08), transparent 32%),
+        #020006;
     }
+
     #map-svg {
       width: 100%;
       height: 100%;
       display: block;
     }
+
     .c-path {
       fill: #111111;
-      stroke: #2a2a2a;
+      stroke: #25202c;
       stroke-width: 0.4;
       cursor: pointer;
-      transition: fill 0.2s ease, stroke 0.15s;
+      transition: fill 0.2s ease, stroke 0.15s, opacity 0.2s ease;
     }
+
     .c-path:hover {
-      fill: #2c2c2c;
-      stroke: #cc2200;
+      fill: #2b1d36;
+      stroke: var(--accent);
     }
+
     .c-path.active {
       stroke: #ffffff;
       stroke-width: 1.4;
-      filter: drop-shadow(0 0 4px rgba(204,34,0,0.7));
+      filter: drop-shadow(0 0 5px rgba(200, 60, 255, 0.85));
     }
 
-    /* PULSE DIAMOND + AURA */
-    @keyframes diamondBeat {
+    /* PURPLE ENERGY PULSE */
+    @keyframes energyPulse {
       0% {
-        transform: scale(0.55);
-        opacity: 0.92;
+        transform: scale(0.72);
+        opacity: 0.68;
       }
-      18% {
+
+      38% {
         transform: scale(var(--pulse-max));
         opacity: 1;
       }
-      32% {
-        transform: scale(0.7);
+
+      62% {
+        transform: scale(0.9);
         opacity: 0.88;
       }
-      48% {
-        transform: scale(calc(var(--pulse-max) * 0.84));
-        opacity: 0.98;
-      }
-      66% {
-        transform: scale(0.65);
-        opacity: 0.7;
-      }
-      85% {
-        transform: scale(0.55);
-        opacity: 0.8;
-      }
+
       100% {
-        transform: scale(0.55);
-        opacity: 0.92;
+        transform: scale(0.72);
+        opacity: 0.68;
       }
+    }
+
+    @keyframes flareStretch {
+      0%, 100% {
+        opacity: 0.32;
+        transform: scaleX(0.72);
+      }
+
+      45% {
+        opacity: 0.95;
+        transform: scaleX(1.15);
+      }
+    }
+
+    @keyframes particleTwinkle {
+      0%, 100% {
+        opacity: 0.2;
+        transform: scale(0.7);
+      }
+
+      45% {
+        opacity: 0.9;
+        transform: scale(1.15);
+      }
+    }
+
+    .energy-pulse {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: energyPulse 1.65s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+
+    .energy-flare {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: flareStretch 1.65s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+
+    .energy-particle {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: particleTwinkle 2.1s ease-in-out infinite;
+      mix-blend-mode: screen;
     }
 
     #tip {
       position: absolute;
       pointer-events: none;
-      background: rgba(10,10,14,0.96);
+      background: rgba(9, 4, 14, 0.96);
       backdrop-filter: blur(8px);
       border: 1px solid var(--line2);
       color: var(--ink);
@@ -280,13 +385,14 @@
       display: none;
       z-index: 100;
       white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,.55);
     }
 
     .map-focus {
       position: absolute;
       top: 14px;
       right: 14px;
-      background: rgba(13,13,20,0.92);
+      background: rgba(11, 4, 18, 0.92);
       border: 1px solid var(--line2);
       backdrop-filter: blur(12px);
       border-radius: 12px;
@@ -297,19 +403,23 @@
       box-shadow: 0 6px 18px rgba(0,0,0,.5);
       z-index: 55;
     }
+
     .focus-name {
       font-family: "Playfair Display", serif;
       font-size: 0.9rem;
       line-height: 1;
       margin-bottom: 2px;
     }
+
     .focus-score {
       font-family: "Playfair Display", serif;
       font-size: 2.15rem;
       line-height: 1;
-      color: #cc2200;
+      color: var(--accent);
       font-weight: 700;
+      text-shadow: 0 0 18px rgba(200, 60, 255, 0.45);
     }
+
     .focus-rank {
       font-size: 0.54rem;
       color: var(--muted);
@@ -318,18 +428,25 @@
       margin-top: 3px;
     }
 
+    /* BOTTOM METRICS */
     .bottom-metrics {
       grid-area: bot;
       display: grid;
       grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
       border-top: 1px solid var(--line);
+      background: rgba(5, 0, 10, 0.97);
     }
+
     .metric-panel {
       padding: 12px 16px;
       border-right: 1px solid var(--line);
       overflow: hidden;
     }
-    .metric-panel:last-child { border-right: none; }
+
+    .metric-panel:last-child {
+      border-right: none;
+    }
+
     .metric-title {
       font-size: 0.48rem;
       text-transform: uppercase;
@@ -337,29 +454,49 @@
       color: var(--muted);
       margin-bottom: 9px;
     }
-    .fbar-row { margin-bottom: 7px; }
+
+    .fbar-row {
+      margin-bottom: 7px;
+    }
+
     .fbar-meta {
       display: flex;
       justify-content: space-between;
       font-size: 0.62rem;
       margin-bottom: 3px;
     }
-    .fbar-pct { font-weight: 500; }
+
+    .fbar-pct {
+      font-weight: 500;
+    }
+
     .fbar-track {
       height: 3px;
       background: var(--faint);
       border-radius: 2px;
       overflow: hidden;
     }
+
     .fbar-fill {
       height: 100%;
       border-radius: 2px;
       transition: width 0.6s ease;
+      box-shadow: 0 0 10px currentColor;
     }
-    #sparkline { width: 100%; height: 88px; }
-    #gauge-svg { display: block; margin: 0 auto; }
+
+    #sparkline {
+      width: 100%;
+      height: 88px;
+    }
+
+    #gauge-svg {
+      display: block;
+      margin: 0 auto;
+    }
+
     .info-panel {
-      background: linear-gradient(135deg, rgba(204,34,0,.12), rgba(80,80,80,.1));
+      background: linear-gradient(135deg, rgba(126, 29, 255, .18), rgba(255, 77, 255, .08));
+      border: 1px solid rgba(255,255,255,.08);
       border-radius: 8px;
       padding: 9px;
       font-size: 0.65rem;
@@ -368,86 +505,184 @@
     }
   </style>
 </head>
+
 <body>
 <div id="tip"></div>
+
 <div class="app">
   <header>
     <div>
       <div class="brand-title">Country Pulse</div>
-      <div class="brand-sub">Radiant Diamond · Happiness Intelligence</div>
+      <div class="brand-sub">Purple Pulse · Happiness Intelligence</div>
     </div>
-    <div class="live-badge"><div class="live-dot"></div> aura intensity = happiness score</div>
+
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      pulse intensity = happiness score
+    </div>
   </header>
+
   <section class="kpi-strip">
-    <div class="kpi-cell"><div class="kpi-label">Global Average</div><div class="kpi-val accent" id="kpi-avg">5.48</div></div>
-    <div class="kpi-cell"><div class="kpi-label">Happiest Country</div><div class="kpi-val" id="kpi-top">Finland</div></div>
-    <div class="kpi-cell"><div class="kpi-label">Unhappiest Country</div><div class="kpi-val" id="kpi-unhappiest">Afghanistan</div></div>
-    <div class="kpi-cell"><div class="kpi-label">Countries Tracked</div><div class="kpi-val green" id="kpi-count">145</div></div>
-    <div class="kpi-cell"><div class="kpi-label">Global Trend</div><div class="kpi-val" id="kpi-trend">Resilient</div></div>
-    <div class="kpi-cell"><div class="kpi-label">Factor Match</div><div class="kpi-val accent">92%</div></div>
-    <div class="kpi-cell"><div class="kpi-label">Highest Score</div><div class="kpi-val" id="kpi-high">7.74</div></div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Global Average</div>
+      <div class="kpi-val accent" id="kpi-avg">5.48</div>
+    </div>
+
+    <div class="kpi-cell">
+      <div class="kpi-label">Happiest Country</div>
+      <div class="kpi-val" id="kpi-top">Finland</div>
+    </div>
+
+    <div class="kpi-cell">
+      <div class="kpi-label">Unhappiest Country</div>
+      <div class="kpi-val" id="kpi-unhappiest">Afghanistan</div>
+    </div>
+
+    <div class="kpi-cell">
+      <div class="kpi-label">Countries Tracked</div>
+      <div class="kpi-val green" id="kpi-count">145</div>
+    </div>
+
+    <div class="kpi-cell">
+      <div class="kpi-label">Global Trend</div>
+      <div class="kpi-val" id="kpi-trend">Resilient</div>
+    </div>
+
+    <div class="kpi-cell">
+      <div class="kpi-label">Factor Match</div>
+      <div class="kpi-val accent">92%</div>
+    </div>
+
+    <div class="kpi-cell">
+      <div class="kpi-label">Highest Score</div>
+      <div class="kpi-val" id="kpi-high">7.74</div>
+    </div>
   </section>
+
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="section-label">Search & Filter</div>
       <input class="search-input" id="search" type="text" placeholder="Country name…" />
+
       <div class="region-filters" id="region-filters">
         <button class="region-btn active" data-r="all">All</button>
       </div>
     </div>
+
     <div class="rank-list" id="rank-list"></div>
   </aside>
+
   <main class="map-area">
     <svg id="map-svg">
       <defs>
-        <!-- soft red glow filter for aura -->
-        <filter id="glowAura" x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="4.2" result="blur" />
+        <!-- broad purple glow -->
+        <filter id="purpleGlow" x="-140%" y="-140%" width="380%" height="380%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur1" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur2" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur3" />
           <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="blur" />
+            <feMergeNode in="blur3" />
+            <feMergeNode in="blur2" />
+            <feMergeNode in="blur1" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-        <radialGradient id="auraGradient" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#ff6644" stop-opacity="0.9" />
-          <stop offset="70%" stop-color="#cc2200" stop-opacity="0.4" />
-          <stop offset="100%" stop-color="#cc2200" stop-opacity="0" />
+
+        <!-- bright orb aura -->
+        <radialGradient id="purpleAura" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+          <stop offset="16%" stop-color="#ffe0ff" stop-opacity="0.95" />
+          <stop offset="34%" stop-color="#ff4dff" stop-opacity="0.82" />
+          <stop offset="62%" stop-color="#9b35ff" stop-opacity="0.34" />
+          <stop offset="100%" stop-color="#2b0048" stop-opacity="0" />
         </radialGradient>
+
+        <!-- horizontal light streak -->
+        <linearGradient id="purpleFlare" x1="0%" y1="50%" x2="100%" y2="50%">
+          <stop offset="0%" stop-color="#7b1dff" stop-opacity="0" />
+          <stop offset="23%" stop-color="#8d28ff" stop-opacity="0.28" />
+          <stop offset="43%" stop-color="#ff42ff" stop-opacity="0.78" />
+          <stop offset="50%" stop-color="#ffffff" stop-opacity="1" />
+          <stop offset="58%" stop-color="#ff7cff" stop-opacity="0.72" />
+          <stop offset="78%" stop-color="#a12cff" stop-opacity="0.28" />
+          <stop offset="100%" stop-color="#6a00ff" stop-opacity="0" />
+        </linearGradient>
       </defs>
+
       <g id="countries-group"></g>
       <g id="waves-group"></g>
     </svg>
+
     <div class="map-focus" id="map-focus">
       <div class="focus-name" id="focus-name">World</div>
       <div class="focus-score" id="focus-score">—</div>
       <div class="focus-rank" id="focus-rank">Select a country</div>
     </div>
   </main>
+
   <div class="bottom-metrics">
-    <div class="metric-panel"><div class="metric-title">Explanatory Factors</div><div id="factor-bars"><div style="color:var(--muted);font-size:0.68rem">Select a country to view factors</div></div></div>
-    <div class="metric-panel"><div class="metric-title">Score Trend (simulated)</div><svg id="sparkline"></svg></div>
-    <div class="metric-panel"><div class="metric-title">Happiness Gauge</div><svg id="gauge-svg" width="160" height="90" viewBox="0 0 160 90"></svg></div>
-    <div class="metric-panel"><div class="metric-title">About This Data</div><div class="info-panel">Cantril Ladder 0–10. Glowing red aura radius & opacity grow with happiness — bright pulse = joyful nation.</div></div>
+    <div class="metric-panel">
+      <div class="metric-title">Explanatory Factors</div>
+      <div id="factor-bars">
+        <div style="color:var(--muted);font-size:0.68rem">Select a country to view factors</div>
+      </div>
+    </div>
+
+    <div class="metric-panel">
+      <div class="metric-title">Score Trend</div>
+      <svg id="sparkline"></svg>
+    </div>
+
+    <div class="metric-panel">
+      <div class="metric-title">Happiness Gauge</div>
+      <svg id="gauge-svg" width="160" height="90" viewBox="0 0 160 90"></svg>
+    </div>
+
+    <div class="metric-panel">
+      <div class="metric-title">About This Data</div>
+      <div class="info-panel">
+        Cantril Ladder 0–10. Purple pulse size, glow and flare intensity grow with happiness — brighter pulse = higher score.
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 const FACTORS = [
-  { id: 'gdp', label: 'GDP per Capita', color: '#cc2200' },
+  { id: 'gdp', label: 'GDP per Capita', color: '#c83cff' },
   { id: 'social', label: 'Social Support', color: '#ffffff' },
-  { id: 'health', label: 'Healthy Life Expectancy', color: '#888888' },
-  { id: 'freedom', label: 'Freedom of Choice', color: '#ffaa66' },
+  { id: 'health', label: 'Healthy Life Expectancy', color: '#a88cff' },
+  { id: 'freedom', label: 'Freedom of Choice', color: '#ff7cff' },
 ];
-const REGIONS = ['Western Europe','North America','East Asia','South Asia','Middle East','Sub-Saharan Africa','Latin America','Eastern Europe'];
-let state = { countries: [], selected: null, topo: null, regionFilter: 'all', projection: null, searchFocus: null };
+
+const REGIONS = [
+  'Western Europe',
+  'North America',
+  'East Asia',
+  'South Asia',
+  'Middle East',
+  'Sub-Saharan Africa',
+  'Latin America',
+  'Eastern Europe'
+];
+
+let state = {
+  countries: [],
+  selected: null,
+  topo: null,
+  regionFilter: 'all',
+  projection: null,
+  searchFocus: null
+};
+
 let previewed = null;
 
 async function init() {
   const topoData = await d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
   state.topo = topojson.feature(topoData, topoData.objects.countries);
-  
+
   const happinessMap = new Map();
+
   const rawData = [
     ["Finland",7.74,"Western Europe"],["Denmark",7.58,"Western Europe"],["Iceland",7.52,"Western Europe"],["Sweden",7.34,"Western Europe"],
     ["Netherlands",7.32,"Western Europe"],["Norway",7.30,"Western Europe"],["Switzerland",7.24,"Western Europe"],["Luxembourg",7.22,"Western Europe"],
@@ -470,49 +705,76 @@ async function init() {
     ["Paraguay",5.35,"Latin America"],["Guatemala",5.83,"Latin America"],["El Salvador",5.35,"Latin America"],["Dominican Republic",5.71,"Latin America"],
     ["Haiti",3.68,"Latin America"],["Nicaragua",5.23,"Latin America"]
   ];
-  rawData.forEach(([name,score,region]) => happinessMap.set(name,{score,region}));
-  
-  const countries = state.topo.features.map((f, i) => {
-    const match = happinessMap.get(f.properties.name);
-    let score = match ? match.score : 4.2 + (Math.sin(i)*0.9);
-    let region = match ? match.region : REGIONS[Math.floor(Math.random() * REGIONS.length)];
-    score = typeof score === 'number' ? score : parseFloat(score);
-    const gdpBase = match ? 45 + (score - 2.4)*6.5 : 35;
-    const socialBase = match ? 40 + (score - 2.4)*7 : 38;
-    const healthBase = match ? 38 + (score - 2.4)*7 : 40;
-    const freedomBase = match ? 35 + (score - 2.4)*8 : 36;
-    return {
-      feature: f,
-      name: f.properties.name,
-      score: Math.min(7.9, Math.max(2.3, score)),
-      region: region,
-      gdp: Math.min(96, Math.floor(gdpBase + (Math.random() * 8 - 4))),
-      social: Math.min(94, Math.floor(socialBase + (Math.random() * 7 - 3))),
-      health: Math.min(92, Math.floor(healthBase + (Math.random() * 8 - 4))),
-      freedom: Math.min(93, Math.floor(freedomBase + (Math.random() * 10 - 5))),
-    };
-  }).filter(c => c.name !== "Antarctica").map((c,i,arr) => ({ ...c, rank: arr.filter(x=>x.score > c.score).length + 1 })).sort((a,b)=>b.score - a.score);
-  
+
+  rawData.forEach(([name, score, region]) => {
+    happinessMap.set(name, { score, region });
+  });
+
+  const countries = state.topo.features
+    .map((f, i) => {
+      const match = happinessMap.get(f.properties.name);
+
+      let score = match ? match.score : 4.2 + (Math.sin(i) * 0.9);
+      let region = match ? match.region : REGIONS[Math.floor(Math.random() * REGIONS.length)];
+
+      score = typeof score === 'number' ? score : parseFloat(score);
+
+      const gdpBase = match ? 45 + (score - 2.4) * 6.5 : 35;
+      const socialBase = match ? 40 + (score - 2.4) * 7 : 38;
+      const healthBase = match ? 38 + (score - 2.4) * 7 : 40;
+      const freedomBase = match ? 35 + (score - 2.4) * 8 : 36;
+
+      return {
+        feature: f,
+        name: f.properties.name,
+        score: Math.min(7.9, Math.max(2.3, score)),
+        region,
+        hasRealScore: Boolean(match),
+        gdp: Math.min(96, Math.floor(gdpBase + (Math.random() * 8 - 4))),
+        social: Math.min(94, Math.floor(socialBase + (Math.random() * 7 - 3))),
+        health: Math.min(92, Math.floor(healthBase + (Math.random() * 8 - 4))),
+        freedom: Math.min(93, Math.floor(freedomBase + (Math.random() * 10 - 5))),
+      };
+    })
+    .filter(c => c.name !== "Antarctica")
+    .map((c, i, arr) => ({
+      ...c,
+      rank: arr.filter(x => x.score > c.score).length + 1
+    }))
+    .sort((a, b) => b.score - a.score);
+
   state.countries = countries;
-  const avg = (countries.reduce((s,c)=>s+c.score,0)/countries.length).toFixed(2);
+
+  const avg = (countries.reduce((s, c) => s + c.score, 0) / countries.length).toFixed(2);
   const top = countries[0];
-  const bottom = countries[countries.length-1];
+  const bottom = countries[countries.length - 1];
+
   document.getElementById('kpi-avg').textContent = avg;
   document.getElementById('kpi-top').textContent = top.name;
   document.getElementById('kpi-unhappiest').textContent = bottom.name;
   document.getElementById('kpi-count').textContent = countries.length;
   document.getElementById('kpi-high').textContent = top.score.toFixed(2);
-  
+
   buildRegionFilters();
   renderMap();
   initAllPulses();
   renderRankList(countries);
   selectCountry(top.name);
   setupSearch();
+
+  window.addEventListener('resize', debounce(() => {
+    renderMap();
+    resetMapVisuals();
+    if (state.selected) selectCountry(state.selected.name);
+  }, 180));
 }
 
 function buildRegionFilters() {
   const container = document.getElementById('region-filters');
+
+  const allBtn = container.querySelector('[data-r="all"]');
+  allBtn.onclick = () => filterRegion('all', allBtn);
+
   REGIONS.forEach(r => {
     const btn = document.createElement('button');
     btn.className = 'region-btn';
@@ -526,26 +788,44 @@ function buildRegionFilters() {
 
 function filterRegion(r, btn) {
   state.regionFilter = r;
+
   document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  const filtered = r === 'all' ? state.countries : state.countries.filter(c => c.region === r);
+
+  const filtered = r === 'all'
+    ? state.countries
+    : state.countries.filter(c => c.region === r);
+
   renderRankList(filtered);
 }
 
 function setupSearch() {
   const searchInput = document.getElementById('search');
+
   searchInput.addEventListener('input', e => {
-    let base = state.regionFilter === 'all' ? state.countries : state.countries.filter(c => c.region === state.regionFilter);
+    let base = state.regionFilter === 'all'
+      ? state.countries
+      : state.countries.filter(c => c.region === state.regionFilter);
+
     const q = e.target.value.trim().toLowerCase();
-    if (q) base = base.filter(c => c.name.toLowerCase().includes(q));
+
+    if (q) {
+      base = base.filter(c => c.name.toLowerCase().includes(q));
+    }
+
     renderRankList(base);
   });
+
   searchInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       const q = searchInput.value.trim().toLowerCase();
       if (!q) return;
+
       let match = state.countries.find(c => c.name.toLowerCase() === q);
-      if (!match) match = state.countries.find(c => c.name.toLowerCase().includes(q));
+      if (!match) {
+        match = state.countries.find(c => c.name.toLowerCase().includes(q));
+      }
+
       if (match) {
         if (state.searchFocus) resetMapVisuals();
         selectCountry(match.name);
@@ -557,26 +837,36 @@ function setupSearch() {
 }
 
 function highlightSingleCountry(country) {
-  d3.selectAll('.c-path').attr('fill-opacity', d => d.properties.name === country.name ? 1 : 0.1);
+  d3.selectAll('.c-path')
+    .attr('fill-opacity', d => d.properties.name === country.name ? 1 : 0.1);
+
   const wg = document.getElementById('waves-group');
   wg.innerHTML = '';
-  if (country && country.feature && state.projection) createSinglePulse(country);
+
+  if (country && country.feature && state.projection) {
+    createSinglePulse(country, true);
+  }
 }
 
 function resetMapVisuals() {
   state.searchFocus = null;
-  d3.selectAll('.c-path').attr('fill-opacity', 1);
+
+  d3.selectAll('.c-path')
+    .attr('fill-opacity', 1);
+
   const wg = document.getElementById('waves-group');
   wg.innerHTML = '';
+
   initAllPulses();
 }
 
 function renderRankList(list) {
   const container = document.getElementById('rank-list');
-  container.innerHTML = list.slice(0,85).map(c => `
-    <div class="rank-item ${state.selected && state.selected.name===c.name ? 'selected' : ''}"
-         onclick="selectCountry('${c.name.replace(/'/g,"\\'")}')"
-         onmouseover="previewCountry('${c.name.replace(/'/g,"\\'")}')"
+
+  container.innerHTML = list.slice(0, 85).map(c => `
+    <div class="rank-item ${state.selected && state.selected.name === c.name ? 'selected' : ''}"
+         onclick="selectCountry('${escapeForInline(c.name)}')"
+         onmouseover="previewCountry('${escapeForInline(c.name)}')"
          onmouseout="endPreview()">
       <span class="rank-num">${c.rank}</span>
       <span class="rank-name">${c.name}</span>
@@ -585,23 +875,33 @@ function renderRankList(list) {
   `).join('');
 }
 
+function escapeForInline(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
 function scoreColor(s) {
   if (s >= 6.5) return '#ffffff';
-  if (s >= 5.5) return '#aaaaaa';
-  if (s >= 4.5) return '#888888';
-  return '#cc2200';
+  if (s >= 5.5) return '#d8b8ff';
+  if (s >= 4.5) return '#9b6cff';
+  return '#c83cff';
 }
 
 function renderMap() {
   const svg = d3.select('#map-svg');
   const width = document.getElementById('map-svg').clientWidth || 920;
   const height = document.getElementById('map-svg').clientHeight || 640;
+
   const projection = d3.geoNaturalEarth1().fitSize([width, height], state.topo);
   state.projection = projection;
+
   const pathGen = d3.geoPath().projection(projection);
-  const colorScale = d3.scaleSequential().domain([2.5, 8]).interpolator(t => d3.interpolateRgb('#200000', '#cc2200')(t));
-  
-  d3.select('#countries-group').selectAll('path')
+
+  const colorScale = d3.scaleSequential()
+    .domain([2.5, 8])
+    .interpolator(t => d3.interpolateRgb('#100018', '#5f189a')(t));
+
+  d3.select('#countries-group')
+    .selectAll('path')
     .data(state.topo.features)
     .join('path')
     .attr('class', 'c-path')
@@ -617,141 +917,202 @@ function renderMap() {
     .on('mousemove', (e, d) => {
       const c = state.countries.find(x => x.name === d.properties.name);
       if (!c) return;
+
       const tip = document.getElementById('tip');
       tip.style.display = 'block';
       tip.style.left = (e.offsetX + 12) + 'px';
       tip.style.top = (e.offsetY - 22) + 'px';
-      tip.innerHTML = `<strong>${c.name}</strong>  ◆ ${c.score.toFixed(2)}`;
+      tip.innerHTML = `<strong>${c.name}</strong>  ✦ ${c.score.toFixed(2)}`;
     })
-    .on('mouseleave', () => { document.getElementById('tip').style.display = 'none'; });
+    .on('mouseleave', () => {
+      document.getElementById('tip').style.display = 'none';
+    });
 }
 
-// DIAMOND PULSE WITH AURA: intensity based on happiness score
+/* PURPLE ENERGY PULSE WITH LENS FLARE */
 function initAllPulses() {
   const wavesGroup = document.getElementById('waves-group');
   wavesGroup.innerHTML = '';
+
   state.countries.forEach(country => {
     if (country.feature && state.projection && country.name !== "Antarctica") {
-      createSinglePulse(country);
+      createSinglePulse(country, false);
     }
   });
 }
 
-function createSinglePulse(country) {
+function createSinglePulse(country, isFocus = false) {
   if (!state.projection || !country.feature) return;
+
   const centroid = d3.geoPath().projection(state.projection).centroid(country.feature);
   if (!centroid || isNaN(centroid[0]) || isNaN(centroid[1])) return;
+
   const [cx, cy] = centroid;
-  const score = country.score;   // 2.4 .. 7.74
-  // Base scale for diamond size: bigger = happier
-  const pulseMax = 0.75 + (score / 8) * 2.2;   // ~0.94 → 2.4
-  // Aura radius (red glow area) grows with happiness
-  const auraRadius = 6 + (score - 2.4) * 1.4;   // range ~3.5px → ~13.5px
-  const auraOpacity = 0.28 + (score - 2.4) / 12;  // 0.28 → 0.73
-  // second outer softer glow
-  const outerGlowRadius = auraRadius * 1.6;
-  const outerOpacity = 0.2 + (score - 2.4) / 20;
-  
+  const score = country.score;
+
+  const normalised = Math.max(0, Math.min(1, (score - 2.4) / (7.8 - 2.4)));
+
+  const focusBoost = isFocus ? 1.55 : 1;
+
+  const orbRadius = (2.1 + normalised * 3.8) * focusBoost;
+  const auraRadius = (7 + normalised * 14) * focusBoost;
+  const outerAuraRadius = (13 + normalised * 25) * focusBoost;
+
+  const flareWidth = (18 + normalised * 46) * focusBoost;
+  const flareHeight = (0.9 + normalised * 2.1) * focusBoost;
+
+  const pulseMax = 1.04 + normalised * 0.68;
+  const opacity = 0.42 + normalised * 0.58;
+
   const wavesGroup = document.getElementById('waves-group');
-  const outerGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  outerGroup.setAttribute('transform', `translate(${cx},${cy})`);
-  
-  const beatGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-  beatGroup.setAttribute('class', 'pulse-beat');
-  beatGroup.style.setProperty('--pulse-max', pulseMax);
-  beatGroup.style.animation = 'diamondBeat 1.44s cubic-bezier(0.34, 1.2, 0.64, 1) infinite';
-  beatGroup.style.transformOrigin = '0px 0px';
-  
-  // 1) deep red glow aura (light source effect)
-  const auraCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  auraCircle.setAttribute('cx', '0');
-  auraCircle.setAttribute('cy', '0');
-  auraCircle.setAttribute('r', auraRadius);
-  auraCircle.setAttribute('fill', 'url(#auraGradient)');
-  auraCircle.setAttribute('opacity', auraOpacity);
-  auraCircle.setAttribute('filter', 'url(#glowAura)');
-  
-  // 2) outer translucent red halo (more intense if happy)
-  const outerGlow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  outerGlow.setAttribute('cx', '0');
-  outerGlow.setAttribute('cy', '0');
-  outerGlow.setAttribute('r', outerGlowRadius);
-  outerGlow.setAttribute('fill', '#ff4422');
-  outerGlow.setAttribute('opacity', outerOpacity);
-  outerGlow.setAttribute('filter', 'url(#glowAura)');
-  
-  // 3) central diamond (red gem with white edge)
-  const diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-  diamond.setAttribute('points', '-5.5,0 0,-9 5.5,0 0,9');
-  diamond.setAttribute('fill', '#e03a1a');
-  diamond.setAttribute('stroke', '#ffaa88');
-  diamond.setAttribute('stroke-width', '1');
-  diamond.setAttribute('stroke-linejoin', 'round');
-  diamond.setAttribute('opacity', '0.98');
-  
-  // 4) interior white-hot core
-  const coreDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  coreDot.setAttribute('cx', '0');
-  coreDot.setAttribute('cy', '0');
-  coreDot.setAttribute('r', '2');
-  coreDot.setAttribute('fill', '#fff9e6');
-  coreDot.setAttribute('opacity', '0.9');
-  
-  // extra tiny spark
+
+  const root = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  root.setAttribute('transform', `translate(${cx},${cy})`);
+  root.setAttribute('pointer-events', 'none');
+
+  const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  pulse.setAttribute('class', 'energy-pulse');
+  pulse.style.setProperty('--pulse-max', pulseMax);
+
+  const outerAura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  outerAura.setAttribute('cx', '0');
+  outerAura.setAttribute('cy', '0');
+  outerAura.setAttribute('r', outerAuraRadius);
+  outerAura.setAttribute('fill', 'url(#purpleAura)');
+  outerAura.setAttribute('opacity', opacity * 0.24);
+  outerAura.setAttribute('filter', 'url(#purpleGlow)');
+
+  const aura = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  aura.setAttribute('cx', '0');
+  aura.setAttribute('cy', '0');
+  aura.setAttribute('r', auraRadius);
+  aura.setAttribute('fill', 'url(#purpleAura)');
+  aura.setAttribute('opacity', opacity * 0.58);
+  aura.setAttribute('filter', 'url(#purpleGlow)');
+
+  const flare = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  flare.setAttribute('class', 'energy-flare');
+  flare.setAttribute('x', -flareWidth * 0.78);
+  flare.setAttribute('y', -flareHeight / 2);
+  flare.setAttribute('width', flareWidth);
+  flare.setAttribute('height', flareHeight);
+  flare.setAttribute('rx', flareHeight);
+  flare.setAttribute('fill', 'url(#purpleFlare)');
+  flare.setAttribute('opacity', opacity);
+  flare.setAttribute('filter', 'url(#purpleGlow)');
+
+  const core = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  core.setAttribute('cx', '0');
+  core.setAttribute('cy', '0');
+  core.setAttribute('r', orbRadius);
+  core.setAttribute('fill', '#fffaff');
+  core.setAttribute('opacity', '0.98');
+  core.setAttribute('filter', 'url(#purpleGlow)');
+
+  const innerCore = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  innerCore.setAttribute('cx', '0');
+  innerCore.setAttribute('cy', '0');
+  innerCore.setAttribute('r', orbRadius * 0.58);
+  innerCore.setAttribute('fill', '#ff4dff');
+  innerCore.setAttribute('opacity', '0.76');
+
   const spark = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  spark.setAttribute('cx', '1.2');
-  spark.setAttribute('cy', '-1.8');
-  spark.setAttribute('r', '0.8');
-  spark.setAttribute('fill', 'white');
-  spark.setAttribute('opacity', '0.85');
-  
-  beatGroup.appendChild(outerGlow);
-  beatGroup.appendChild(auraCircle);
-  beatGroup.appendChild(diamond);
-  beatGroup.appendChild(coreDot);
-  beatGroup.appendChild(spark);
-  outerGroup.appendChild(beatGroup);
-  wavesGroup.appendChild(outerGroup);
+  spark.setAttribute('cx', orbRadius * 0.34);
+  spark.setAttribute('cy', -orbRadius * 0.36);
+  spark.setAttribute('r', Math.max(0.55, orbRadius * 0.16));
+  spark.setAttribute('fill', '#ffffff');
+  spark.setAttribute('opacity', '0.92');
+
+  const particleA = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  particleA.setAttribute('class', 'energy-particle');
+  particleA.setAttribute('cx', auraRadius * 0.52);
+  particleA.setAttribute('cy', -auraRadius * 0.24);
+  particleA.setAttribute('r', Math.max(0.45, orbRadius * 0.11));
+  particleA.setAttribute('fill', '#ffffff');
+  particleA.setAttribute('opacity', '0.45');
+  particleA.style.animationDelay = `${normalised * 0.6}s`;
+
+  const particleB = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  particleB.setAttribute('class', 'energy-particle');
+  particleB.setAttribute('cx', -auraRadius * 0.42);
+  particleB.setAttribute('cy', auraRadius * 0.18);
+  particleB.setAttribute('r', Math.max(0.35, orbRadius * 0.09));
+  particleB.setAttribute('fill', '#dba8ff');
+  particleB.setAttribute('opacity', '0.38');
+  particleB.style.animationDelay = `${0.35 + normalised * 0.5}s`;
+
+  pulse.appendChild(outerAura);
+  pulse.appendChild(aura);
+  pulse.appendChild(flare);
+  pulse.appendChild(core);
+  pulse.appendChild(innerCore);
+  pulse.appendChild(spark);
+  pulse.appendChild(particleA);
+  pulse.appendChild(particleB);
+
+  root.appendChild(pulse);
+  wavesGroup.appendChild(root);
 }
 
 function previewCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
+
   previewed = entry;
+
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
-  document.getElementById('focus-rank').innerHTML = `Rank #${entry.rank} of ${state.countries.length} <span style="color:#cc2200;font-size:0.52rem">• PREVIEW</span>`;
-  d3.selectAll('.c-path').classed('active', d => d.properties.name === entry.name);
+  document.getElementById('focus-rank').innerHTML = `Rank #${entry.rank} of ${state.countries.length} <span style="color:#c83cff;font-size:0.52rem">• PREVIEW</span>`;
+
+  d3.selectAll('.c-path')
+    .classed('active', d => d.properties.name === entry.name);
 }
 
 function endPreview() {
   previewed = null;
+
   if (!state.selected) return;
+
   document.getElementById('focus-name').textContent = state.selected.name;
   document.getElementById('focus-score').textContent = state.selected.score.toFixed(2);
   document.getElementById('focus-rank').textContent = `Rank #${state.selected.rank} of ${state.countries.length}`;
-  d3.selectAll('.c-path').classed('active', d => d.properties.name === state.selected.name);
+
+  d3.selectAll('.c-path')
+    .classed('active', d => d.properties.name === state.selected.name);
 }
 
 function selectCountry(name) {
   const entry = state.countries.find(c => c.name.toLowerCase() === name.toLowerCase());
   if (!entry) return;
-  if (state.searchFocus && state.searchFocus !== name) resetMapVisuals();
+
+  if (state.searchFocus && state.searchFocus !== name) {
+    resetMapVisuals();
+  }
+
   state.selected = entry;
   state.searchFocus = null;
+
   document.getElementById('focus-name').textContent = entry.name;
   document.getElementById('focus-score').textContent = entry.score.toFixed(2);
   document.getElementById('focus-rank').textContent = `Rank #${entry.rank} of ${state.countries.length}`;
-  d3.selectAll('.c-path').classed('active', d => d.properties.name === entry.name);
+
+  d3.selectAll('.c-path')
+    .classed('active', d => d.properties.name === entry.name);
+
   renderFactors(entry);
   renderSparkline(entry);
   renderGauge(entry.score);
-  const filtered = state.regionFilter === 'all' ? state.countries : state.countries.filter(c => c.region === state.regionFilter);
+
+  const filtered = state.regionFilter === 'all'
+    ? state.countries
+    : state.countries.filter(c => c.region === state.regionFilter);
+
   renderRankList(filtered);
 }
 
 function renderFactors(entry) {
   const container = document.getElementById('factor-bars');
+
   container.innerHTML = FACTORS.map(f => `
     <div class="fbar-row">
       <div class="fbar-meta">
@@ -759,7 +1120,7 @@ function renderFactors(entry) {
         <span class="fbar-pct" style="color:${f.color}">${Math.min(98, Math.max(5, Math.floor(entry[f.id])))}%</span>
       </div>
       <div class="fbar-track">
-        <div class="fbar-fill" style="width:${Math.min(98, Math.max(5, entry[f.id]))}%; background:${f.color};"></div>
+        <div class="fbar-fill" style="width:${Math.min(98, Math.max(5, entry[f.id]))}%; background:${f.color}; color:${f.color};"></div>
       </div>
     </div>
   `).join('');
@@ -768,45 +1129,161 @@ function renderFactors(entry) {
 function renderSparkline(entry) {
   const svg = document.getElementById('sparkline');
   svg.innerHTML = '';
-  const W = svg.clientWidth || 210, H = 88;
+
+  const W = svg.clientWidth || 210;
+  const H = 88;
+
   const years = d3.range(2014, 2026);
   const base = entry.score;
-  const pts = years.map((y, i) => ({ y, v: Math.min(9, Math.max(2.2, base + Math.sin(i * 0.7) * 0.35 + (i-5)*0.012 )) }));
-  const xScale = d3.scaleLinear().domain([2014,2025]).range([20, W-12]);
-  const yScale = d3.scaleLinear().domain([d3.min(pts, d=>d.v)-0.3, d3.max(pts,d=>d.v)+0.3]).range([H-8, 6]);
-  const line = d3.line().x(d=>xScale(d.y)).y(d=>yScale(d.v)).curve(d3.curveCatmullRom);
-  const area = d3.area().x(d=>xScale(d.y)).y1(H-6).y0(d=>yScale(d.v)).curve(d3.curveCatmullRom);
+
+  const pts = years.map((y, i) => ({
+    y,
+    v: Math.min(9, Math.max(2.2, base + Math.sin(i * 0.7) * 0.35 + (i - 5) * 0.012))
+  }));
+
+  const xScale = d3.scaleLinear().domain([2014, 2025]).range([20, W - 12]);
+  const yScale = d3.scaleLinear()
+    .domain([d3.min(pts, d => d.v) - 0.3, d3.max(pts, d => d.v) + 0.3])
+    .range([H - 8, 6]);
+
+  const line = d3.line()
+    .x(d => xScale(d.y))
+    .y(d => yScale(d.v))
+    .curve(d3.curveCatmullRom);
+
+  const area = d3.area()
+    .x(d => xScale(d.y))
+    .y1(H - 6)
+    .y0(d => yScale(d.v))
+    .curve(d3.curveCatmullRom);
+
   const svgSel = d3.select('#sparkline');
-  const grad = svgSel.append('defs').append('linearGradient').attr('id', 'sparkGrad').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',1);
-  grad.append('stop').attr('offset','0%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity',0.4);
-  grad.append('stop').attr('offset','100%').attr('stop-color', scoreColor(entry.score)).attr('stop-opacity',0);
-  svgSel.append('path').datum(pts).attr('d', area).attr('fill', 'url(#sparkGrad)');
-  svgSel.append('path').datum(pts).attr('d', line).attr('fill','none').attr('stroke', scoreColor(entry.score)).attr('stroke-width',1.6);
-  [2015,2020,2025].forEach(y => svgSel.append('text').attr('x', xScale(y)).attr('y', H-6).attr('fill','rgba(255,255,255,0.3)').attr('font-size',7).attr('text-anchor','middle').text(y));
+
+  const defs = svgSel.append('defs');
+
+  const grad = defs.append('linearGradient')
+    .attr('id', 'sparkGrad')
+    .attr('x1', 0)
+    .attr('y1', 0)
+    .attr('x2', 0)
+    .attr('y2', 1);
+
+  grad.append('stop')
+    .attr('offset', '0%')
+    .attr('stop-color', scoreColor(entry.score))
+    .attr('stop-opacity', 0.42);
+
+  grad.append('stop')
+    .attr('offset', '100%')
+    .attr('stop-color', scoreColor(entry.score))
+    .attr('stop-opacity', 0);
+
+  svgSel.append('path')
+    .datum(pts)
+    .attr('d', area)
+    .attr('fill', 'url(#sparkGrad)');
+
+  svgSel.append('path')
+    .datum(pts)
+    .attr('d', line)
+    .attr('fill', 'none')
+    .attr('stroke', scoreColor(entry.score))
+    .attr('stroke-width', 1.6);
+
+  [2015, 2020, 2025].forEach(y => {
+    svgSel.append('text')
+      .attr('x', xScale(y))
+      .attr('y', H - 6)
+      .attr('fill', 'rgba(255,255,255,0.3)')
+      .attr('font-size', 7)
+      .attr('text-anchor', 'middle')
+      .text(y);
+  });
 }
 
 function renderGauge(score) {
   const svg = d3.select('#gauge-svg');
   svg.selectAll('*').remove();
-  const W=160, H=90, cx=W/2, cy=H-8, r=66;
-  const start=-Math.PI, end=0;
-  const angleScale = d3.scaleLinear().domain([2.5,8]).range([start,end]);
-  const seg = [[2.5,4.5,'#cc2200'],[4.5,5.5,'#4a4a4a'],[5.5,6.5,'#999999'],[6.5,8,'#fafafa']];
+
+  const W = 160;
+  const H = 90;
+  const cx = W / 2;
+  const cy = H - 8;
+  const r = 66;
+
+  const start = -Math.PI;
+  const end = 0;
+
+  const angleScale = d3.scaleLinear()
+    .domain([2.5, 8])
+    .range([start, end]);
+
+  const seg = [
+    [2.5, 4.5, '#5c177f'],
+    [4.5, 5.5, '#7d45a8'],
+    [5.5, 6.5, '#b78aff'],
+    [6.5, 8, '#ffffff']
+  ];
+
   const arcPath = (sa, ea, ir, or) => {
-    const x1=cx+or*Math.cos(sa), y1=cy+or*Math.sin(sa), x2=cx+or*Math.cos(ea), y2=cy+or*Math.sin(ea);
-    const xi1=cx+ir*Math.cos(sa), yi1=cy+ir*Math.sin(sa), xi2=cx+ir*Math.cos(ea), yi2=cy+ir*Math.sin(ea);
+    const x1 = cx + or * Math.cos(sa);
+    const y1 = cy + or * Math.sin(sa);
+    const x2 = cx + or * Math.cos(ea);
+    const y2 = cy + or * Math.sin(ea);
+
+    const xi1 = cx + ir * Math.cos(sa);
+    const yi1 = cy + ir * Math.sin(sa);
+    const xi2 = cx + ir * Math.cos(ea);
+    const yi2 = cy + ir * Math.sin(ea);
+
     return `M${x1} ${y1} A${or} ${or} 0 0 1 ${x2} ${y2} L${xi2} ${yi2} A${ir} ${ir} 0 0 0 ${xi1} ${yi1} Z`;
   };
-  seg.forEach(([low,high,col]) => {
-    const sa=angleScale(low), ea=angleScale(high);
-    svg.append('path').attr('d', arcPath(sa, ea, r-14, r)).attr('fill', col).attr('opacity',0.35);
+
+  seg.forEach(([low, high, col]) => {
+    const sa = angleScale(low);
+    const ea = angleScale(high);
+
+    svg.append('path')
+      .attr('d', arcPath(sa, ea, r - 14, r))
+      .attr('fill', col)
+      .attr('opacity', 0.35);
   });
-  const valAngle = angleScale(Math.min(8,Math.max(2.5,score)));
-  svg.append('path').attr('d', arcPath(start, valAngle, r-14, r)).attr('fill', scoreColor(score)).attr('opacity',0.95);
-  const nx = cx + (r-8)*Math.cos(valAngle), ny = cy + (r-8)*Math.sin(valAngle);
-  svg.append('circle').attr('cx', nx).attr('cy', ny).attr('r',4).attr('fill','#fff');
-  svg.append('text').attr('x',cx).attr('y',cy-12).attr('text-anchor','middle').attr('fill','#cc2200').attr('font-family','Playfair Display,serif').attr('font-size',19).text(score.toFixed(2));
+
+  const valAngle = angleScale(Math.min(8, Math.max(2.5, score)));
+
+  svg.append('path')
+    .attr('d', arcPath(start, valAngle, r - 14, r))
+    .attr('fill', scoreColor(score))
+    .attr('opacity', 0.95);
+
+  const nx = cx + (r - 8) * Math.cos(valAngle);
+  const ny = cy + (r - 8) * Math.sin(valAngle);
+
+  svg.append('circle')
+    .attr('cx', nx)
+    .attr('cy', ny)
+    .attr('r', 4)
+    .attr('fill', '#fff')
+    .attr('filter', 'url(#purpleGlow)');
+
+  svg.append('text')
+    .attr('x', cx)
+    .attr('y', cy - 12)
+    .attr('text-anchor', 'middle')
+    .attr('fill', '#c83cff')
+    .attr('font-family', 'Playfair Display,serif')
+    .attr('font-size', 19)
+    .text(score.toFixed(2));
 }
+
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
 init();
 </script>
 </body>
