@@ -47,7 +47,7 @@
 
     .app {
       display: grid;
-      grid-template-rows: 36px 46px minmax(0, 1fr) 176px;
+      grid-template-rows: 34px 44px minmax(0, 1fr) 118px;
       grid-template-columns: 132px minmax(0, 1fr);
       grid-template-areas:
         "hdr hdr"
@@ -81,27 +81,27 @@
 
     .brand-title {
       font-family: "Playfair Display", serif;
-      font-size: 0.98rem;
+      font-size: 0.92rem;
       letter-spacing: 0.01em;
       line-height: 1;
     }
 
     .brand-sub {
-      font-size: 0.45rem;
+      font-size: 0.42rem;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 1.8px;
-      margin-top: 2px;
+      letter-spacing: 1.7px;
+      margin-top: 1px;
     }
 
     .live-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.52rem;
+      font-size: 0.5rem;
       color: var(--accent2);
       text-transform: uppercase;
-      letter-spacing: 1.35px;
+      letter-spacing: 1.25px;
       white-space: nowrap;
     }
 
@@ -142,16 +142,16 @@
     }
 
     .kpi-label {
-      font-size: 0.38rem;
+      font-size: 0.36rem;
       text-transform: uppercase;
-      letter-spacing: 1.55px;
+      letter-spacing: 1.45px;
       color: var(--muted);
       margin-bottom: 2px;
       white-space: nowrap;
     }
 
     .kpi-val {
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 500;
       color: var(--ink);
       line-height: 1;
@@ -184,9 +184,9 @@
     }
 
     .section-label {
-      font-size: 0.4rem;
+      font-size: 0.38rem;
       text-transform: uppercase;
-      letter-spacing: 1.7px;
+      letter-spacing: 1.6px;
       color: var(--muted);
       margin-bottom: 7px;
     }
@@ -197,7 +197,7 @@
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       padding: 5px 7px;
       border-radius: 7px;
       outline: none;
@@ -221,7 +221,7 @@
 
     .region-btn {
       font-family: "Syne", sans-serif;
-      font-size: 0.46rem;
+      font-size: 0.44rem;
       padding: 2px 6px;
       border-radius: 20px;
       border: 1px solid var(--line2);
@@ -230,7 +230,7 @@
       cursor: pointer;
       transition: all 0.2s;
       text-transform: uppercase;
-      letter-spacing: .85px;
+      letter-spacing: .8px;
     }
 
     .region-btn:hover,
@@ -244,7 +244,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 0 9px;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
     }
 
     .rank-list::-webkit-scrollbar {
@@ -264,7 +264,7 @@
       border-bottom: 1px solid var(--line);
       cursor: pointer;
       transition: all 0.15s;
-      font-size: 0.54rem;
+      font-size: 0.52rem;
     }
 
     .rank-item:hover,
@@ -274,13 +274,13 @@
     }
 
     .rank-num {
-      font-size: 0.46rem;
+      font-size: 0.44rem;
       color: var(--muted);
       min-width: 16px;
     }
 
     .rank-name {
-      font-size: 0.54rem;
+      font-size: 0.52rem;
       flex: 1;
       min-width: 0;
       white-space: nowrap;
@@ -289,7 +289,7 @@
     }
 
     .rank-score {
-      font-size: 0.54rem;
+      font-size: 0.52rem;
       font-weight: 500;
       min-width: 24px;
       text-align: right;
@@ -372,7 +372,7 @@
       border: 1px solid var(--line2);
       color: var(--ink);
       font-family: "Syne", sans-serif;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       padding: 4px 9px;
       border-radius: 10px;
       display: none;
@@ -430,11 +430,11 @@
       border-top: 1px solid var(--line);
       background: rgba(4,4,4,0.98);
       overflow: hidden;
-      padding-bottom: 10px;
+      padding-bottom: 6px;
     }
 
     .metric-panel {
-      padding: 10px 12px 14px 12px;
+      padding: 8px 12px 10px 12px;
       border-right: 1px solid var(--line);
       overflow: hidden;
       min-width: 0;
@@ -445,23 +445,23 @@
     }
 
     .metric-title {
-      font-size: 0.36rem;
+      font-size: 0.34rem;
       text-transform: uppercase;
-      letter-spacing: 1.8px;
+      letter-spacing: 1.7px;
       color: var(--muted);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       white-space: nowrap;
     }
 
     .fbar-row {
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .fbar-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.54rem;
-      margin-bottom: 2px;
+      font-size: 0.48rem;
+      margin-bottom: 1px;
       gap: 8px;
     }
 
@@ -491,13 +491,13 @@
 
     #sparkline {
       width: 100%;
-      height: 74px;
+      height: 56px;
       display: block;
     }
 
     #gauge-svg {
-      width: 148px;
-      height: 82px;
+      width: 122px;
+      height: 66px;
       display: block;
       margin: 0 auto;
     }
@@ -505,13 +505,13 @@
     .info-panel {
       background: linear-gradient(135deg, rgba(220,23,23,.11), rgba(80,80,80,.06));
       border: 1px solid rgba(255,255,255,.06);
-      border-radius: 14px;
-      padding: 10px 11px;
-      font-size: 0.58rem;
-      line-height: 1.4;
+      border-radius: 12px;
+      padding: 8px 9px;
+      font-size: 0.49rem;
+      line-height: 1.34;
       color: var(--muted);
-      min-height: 88px;
-      overflow: visible;
+      min-height: 68px;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -550,6 +550,7 @@
         <button class="region-btn active" data-r="all">All</button>
       </div>
     </div>
+
     <div class="rank-list" id="rank-list"></div>
   </aside>
 
@@ -592,7 +593,7 @@
     <div class="metric-panel">
       <div class="metric-title">Explanatory Factors</div>
       <div id="factor-bars">
-        <div style="color:var(--muted);font-size:0.56rem">Select a country to view factors</div>
+        <div style="color:var(--muted);font-size:0.5rem">Select a country to view factors</div>
       </div>
     </div>
 
@@ -603,7 +604,7 @@
 
     <div class="metric-panel">
       <div class="metric-title">Happiness Gauge</div>
-      <svg id="gauge-svg" width="148" height="82" viewBox="0 0 148 82"></svg>
+      <svg id="gauge-svg" width="122" height="66" viewBox="0 0 122 66"></svg>
     </div>
 
     <div class="metric-panel">
@@ -1139,8 +1140,8 @@ function renderSparkline(entry) {
   const svg = document.getElementById('sparkline');
   svg.innerHTML = '';
 
-  const W = svg.clientWidth || 260;
-  const H = 74;
+  const W = svg.clientWidth || 220;
+  const H = 56;
   const years = d3.range(2014, 2026);
   const base = entry.score;
 
@@ -1149,10 +1150,10 @@ function renderSparkline(entry) {
     v: Math.min(9, Math.max(2.2, base + Math.sin(i * 0.7) * 0.35 + (i - 5) * 0.012))
   }));
 
-  const xScale = d3.scaleLinear().domain([2014, 2025]).range([18, W - 10]);
+  const xScale = d3.scaleLinear().domain([2014, 2025]).range([16, W - 10]);
   const yScale = d3.scaleLinear()
     .domain([d3.min(pts, d => d.v) - 0.3, d3.max(pts, d => d.v) + 0.3])
-    .range([H - 14, 8]);
+    .range([H - 12, 6]);
 
   const line = d3.line()
     .x(d => xScale(d.y))
@@ -1161,7 +1162,7 @@ function renderSparkline(entry) {
 
   const area = d3.area()
     .x(d => xScale(d.y))
-    .y1(H - 12)
+    .y1(H - 10)
     .y0(d => yScale(d.v))
     .curve(d3.curveCatmullRom);
 
@@ -1178,7 +1179,7 @@ function renderSparkline(entry) {
   grad.append('stop')
     .attr('offset', '0%')
     .attr('stop-color', scoreColor(entry.score))
-    .attr('stop-opacity', 0.32);
+    .attr('stop-opacity', 0.3);
 
   grad.append('stop')
     .attr('offset', '100%')
@@ -1195,14 +1196,14 @@ function renderSparkline(entry) {
     .attr('d', line)
     .attr('fill', 'none')
     .attr('stroke', scoreColor(entry.score))
-    .attr('stroke-width', 1.35);
+    .attr('stroke-width', 1.25);
 
   [2015, 2020, 2025].forEach(y => {
     svgSel.append('text')
       .attr('x', xScale(y))
-      .attr('y', H - 2)
-      .attr('fill', 'rgba(255,255,255,0.26)')
-      .attr('font-size', 6)
+      .attr('y', H - 1)
+      .attr('fill', 'rgba(255,255,255,0.24)')
+      .attr('font-size', 5.5)
       .attr('text-anchor', 'middle')
       .text(y);
   });
@@ -1212,11 +1213,11 @@ function renderGauge(score) {
   const svg = d3.select('#gauge-svg');
   svg.selectAll('*').remove();
 
-  const W = 148;
-  const H = 82;
+  const W = 122;
+  const H = 66;
   const cx = W / 2;
-  const cy = H - 10;
-  const r = 52;
+  const cy = H - 8;
+  const r = 42;
 
   const start = -Math.PI;
   const end = 0;
@@ -1251,7 +1252,7 @@ function renderGauge(score) {
     const ea = angleScale(high);
 
     svg.append('path')
-      .attr('d', arcPath(sa, ea, r - 10, r))
+      .attr('d', arcPath(sa, ea, r - 8, r))
       .attr('fill', col)
       .attr('opacity', 0.34);
   });
@@ -1259,26 +1260,26 @@ function renderGauge(score) {
   const valAngle = angleScale(Math.min(8, Math.max(2.5, score)));
 
   svg.append('path')
-    .attr('d', arcPath(start, valAngle, r - 10, r))
+    .attr('d', arcPath(start, valAngle, r - 8, r))
     .attr('fill', scoreColor(score))
     .attr('opacity', 0.94);
 
-  const nx = cx + (r - 7) * Math.cos(valAngle);
-  const ny = cy + (r - 7) * Math.sin(valAngle);
+  const nx = cx + (r - 6) * Math.cos(valAngle);
+  const ny = cy + (r - 6) * Math.sin(valAngle);
 
   svg.append('circle')
     .attr('cx', nx)
     .attr('cy', ny)
-    .attr('r', 4.5)
+    .attr('r', 3.8)
     .attr('fill', '#fff');
 
   svg.append('text')
     .attr('x', cx)
-    .attr('y', cy - 16)
+    .attr('y', cy - 13)
     .attr('text-anchor', 'middle')
     .attr('fill', '#ff4040')
     .attr('font-family', 'Playfair Display, serif')
-    .attr('font-size', 19)
+    .attr('font-size', 17)
     .text(score.toFixed(2));
 }
 
